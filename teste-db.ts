@@ -5,7 +5,6 @@ async function main() {
   try {
     console.log("🚀 Conectando ao banco no Railway...")
     const viagens = await prisma.trip.findMany() 
-    
     console.log("✅ Dados encontrados:")
     console.table(viagens)
   } catch (e) {
