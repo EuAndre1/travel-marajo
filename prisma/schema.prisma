@@ -1,0 +1,551 @@
+// ============================================
+// TRAVEL MARAJO - SCHEMA PRISMA
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Currency {
+  BRL
+  USD
+  EUR
+  GBP
+  AOA
+}
+enum LeadSource {
+  HOME_NEWSLETTER
+  HERO_SEARCH
+  PACKAGES_PAGE
+  ACTIVITIES_PAGE
+  CHECKOUT_PAGE
+  UNKNOWN
+}
+
+enum LeadIntentType {
+  NEWSLETTER
+  DESTINATION
+  PACKAGE
+  ACTIVITY
+  CHECKOUT
+  GENERAL
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  LOST
+}
+
+enum CommercialEventName {
+  LEAD_CAPTURED
+  CHECKOUT_STARTED
+  PAYMENT_COMPLETED
+  BOOKING_CONFIRMED
+}
+
+enum EventProcessingStatus {
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+// ============================================
+// AUTH MODELS (NextAuth)
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id                String    @id @default(cuid())
+  name              String?
+  email             String?   @unique
+  emailVerified     DateTime?
+  image             String?
+  hashedPassword    String?
+  accounts          Account[]
+  sessions          Session[]
+  bookings          Booking[]
+  reviews           Review[]
+  leads             Lead[]
+  commercialEvents  CommercialEvent[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  phoneNumber       String?
+  country           String?
+  preferredLanguage String    @default("pt")
+  preferredCurrency Currency  @default(BRL)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// COMMERCE CORE
+// ============================================
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  REFUNDED
+}
+
+enum BookingType {
+  PACKAGE
+  ACTIVITY
+  MIXED
+}
+
+enum BookingItemType {
+  PACKAGE
+  ACTIVITY
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  STRIPE
+  MANUAL
+}
+
+enum PaymentMethod {
+  CARD
+  PIX
+  BANK_TRANSFER
+}
+
+model Booking {
+  id              String          @id @default(cuid())
+  userId          String?
+  user            User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  leadId          String?
+  lead            Lead?           @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  bookingDate     DateTime        @default(now())
+  startDate       DateTime
+  endDate         DateTime?
+  customerName    String?
+  customerEmail   String?
+  customerPhone   String?
+  totalPrice      Float
+  currency        Currency
+  status          BookingStatus   @default(PENDING)
+  bookingType     BookingType     @default(MIXED)
+  payment         Payment?
+  bookingItems    BookingItem[]
+  flightBookings  FlightBooking[]
+  hotelBookings   HotelBooking[]
+  packageBookings PackageBooking[]
+  commercialEvents CommercialEvent[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([leadId])
+  @@index([customerEmail])
+  @@index([status])
+  @@index([bookingType])
+  @@index([createdAt])
+}
+
+model BookingItem {
+  id                  String          @id @default(cuid())
+  bookingId           String
+  booking             Booking         @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type                BookingItemType
+  referenceId         String
+  slugSnapshot        String?
+  titleSnapshot       String
+  descriptionSnapshot String?         @db.Text
+  imageSnapshot       String?
+  quantity            Int             @default(1)
+  unitPrice           Float
+  totalPrice          Float
+  currency            Currency
+  metadata            Json?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([bookingId])
+  @@index([type, referenceId])
+}
+
+model Payment {
+  id                String          @id @default(cuid())
+  bookingId         String          @unique
+  booking           Booking         @relation(fields: [bookingId], references: [id])
+  amount            Float
+  currency          Currency
+  paymentProvider   PaymentProvider @default(STRIPE)
+  paymentMethod     PaymentMethod   @default(CARD)
+  transactionId     String          @unique
+  checkoutSessionId String?
+  paymentIntentId   String?
+  rawStatus         String?
+  status            PaymentStatus   @default(PENDING)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([status])
+  @@index([paymentProvider, paymentMethod])
+  @@index([paymentIntentId])
+  @@index([checkoutSessionId])
+}
+
+// ============================================
+// DESTINATIONS / PACKAGES / ACTIVITIES
+// ============================================
+
+model Destination {
+  id               String     @id @default(cuid())
+  name             String     @unique
+  slug             String     @unique
+  shortDescription String?
+  description      String     @db.Text
+  heroImage        String?
+  isActive         Boolean    @default(true)
+  images           String[]
+  latitude         Float?
+  longitude        Float?
+  country          String
+  state            String
+  city             String?
+  packages         Package[]
+  activities       Activity[]
+  leads            Lead[]
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  @@index([country])
+  @@index([state])
+  @@index([isActive])
+}
+
+model Package {
+  id              String           @id @default(cuid())
+  slug            String           @unique
+  isActive        Boolean          @default(true)
+  destinationId   String?
+  destination     Destination?     @relation(fields: [destinationId], references: [id])
+  name            String
+  description     String           @db.Text
+  price           Float
+  currency        Currency
+  durationDays    Int
+  maxTravelers    Int?
+  packageItems    PackageItem[]
+  leads           Lead[]
+  destinations    String[]
+  images          String[]
+  availableFrom   DateTime
+  availableTo     DateTime
+  packageBookings PackageBooking[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([name])
+  @@index([price])
+  @@index([destinationId, isActive])
+}
+
+enum PackageItemType {
+  ACCOMMODATION
+  TRANSFER
+  ACTIVITY
+  SERVICE
+  MEAL
+  OTHER
+}
+
+model PackageItem {
+  id          String          @id @default(cuid())
+  packageId   String
+  package     Package         @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  type        PackageItemType
+  title       String
+  description String?
+  quantity    Int             @default(1)
+  order       Int             @default(0)
+  isOptional  Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@index([packageId, order])
+}
+
+model Activity {
+  id               String      @id @default(cuid())
+  slug             String      @unique
+  destinationId    String
+  destination      Destination @relation(fields: [destinationId], references: [id])
+  name             String
+  shortDescription String?
+  description      String      @db.Text
+  price            Float
+  currency         Currency
+  durationMinutes  Int?
+  maxParticipants  Int?
+  category         String?
+  images           String[]
+  isActive         Boolean     @default(true)
+  leads            Lead[]
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([destinationId, isActive])
+  @@index([category])
+}
+
+model Lead {
+  id            String          @id @default(cuid())
+  userId        String?
+  user          User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email         String?
+  name          String?
+  phone         String?
+  source        LeadSource
+  intentType    LeadIntentType
+  status        LeadStatus      @default(NEW)
+  language      String          @default("pt")
+  currency      Currency?
+  country       String?
+  destinationId String?
+  destination   Destination?    @relation(fields: [destinationId], references: [id], onDelete: SetNull)
+  packageId     String?
+  package       Package?        @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  activityId    String?
+  activity      Activity?       @relation(fields: [activityId], references: [id], onDelete: SetNull)
+  metadata      Json?
+  bookings      Booking[]
+  commercialEvents CommercialEvent[]
+  lastIntentAt  DateTime        @default(now())
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([email])
+  @@index([source, intentType])
+  @@index([destinationId])
+  @@index([packageId])
+  @@index([activityId])
+  @@index([createdAt])
+}
+model CommercialEvent {
+  id             String               @id @default(cuid())
+  eventName      CommercialEventName
+  occurredAt     DateTime             @default(now())
+  leadId         String?
+  lead           Lead?                @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  bookingId      String?
+  booking        Booking?             @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  userId         String?
+  user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  source         LeadSource?
+  intentType     LeadIntentType?
+  currency       Currency?
+  amount         Float?
+  idempotencyKey String?              @unique
+  metadata       Json?
+  createdAt      DateTime             @default(now())
+
+  @@index([eventName, occurredAt])
+  @@index([leadId])
+  @@index([bookingId])
+  @@index([userId])
+  @@index([source, intentType])
+}
+model EventProcessingLock {
+  id         String                @id @default(cuid())
+  scope      String
+  eventKey   String
+  status     EventProcessingStatus @default(PROCESSING)
+  attempts   Int                   @default(1)
+  lastError  String?
+  metadata   Json?
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  @@unique([scope, eventKey])
+  @@index([scope, status, updatedAt])
+}
+// ============================================
+// LEGACY / EXTENDED INVENTORY MODELS
+// ============================================
+
+model Flight {
+  id               String          @id @default(cuid())
+  flightNumber     String
+  airline          String
+  departureAirport String
+  arrivalAirport   String
+  departureTime    DateTime
+  arrivalTime      DateTime
+  price            Float
+  currency         Currency
+  availableSeats   Int
+  flightBookings   FlightBooking[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@unique([flightNumber, departureTime])
+  @@index([departureAirport])
+  @@index([arrivalAirport])
+}
+
+model FlightBooking {
+  id                String   @id @default(cuid())
+  bookingId         String
+  booking           Booking  @relation(fields: [bookingId], references: [id])
+  flightId          String
+  flight            Flight   @relation(fields: [flightId], references: [id])
+  numPassengers     Int
+  seatNumbers       String[]
+  priceAtBooking    Float
+  currencyAtBooking Currency
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([bookingId, flightId])
+  @@index([bookingId])
+  @@index([flightId])
+}
+
+model Accommodation {
+  id            String        @id @default(cuid())
+  name          String
+  type          String
+  description   String        @db.Text
+  address       String
+  city          String
+  state         String
+  country       String
+  latitude      Float?
+  longitude     Float?
+  pricePerNight Float
+  currency      Currency
+  rating        Float?
+  images        String[]
+  amenities     String[]
+  hotelBookings HotelBooking[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([city])
+  @@index([country])
+  @@index([type])
+}
+
+model HotelBooking {
+  id                String        @id @default(cuid())
+  bookingId         String
+  booking           Booking       @relation(fields: [bookingId], references: [id])
+  accommodationId   String
+  accommodation     Accommodation @relation(fields: [accommodationId], references: [id])
+  checkInDate       DateTime
+  checkOutDate      DateTime
+  numGuests         Int
+  numRooms          Int
+  priceAtBooking    Float
+  currencyAtBooking Currency
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@unique([bookingId, accommodationId])
+  @@index([bookingId])
+  @@index([accommodationId])
+}
+
+model PackageBooking {
+  id                String   @id @default(cuid())
+  bookingId         String
+  booking           Booking  @relation(fields: [bookingId], references: [id])
+  packageId         String
+  package           Package  @relation(fields: [packageId], references: [id])
+  numTravelers      Int
+  priceAtBooking    Float
+  currencyAtBooking Currency
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([bookingId, packageId])
+  @@index([bookingId])
+  @@index([packageId])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  entityType String
+  entityId   String
+  rating     Int
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([entityType, entityId])
+}
+
+model Promotion {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  discountValue Float
+  discountType  String
+  minOrderValue Float?
+  maxDiscount   Float?
+  validFrom     DateTime
+  validTo       DateTime
+  isActive      Boolean  @default(true)
+  appliesTo     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+}
