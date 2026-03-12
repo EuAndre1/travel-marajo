@@ -57,7 +57,7 @@ export default function PackagesPage() {
                   </Link>
 
                   <Link
-                    href="/checkout?plan=pesqueiro-premium"
+                    href="/checkout?experience=pesqueiro"
                     className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
                   >
                     Reservar agora
@@ -71,3 +71,4 @@ export default function PackagesPage() {
     </main>
   )
 }
+
