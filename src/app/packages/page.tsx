@@ -1,81 +1,73 @@
-'use client'
-
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import type { PackageModel } from '@/types'
-import { formatPrice } from '@/lib/utils'
-
-type PackagesResponse = {
-  packages: PackageModel[]
-}
+﻿import Image from "next/image"
+import Link from "next/link"
 
 export default function PackagesPage() {
-  const [packages, setPackages] = useState<PackageModel[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    const fetchPackages = async () => {
-      try {
-        const response = await fetch('/api/packages')
-        const data = (await response.json()) as PackagesResponse | { error: string }
-
-        if (!response.ok) {
-          setError('error' in data ? data.error : 'Falha ao carregar pacotes')
-          return
-        }
-
-        setPackages((data as PackagesResponse).packages)
-      } catch {
-        setError('Falha ao carregar pacotes')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    void fetchPackages()
-  }, [])
-
   return (
-    <div className="min-h-screen bg-neutral-50 py-12">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-display font-bold text-[#003366] mb-6">Pacotes de Viagem</h1>
+    <main className="bg-white min-h-screen">
+      <section className="py-16 md:py-24">
+        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="inline-flex items-center rounded-full bg-[#FFF1E8] px-4 py-2 text-sm font-medium text-[#FF6600] mb-4">
+                Pacotes em destaque
+              </span>
+              <h1 className="text-4xl md:text-5xl font-bold text-[#003366] mb-4">
+                Pacotes de Viagem
+              </h1>
+              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+                Experiências selecionadas para viajantes que desejam viver o melhor da Ilha de Marajó.
+              </p>
+            </div>
 
-        {isLoading && <p className="text-neutral-600">Carregando pacotes...</p>}
-        {error && <p className="text-red-600">{error}</p>}
-
-        {!isLoading && !error && packages.length === 0 && (
-          <p className="text-neutral-600">Nenhum pacote ativo no momento.</p>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {packages.map((pkg) => (
-            <article key={pkg.id} className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="h-48 bg-gradient-to-br from-[#003366]/10 to-[#FF6600]/10">
-                {pkg.images[0] ? (
-                  <img src={pkg.images[0]} alt={pkg.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#003366]">Travel Marajo</div>
-                )}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center rounded-3xl border border-gray-200 shadow-xl overflow-hidden">
+              <div className="relative min-h-[320px] lg:min-h-[100%]">
+                <Image
+                  src="/pesqueiro-1.png"
+                  alt="Praia do Pesqueiro"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
-              <div className="p-5">
-                <h2 className="text-xl font-semibold text-[#003366] mb-2">{pkg.name}</h2>
-                <p className="text-sm text-neutral-600 mb-3 line-clamp-2">{pkg.description}</p>
-                <p className="text-sm text-neutral-500 mb-4">Duracao: {pkg.durationDays} dias</p>
-                <p className="text-2xl font-bold text-[#003366] mb-4">
-                  {formatPrice(pkg.price, pkg.currency, 'pt')}
+
+              <div className="p-8 md:p-10">
+                <span className="inline-flex items-center rounded-full bg-[#FFF1E8] px-3 py-1 text-sm font-medium text-[#FF6600] mb-4">
+                  Oferta premium
+                </span>
+
+                <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">
+                  Praia do Pesqueiro
+                </h2>
+
+                <p className="text-gray-600 text-lg mb-6">
+                  Uma das experiências mais emblemáticas de Soure, com paisagem marajoara, forte apelo fotográfico e conexão autêntica com a cultura local.
                 </p>
-                <Link
-                  href={`/checkout?type=PACKAGE&id=${pkg.id}&source=PACKAGES_PAGE`}
-                  className="inline-flex items-center justify-center w-full bg-[#FF6600] hover:bg-[#e55a00] text-white font-semibold py-2 rounded-lg transition-colors"
-                >
-                  Reservar pacote
-                </Link>
+
+                <div className="mb-6">
+                  <p className="text-sm text-gray-500 mb-1">Investimento</p>
+                  <p className="text-2xl font-bold text-[#FF6600]">A partir de R$ 250 por pessoa</p>
+                </div>
+
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    href="/experiences/pesqueiro"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#003366] px-6 py-3 text-white font-semibold hover:bg-[#00264d] transition"
+                  >
+                    Ver detalhes
+                  </Link>
+
+                  <Link
+                    href="/checkout?plan=pesqueiro-premium"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
+                  >
+                    Reservar agora
+                  </Link>
+                </div>
               </div>
-            </article>
-          ))}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   )
 }

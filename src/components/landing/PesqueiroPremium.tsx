@@ -58,7 +58,7 @@ export default function PesqueiroPremium() {
               </ul>
 
               <div className="flex flex-wrap gap-4">
-                <a href="/packages" className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition">
+                <a href="/experiences/pesqueiro" className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition">
                   {content.premiumCta1}
                 </a>
                 <a href="/activities" className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-6 py-3 text-[#003366] font-semibold hover:bg-[#003366] hover:text-white transition">
@@ -98,3 +98,4 @@ export default function PesqueiroPremium() {
     </section>
   )
 }
+
