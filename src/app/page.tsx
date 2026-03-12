@@ -1,3 +1,4 @@
+﻿import PesqueiroPremium from "@/components/landing/PesqueiroPremium"
 import type { Metadata } from 'next'
 import HeroLanding from '@/components/landing/HeroLanding'
 import DestinosLanding from '@/components/landing/DestinosLanding'
@@ -25,9 +26,11 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HeroLanding />
       <DestinosLanding />
+      <PesqueiroPremium />
       <OfertasLanding />
       <AtividadesLanding />
       <NewsletterLanding />
     </>
   )
 }
+
