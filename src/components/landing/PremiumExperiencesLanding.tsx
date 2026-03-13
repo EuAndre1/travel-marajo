@@ -5,8 +5,8 @@ import { useSiteLanguage } from '@/lib/use-site-language'
 
 const experiences = [
   {
-    title: 'Passeio de BÃºfalo na Praia',
-    category: 'ExperiÃªncia exclusiva',
+    title: 'Passeio de Búfalo na Praia',
+    category: 'Experiência exclusiva',
     duration: '2 horas',
     price: 'R$ 180',
     rating: '4.9',
@@ -14,7 +14,7 @@ const experiences = [
     cta: '/activities',
   },
   {
-    title: 'Praia do Pesqueiro ao PÃ´r do Sol',
+    title: 'Praia do Pesqueiro ao Pôr do Sol',
     category: 'Natureza',
     duration: 'Meio dia',
     price: 'R$ 150',
@@ -23,7 +23,7 @@ const experiences = [
     cta: '/activities',
   },
   {
-    title: 'VivÃªncia Cultural em Soure',
+    title: 'Vivência Cultural em Soure',
     category: 'Cultura local',
     duration: '3 horas',
     price: 'R$ 120',
@@ -63,7 +63,7 @@ export default function PremiumExperiencesLanding() {
                     <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-[#003366]">{item.category}</span>
                   </div>
                   <div className="absolute top-4 right-4">
-                    <span className="rounded-full bg-[#FF6600] px-3 py-1 text-xs font-semibold text-white">â˜… {item.rating}</span>
+                    <span className="rounded-full bg-[#FF6600] px-3 py-1 text-xs font-semibold text-white">★ {item.rating}</span>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
                     <p className="text-sm text-white/80 mb-1">{item.duration}</p>
@@ -92,4 +92,3 @@ export default function PremiumExperiencesLanding() {
     </section>
   )
 }
-

@@ -19,7 +19,7 @@ export default function CheckoutCancelPage() {
                   href="/experiencias"
                   className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-5 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
                 >
-                  Voltar para experiÃªncias
+                  Voltar para experiências
                 </Link>
                 <Link
                   href="/planejar-viagem"

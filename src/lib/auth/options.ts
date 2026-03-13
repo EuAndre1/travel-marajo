@@ -1,16 +1,17 @@
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { type AuthOptions } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
-import { db } from '@/database/client'
-import { validateUserCredentials } from '@/services/user.service'
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import { type AuthOptions } from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import GoogleProvider from "next-auth/providers/google"
+import { db } from "@/database/client"
+import { getSafeAuthSecret } from "@/lib/env"
+import { validateUserCredentials } from "@/services/user.service"
 
-const providers: AuthOptions['providers'] = [
+const providers: AuthOptions["providers"] = [
   CredentialsProvider({
-    name: 'Credentials',
+    name: "Credentials",
     credentials: {
-      email: { label: 'Email', type: 'email' },
-      password: { label: 'Password', type: 'password' },
+      email: { label: "Email", type: "email" },
+      password: { label: "Password", type: "password" },
     },
     async authorize(credentials) {
       if (!credentials?.email || !credentials.password) {
@@ -38,7 +39,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    })
+    }),
   )
 }
 
@@ -46,11 +47,11 @@ export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(db),
   providers,
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
   },
   pages: {
-    signIn: '/login',
-    error: '/login',
+    signIn: "/pt/entrar",
+    error: "/pt/entrar",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -66,5 +67,5 @@ export const authOptions: AuthOptions = {
       return session
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: getSafeAuthSecret(),
 }

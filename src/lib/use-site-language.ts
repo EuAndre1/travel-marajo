@@ -1,44 +1,55 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { DEFAULT_LOCALE, isAppLocale, type AppLocale } from "@/config/i18n"
+import {
+  detectLocaleFromPathname,
+  getLocalizedPath,
+  resolveCanonicalRoute,
+  resolveLegacyRoute,
+  stripLocalePrefix,
+} from "@/i18n/routing"
 
-export type SiteLang = "pt" | "en" | "fr" | "es"
+export type SiteLang = AppLocale
 
-const STORAGE_KEY = "site-language"
+function buildLocalizedCurrentPath(pathname: string, targetLocale: AppLocale) {
+  const currentLocale = detectLocaleFromPathname(pathname)
 
-function isValidLang(value: string | null): value is SiteLang {
-  return value === "pt" || value === "en" || value === "fr" || value === "es"
-}
+  if (currentLocale) {
+    const { segments } = stripLocalePrefix(pathname)
+    const matched = resolveCanonicalRoute(currentLocale, segments)
+    if (matched) {
+      return getLocalizedPath(targetLocale, matched.key, matched.params)
+    }
+  }
 
-export function getStoredSiteLanguage(): SiteLang {
-  if (typeof window === "undefined") return "pt"
-  const saved = localStorage.getItem(STORAGE_KEY)
-  return isValidLang(saved) ? saved : "pt"
+  const legacyMatch = resolveLegacyRoute(pathname)
+  if (legacyMatch) {
+    return getLocalizedPath(targetLocale, legacyMatch.key, legacyMatch.params)
+  }
+
+  return getLocalizedPath(targetLocale, "home")
 }
 
 export function useSiteLanguage() {
-  const [lang, setLangState] = useState<SiteLang>("pt")
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  useEffect(() => {
-    const syncLanguage = () => {
-      setLangState(getStoredSiteLanguage())
-    }
-
-    syncLanguage()
-
-    window.addEventListener("site-language-changed", syncLanguage)
-    window.addEventListener("storage", syncLanguage)
-
-    return () => {
-      window.removeEventListener("site-language-changed", syncLanguage)
-      window.removeEventListener("storage", syncLanguage)
-    }
-  }, [])
+  const lang = useMemo<SiteLang>(() => {
+    const detected = detectLocaleFromPathname(pathname)
+    return detected ?? DEFAULT_LOCALE
+  }, [pathname])
 
   const setLang = (value: SiteLang) => {
-    localStorage.setItem(STORAGE_KEY, value)
-    setLangState(value)
-    window.dispatchEvent(new Event("site-language-changed"))
+    if (!isAppLocale(value)) {
+      return
+    }
+
+    const nextPath = buildLocalizedCurrentPath(pathname, value)
+    const query = searchParams.toString()
+    router.push(query ? `${nextPath}?${query}` : nextPath)
   }
 
   return { lang, setLang }

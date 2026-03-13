@@ -24,8 +24,8 @@ export default function CheckoutSuccessClient() {
   const itemName = type === "pacote" ? packageItem?.title : experience?.title
 
   const message = itemName
-    ? `OlÃ¡! ConcluÃ­ o checkout da experiÃªncia/pacote: ${itemName}. Pode confirmar os prÃ³ximos passos?`
-    : "OlÃ¡! ConcluÃ­ o checkout e gostaria de confirmar os prÃ³ximos passos da minha reserva."
+    ? `Ol! Conclu o checkout da experincia/pacote: ${itemName}. Pode confirmar os prximos passos?`
+    : "Ol! Conclu o checkout e gostaria de confirmar os prximos passos da minha reserva."
 
   const whatsappLink = buildWhatsappLink(message)
 
@@ -36,13 +36,13 @@ export default function CheckoutSuccessClient() {
           <div className="max-w-4xl mx-auto">
             <SectionHeader
               eyebrow="Reserva confirmada"
-              title="Pagamento aprovado. Estamos preparando sua experiÃªncia"
-              subtitle="Nossa equipe concierge jÃ¡ recebeu seu pedido e entrarÃ¡ em contato para alinhar detalhes e logÃ­stica."
+              title="Pagamento aprovado. Estamos preparando sua experincia"
+              subtitle="Nossa equipe concierge j recebeu seu pedido e entrar em contato para alinhar detalhes e logstica."
             />
 
             <div className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm text-slate-600">
-                {itemName ? `ExperiÃªncia/Pacote: ${itemName}` : "Seu pedido foi registrado com sucesso."}
+                {itemName ? `Experincia/Pacote: ${itemName}` : "Seu pedido foi registrado com sucesso."}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 {whatsappLink ? (
@@ -63,7 +63,7 @@ export default function CheckoutSuccessClient() {
                   href="/experiencias"
                   className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-5 py-3 text-[#003366] font-semibold hover:bg-[#003366] hover:text-white transition"
                 >
-                  Ver mais experiÃªncias
+                  Ver mais experincias
                 </Link>
               </div>
             </div>

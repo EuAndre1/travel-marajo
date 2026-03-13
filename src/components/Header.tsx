@@ -4,16 +4,16 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
-import { headerNavigation } from "@/data/site"
-import { siteContent } from "@/config/site-content"
+import { siteChrome } from "@/data/site"
 import { useSiteLanguage } from "@/lib/use-site-language"
+import { getLocalizedPath } from "@/i18n/routing"
 
 export default function Header() {
   const { data: session } = useSession()
   const { lang, setLang } = useSiteLanguage()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const languageLabel = siteContent[lang]?.langLabel ?? "Idioma"
+  const chrome = siteChrome[lang]
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 80)
@@ -23,41 +23,41 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
         isScrolled ? "glassmorphism shadow-lg" : "bg-transparent"
       }`}
     >
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16">
         <div className="flex items-center justify-between py-4">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href={getLocalizedPath(lang, "home")} className="flex items-center gap-3">
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+              className={`flex h-10 w-10 items-center justify-center rounded-xl ${
                 isScrolled ? "bg-primary" : "bg-white/20 backdrop-blur-sm"
               }`}
             >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </div>
             <div className="leading-tight">
               <span className={`block text-lg font-display ${isScrolled ? "text-primary" : "text-white"}`}>
-                Travel MarajÃ³
+                {chrome.brandName}
               </span>
               <span className={`text-[11px] uppercase tracking-[0.3em] ${isScrolled ? "text-slate-400" : "text-white/70"}`}>
-                Plataforma de destino
+                {chrome.brandTagline}
               </span>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-2" aria-label="NavegaÃ§Ã£o principal">
-            {headerNavigation.map((item) => (
+          <nav className="hidden items-center gap-2 lg:flex" aria-label="Primary navigation">
+            {chrome.mainNav.map((item) => (
               <Link
                 key={item.label}
-                href={item.href}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                href={getLocalizedPath(lang, item.route)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${
                   isScrolled
-                    ? "text-slate-700 hover:text-primary hover:bg-slate-100"
-                    : "text-white/90 hover:text-white hover:bg-white/10"
+                    ? "text-slate-700 hover:bg-slate-100 hover:text-primary"
+                    : "text-white/90 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {item.label}
@@ -65,10 +65,10 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden items-center gap-3 lg:flex">
             <div className={`flex items-center gap-2 rounded-full px-3 py-2 ${isScrolled ? "bg-slate-100" : "bg-white/15"}`}>
               <span className={`text-xs font-semibold ${isScrolled ? "text-slate-600" : "text-white/80"}`}>
-                {languageLabel}
+                {chrome.languageLabel}
               </span>
               <select
                 value={lang}
@@ -84,32 +84,32 @@ export default function Header() {
             {session ? (
               <>
                 <Link
-                  href="/profile"
+                  href={getLocalizedPath(lang, "profile")}
                   className={`${isScrolled ? "text-slate-700 hover:text-primary" : "text-white/90 hover:text-white"} text-sm font-medium transition-colors`}
                 >
-                  Meu Perfil
+                  {chrome.profileLabel}
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="bg-accent hover:bg-accent-dark text-white font-semibold py-2 px-4 rounded-full transition-colors"
+                  className="rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-dark"
                 >
-                  Sair
+                  {chrome.signOutLabel}
                 </button>
               </>
             ) : (
-              <Link href="/login" className="bg-accent hover:bg-accent-dark text-white font-semibold py-2 px-4 rounded-full transition-colors">
-                Entrar
+              <Link href={getLocalizedPath(lang, "login")} className="rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-dark">
+                {chrome.signInLabel}
               </Link>
             )}
             <Link
-              href="#experiencias"
-              className={`hidden xl:inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition ${
+              href={getLocalizedPath(lang, "planTrip")}
+              className={`hidden items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition xl:inline-flex ${
                 isScrolled
                   ? "border border-primary/30 text-primary hover:border-primary"
                   : "border border-white/50 text-white hover:border-white"
               }`}
             >
-              Planejar viagem
+              {chrome.planTripLabel}
             </Link>
           </div>
 
@@ -117,7 +117,7 @@ export default function Header() {
             <button
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               className={isScrolled ? "text-primary" : "text-white"}
-              aria-label="Abrir menu"
+              aria-label="Open menu"
             >
               {isMobileMenuOpen ? <XMarkIcon className="h-7 w-7" /> : <Bars3Icon className="h-7 w-7" />}
             </button>
@@ -126,12 +126,12 @@ export default function Header() {
       </div>
 
       {isMobileMenuOpen ? (
-        <div className="lg:hidden bg-white shadow-lg pb-6">
-          <nav className="flex flex-col items-center space-y-4 pt-4" aria-label="Menu mobile">
-            {headerNavigation.map((item) => (
+        <div className="bg-white pb-6 shadow-lg lg:hidden">
+          <nav className="flex flex-col items-center space-y-4 pt-4" aria-label="Mobile menu">
+            {chrome.mainNav.map((item) => (
               <Link
                 key={item.label}
-                href={item.href}
+                href={getLocalizedPath(lang, item.route)}
                 className="text-slate-700 hover:text-primary"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -139,7 +139,7 @@ export default function Header() {
               </Link>
             ))}
             <div className="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-2">
-              <span className="text-xs font-semibold text-slate-600">{languageLabel}</span>
+              <span className="text-xs font-semibold text-slate-600">{chrome.languageLabel}</span>
               <select
                 value={lang}
                 onChange={(e) => setLang(e.target.value as "pt" | "en" | "es" | "fr")}
@@ -152,20 +152,20 @@ export default function Header() {
               </select>
             </div>
             <Link
-              href="#experiencias"
-              className="border border-primary/30 text-primary px-4 py-2 rounded-full"
+              href={getLocalizedPath(lang, "planTrip")}
+              className="rounded-full border border-primary/30 px-4 py-2 text-primary"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Planejar viagem
+              {chrome.planTripLabel}
             </Link>
             {session ? (
               <>
                 <Link
-                  href="/profile"
+                  href={getLocalizedPath(lang, "profile")}
                   className="text-slate-700"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Meu Perfil
+                  {chrome.profileLabel}
                 </Link>
                 <button
                   onClick={() => {
@@ -174,16 +174,16 @@ export default function Header() {
                   }}
                   className="text-red-600"
                 >
-                  Sair
+                  {chrome.signOutLabel}
                 </button>
               </>
             ) : (
               <Link
-                href="/login"
-                className="bg-accent text-white px-4 py-2 rounded-full"
+                href={getLocalizedPath(lang, "login")}
+                className="rounded-full bg-accent px-4 py-2 text-white"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                Entrar
+                {chrome.signInLabel}
               </Link>
             )}
           </nav>

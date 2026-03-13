@@ -6,7 +6,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 
 const searchTypes = [
   { value: 'flights', label: 'Voos' },
-  { value: 'hotels', label: 'HotÃ©is' },
+  { value: 'hotels', label: 'Hotéis' },
   { value: 'packages', label: 'Pacotes' },
 ]
 
@@ -21,9 +21,9 @@ export default function SearchForm() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     const params = new URLSearchParams()
-    
+
     if (searchType === 'flights') {
       if (origin) params.append('origin', origin)
       if (destination) params.append('destination', destination)
@@ -47,7 +47,6 @@ export default function SearchForm() {
 
   return (
     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-5xl mx-auto">
-      {/* Tabs */}
       <div className="flex overflow-x-auto scrollbar-hide border-b border-gray-100">
         {searchTypes.map((type) => (
           <button
@@ -67,22 +66,19 @@ export default function SearchForm() {
         ))}
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSearch} className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Destination */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-500 uppercase">Destino</label>
             <input
               type="text"
-              placeholder="MarajÃ³ ou cidade"
+              placeholder="Marajó ou cidade"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
 
-          {/* Origin (only for flights) */}
           {searchType === 'flights' && (
             <div className="space-y-2">
               <label className="text-xs font-medium text-gray-500 uppercase">Origem</label>
@@ -96,7 +92,6 @@ export default function SearchForm() {
             </div>
           )}
 
-          {/* Dates */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-500 uppercase">
               {searchType === 'hotels' ? 'Check-in' : 'Data de Partida'}
@@ -109,7 +104,6 @@ export default function SearchForm() {
             />
           </div>
 
-          {/* Return Date */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-500 uppercase">
               {searchType === 'hotels' ? 'Check-out' : 'Data de Retorno'}
@@ -122,10 +116,9 @@ export default function SearchForm() {
             />
           </div>
 
-          {/* Guests */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-500 uppercase">
-              {searchType === 'flights' ? 'Adultos' : 'HÃ³spedes'}
+              {searchType === 'flights' ? 'Adultos' : 'Hóspedes'}
             </label>
             <input
               type="number"
@@ -138,7 +131,6 @@ export default function SearchForm() {
           </div>
         </div>
 
-        {/* Search Button */}
         <div className="mt-6 flex justify-end">
           <button
             type="submit"

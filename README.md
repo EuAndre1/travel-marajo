@@ -210,3 +210,9 @@ Em caso de dúvidas ou problemas:
 ---
 
 **Feito com ❤️ para promover o turismo no Marajó!**
+## Architecture notes
+
+- Canonical public routing now uses locale-prefixed paths: `/pt`, `/en`, `/es`, `/fr`.
+- Legacy routes such as `/experiencias`, `/experiences`, `/pacotes`, `/packages`, `/guia`, and `/guides` are compatibility routes and should redirect to canonical localized URLs.
+- The active locale is derived from the URL path instead of localStorage-only state.
+- `NEXT_PUBLIC_SITE_URL` must be set in every environment for canonical URLs, sitemap, robots, and Stripe redirect URLs.

@@ -1,7 +1,7 @@
-export * from './auth'
-export * from './booking'
-export * from './flight'
-export * from './hotel'
-export * from './commercial'
-
-export * from './lead'
+export * from "./auth"
+export * from "./booking"
+export * from "./commercial"
+export * from "./flight"
+export * from "./hotel"
+export * from "./lead"
+export * from "./media"

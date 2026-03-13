@@ -34,18 +34,18 @@ export default function PartnersPage() {
             <div className="mt-16">
               <SectionHeader
                 eyebrow="Prova social"
-                title="Quem viaja com a Travel MarajÃ³ recomenda"
-                subtitle="Depoimentos preparados para substituiÃ§Ã£o por casos reais assim que disponÃ­veis."
+                title="Quem viaja com a Travel Marajó recomenda"
+                subtitle="Depoimentos preparados para substituição por casos reais assim que disponíveis."
               />
 
               <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
                 {testimonials.map((item) => (
                   <article key={item.name} className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
                     <div className="text-xs uppercase tracking-[0.2em] text-slate-400">
-                      {item.country} â€¢ {item.destination}
+                      {item.country}  {item.destination}
                     </div>
                     <h3 className="mt-3 text-lg font-semibold text-[#0B1C2C]">{item.name}</h3>
-                    <p className="mt-3 text-sm text-slate-600">â€œ{item.quote}â€</p>
+                    <p className="mt-3 text-sm text-slate-600">{item.quote}</p>
                   </article>
                 ))}
               </div>

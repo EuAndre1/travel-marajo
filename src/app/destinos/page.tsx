@@ -11,8 +11,8 @@ export default function DestinationsPage() {
           <div className="max-w-6xl mx-auto">
             <SectionHeader
               eyebrow="Destinos"
-              title="Bases estratÃ©gicas para explorar o MarajÃ³"
-              subtitle="Escolha sua base e conecte experiÃªncias, hospedagens e logÃ­stica com curadoria local."
+              title="Bases estratégicas para explorar o Marajó"
+              subtitle="Escolha sua base e conecte experiências, hospedagens e logística com curadoria local."
             />
 
             <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">

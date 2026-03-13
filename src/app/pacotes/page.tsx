@@ -57,7 +57,10 @@ export default function PackagesPage() {
                     <p className="text-sm font-semibold text-[#003366] mb-2">{content.pages.packages.includes}</p>
                     <ul className="text-sm text-slate-600 space-y-1">
                       {item.included.map((inc) => (
-                        <li key={inc}>â€¢ {inc}</li>
+                        <li key={inc} className="flex items-start gap-2">
+                          <span aria-hidden="true" className="text-[#FF6600]">•</span>
+                          <span>{inc}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>
@@ -65,7 +68,10 @@ export default function PackagesPage() {
                     <p className="text-sm font-semibold text-[#003366] mb-2">{content.pages.packages.itinerary}</p>
                     <ul className="text-sm text-slate-600 space-y-1">
                       {item.itinerary.map((step) => (
-                        <li key={step}>â€¢ {step}</li>
+                        <li key={step} className="flex items-start gap-2">
+                          <span aria-hidden="true" className="text-[#FF6600]">•</span>
+                          <span>{step}</span>
+                        </li>
                       ))}
                     </ul>
                   </div>

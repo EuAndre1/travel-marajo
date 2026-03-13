@@ -111,3 +111,18 @@ Se precisar de ajuda:
 ---
 
 **Boa sorte com seu projeto! 🌴✈️**
+## Variaveis obrigatorias recomendadas
+
+```bash
+DATABASE_URL=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+NEXT_PUBLIC_SITE_URL=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+```
+
+- A aplicacao publica deve responder com rotas canonicas localizadas em `/pt`, `/en`, `/es` e `/fr`.
+- `NEXT_PUBLIC_SITE_URL` precisa apontar para o dominio final para que canonical, hreflang, sitemap e robots gerem URLs corretas.
+- Rotas antigas sem locale devem ser tratadas como compatibilidade e redirecionadas.

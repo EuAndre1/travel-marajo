@@ -1,10 +1,7 @@
-export const i18nConfig = {
-  locales: ['pt', 'en', 'fr', 'es'],
-  defaultLocale: 'pt',
-} as const
-
-export type Locale = (typeof i18nConfig.locales)[number]
-
-export function isLocale(value: string): value is Locale {
-  return i18nConfig.locales.includes(value as Locale)
-}
+export {
+  DEFAULT_LOCALE,
+  LOCALE_TO_BCP47,
+  SUPPORTED_LOCALES,
+  isAppLocale as isLocale,
+  type AppLocale as Locale,
+} from "@/config/i18n"

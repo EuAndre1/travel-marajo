@@ -1,17 +1,14 @@
-import Stripe from 'stripe'
+import Stripe from "stripe"
+import { getRequiredEnv } from "@/lib/env"
 
 let stripeInstance: Stripe | null = null
 
 export function getStripe(): Stripe {
-  const secretKey = process.env.STRIPE_SECRET_KEY
-
-  if (!secretKey) {
-    throw new Error('Missing required environment variable: STRIPE_SECRET_KEY')
-  }
+  const secretKey = getRequiredEnv("STRIPE_SECRET_KEY")
 
   if (!stripeInstance) {
     stripeInstance = new Stripe(secretKey, {
-      apiVersion: '2023-10-16',
+      apiVersion: "2023-10-16",
     })
   }
 

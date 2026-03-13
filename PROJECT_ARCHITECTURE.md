@@ -10,9 +10,12 @@ Last updated: 2026-03-13
 - Types under `src/types` for commercial/assistant/auth domains.
 
 ## Multilingual system
-- Language state is managed by `src/lib/use-site-language.ts` with persistence (localStorage).
-- Content dictionary lives in `src/config/site-content.ts` and is consumed as `siteContent[lang]`.
-- Key pages and home/landing components use `useSiteLanguage()` and `siteContent` to render text.
+- Canonical locale architecture is path-based under `src/app/[locale]/[[...segments]]/page.tsx`.
+- Middleware redirects legacy semantic routes into canonical locale-prefixed routes.
+- Route source-of-truth lives in `src/i18n/routing.ts`.
+- Locale source-of-truth lives in `src/config/i18n.ts`.
+- UI copy source-of-truth remains `src/config/site-content.ts` plus domain data translations such as `src/data/experiencias.ts`.
+- `src/lib/use-site-language.ts` now derives active language from the URL and navigates between canonical localized routes.
 - Supported languages: PT, EN, ES, FR.
 
 ## Assistant system
@@ -58,8 +61,19 @@ Last updated: 2026-03-13
 
 ## SEO components
 - Global metadata in `src/app/layout.tsx`.
+- Canonical and alternate locale URLs are generated from `src/i18n/routing.ts`.
 - SEO files:
   - `src/app/robots.ts`
   - `src/app/sitemap.ts`
 - Structured metadata helpers in `src/lib/metadata-schema.ts`.
-- Page-level metadata and JSON-LD are used where applicable (e.g., `src/app/page.tsx`).
+- Page-level metadata and JSON-LD are used where applicable, while the localized catch-all route normalizes canonical metadata for public pages.
+
+## Deploy hardening
+- Env helpers live in `src/lib/env.ts`.
+- Site URL resolution uses `NEXT_PUBLIC_SITE_URL` first, then `NEXTAUTH_URL`.
+- Auth secret now fails explicitly in production when missing.
+- Stripe secret access is centralized through `getRequiredEnv`.
+
+## Media proof readiness
+- Shared media/testimonial typing lives in `src/types/media.ts`.
+- Empty production-safe proof registry lives in `src/data/proof-assets.ts` and is ready for real assets without fake content.

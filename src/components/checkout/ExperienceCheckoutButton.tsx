@@ -33,7 +33,7 @@ export default function ExperienceCheckoutButton({
     } catch (error) {
       console.error(error)
       setIsLoading(false)
-      alert("NÃ£o foi possÃ­vel iniciar o checkout agora. Tente novamente.")
+      alert("Não foi possível iniciar o checkout agora. Tente novamente.")
     }
   }
 

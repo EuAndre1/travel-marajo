@@ -1,14 +1,16 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next"
+import { buildAbsoluteUrl, getSiteUrl } from "@/lib/env"
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXTAUTH_URL ?? 'https://www.travelmarajo.com'
-
   return {
-    rules: {
-      userAgent: '*',
-      allow: '/',
-    },
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/checkout/success", "/checkout/cancel"],
+      },
+    ],
+    sitemap: buildAbsoluteUrl("/sitemap.xml"),
+    host: getSiteUrl(),
   }
 }

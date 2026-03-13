@@ -12,19 +12,19 @@ import HomePartners from "@/components/home/HomePartners"
 import HomeNewsletter from "@/components/home/HomeNewsletter"
 
 export const metadata: Metadata = {
-  title: "Travel MarajÃ³ | Plataforma de destino",
+  title: "Travel Marajó | Plataforma de destino",
   description:
-    "Plataforma premium para descobrir experiÃªncias, roteiros e parceiros locais na Ilha de MarajÃ³. Curadoria internacional com foco em confianÃ§a e reserva.",
+    "Plataforma premium para descobrir experiências, roteiros e parceiros locais na Ilha de Marajó. Curadoria internacional com foco em confiança e reserva.",
 }
 
 export default function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "Travel MarajÃ³",
+    name: "Travel Marajó",
     url: "https://www.travelmarajo.com",
     description:
-      "Plataforma de destino para experiÃªncias e roteiros na Ilha de MarajÃ³ com curadoria local.",
+      "Plataforma de destino para experiências e roteiros na Ilha de Marajó com curadoria local.",
     areaServed: ["Brazil", "Europe", "Latin America"],
     potentialAction: {
       "@type": "SearchAction",
