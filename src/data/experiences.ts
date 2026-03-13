@@ -1,4 +1,4 @@
-﻿export const experiences = {
+export const experiences = {
   pesqueiro: {
     slug: "pesqueiro",
     title: "Praia do Pesqueiro",

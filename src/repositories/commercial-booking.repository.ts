@@ -1,4 +1,4 @@
-﻿import { BookingItemType, BookingStatus, BookingType, Prisma, type Booking, type BookingItem } from '@prisma/client'
+import { BookingItemType, BookingStatus, BookingType, Prisma, type Booking, type BookingItem } from '@prisma/client'
 import { db } from '@/database/client'
 import type { SupportedCurrency } from '@/config/currency'
 

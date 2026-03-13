@@ -20,13 +20,13 @@ export default function RegisterPage() {
     setError('')
 
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem')
+      setError('As senhas nÃ£o coincidem')
       setIsLoading(false)
       return
     }
 
     try {
-      // Aqui você implementaria a criação de usuário
+      // Aqui vocÃª implementaria a criaÃ§Ã£o de usuÃ¡rio
       // Por enquanto, apenas redirecionamos para login
       router.push('/login')
     } catch (error) {
@@ -52,7 +52,7 @@ export default function RegisterPage() {
               </svg>
             </div>
             <h1 className="text-2xl font-bold text-neutral-800">Criar conta</h1>
-            <p className="text-neutral-600 mt-1">Comece sua jornada pelo Marajó</p>
+            <p className="text-neutral-600 mt-1">Comece sua jornada pelo MarajÃ³</p>
           </div>
 
           {/* Error Message */}
@@ -116,7 +116,7 @@ export default function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 required
               />
             </div>
@@ -127,7 +127,7 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 required
               />
             </div>
@@ -143,7 +143,7 @@ export default function RegisterPage() {
           {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-neutral-600">
-              Já tem uma conta?{' '}
+              JÃ¡ tem uma conta?{' '}
               <Link href="/login" className="text-primary hover:text-primary-dark font-medium">
                 Entrar
               </Link>

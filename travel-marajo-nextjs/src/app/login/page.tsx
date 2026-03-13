@@ -25,7 +25,7 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError('Email ou senha inválidos')
+        setError('Email ou senha invÃ¡lidos')
       } else {
         router.push('/')
         router.refresh()
@@ -106,7 +106,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 required
               />
             </div>
@@ -122,7 +122,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-neutral-600">
-              Não tem uma conta?{' '}
+              NÃ£o tem uma conta?{' '}
               <Link href="/register" className="text-primary hover:text-primary-dark font-medium">
                 Cadastre-se
               </Link>

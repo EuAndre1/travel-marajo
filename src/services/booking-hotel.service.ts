@@ -1,4 +1,4 @@
-﻿import { DEFAULT_CURRENCY } from '@/config/currency'
+import { DEFAULT_CURRENCY } from '@/config/currency'
 import { getOptionalEnv } from '@/lib/env'
 import { normalizeCurrency } from '@/lib/money'
 import type { HotelResult, HotelSearchParams, PaginatedHotelsResponse } from '@/types/hotel'

@@ -1,4 +1,4 @@
-﻿import { EventProcessingStatus, Prisma, type EventProcessingLock } from '@prisma/client'
+import { EventProcessingStatus, Prisma, type EventProcessingLock } from '@prisma/client'
 import { db } from '@/database/client'
 
 export async function findEventProcessingLock(scope: string, eventKey: string) {

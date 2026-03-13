@@ -1,4 +1,4 @@
-﻿type RateLimitEntry = {
+type RateLimitEntry = {
   count: number
   resetAt: number
 }

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     const { type, details, totalPrice, currency, paymentMethodId } = validatedBooking
 
-    // Criar intenção de pagamento com Stripe
+    // Criar intenÃ§Ã£o de pagamento com Stripe
     let paymentIntent
     if (paymentMethodId) {
       paymentIntent = await stripe.paymentIntents.create({

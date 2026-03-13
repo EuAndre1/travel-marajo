@@ -1,4 +1,4 @@
-﻿import { BookingItemType } from '@prisma/client'
+import { BookingItemType } from '@prisma/client'
 import { getStripe } from '@/lib/stripe'
 import { createPendingStripePayment } from '@/repositories/booking.repository'
 import { createCommercialBooking } from '@/repositories/commercial-booking.repository'

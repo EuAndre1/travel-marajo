@@ -1,4 +1,4 @@
-﻿import { z } from 'zod'
+import { z } from 'zod'
 
 const metadataValueSchema = z.union([
   z.string().max(300),

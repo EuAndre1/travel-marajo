@@ -1,0 +1,41 @@
+
+> travel-marajo@1.0.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local, .env
+
+ ✓ Starting...
+ ✓ Ready in 4s
+ ○ Compiling / ...
+ ✓ Compiled / in 17.8s (726 modules)
+ ✓ Compiled in 1181ms (356 modules)
+ GET / 200 in 19844ms
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 7.6s (1025 modules)
+ GET /favicon.ico 404 in 8951ms
+ GET /api/auth/session 200 in 9100ms
+ GET /api/auth/session 200 in 66ms
+ GET / 200 in 379ms
+ GET /api/auth/session 200 in 66ms
+ GET /api/auth/session 200 in 26ms
+ ○ Compiling /experiencias/[slug] ...
+ ✓ Compiled /experiencias/[slug] in 1557ms (1049 modules)
+ ✓ Compiled in 1458ms (735 modules)
+ ✓ Compiled in 1029ms (735 modules)
+ ✓ Compiled in 2.3s (735 modules)
+ ✓ Compiled in 274ms (377 modules)
+ ✓ Compiled in 1978ms (721 modules)
+ ✓ Compiled in 566ms (358 modules)
+ ✓ Compiled in 321ms (358 modules)
+ ✓ Compiled in 1267ms (709 modules)
+ ✓ Compiled in 1959ms (709 modules)
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 1588ms (692 modules)
+ GET /api/auth/session 200 in 2686ms
+ GET /api/auth/session 200 in 38ms
+ GET /experiencias/pesqueiro 200 in 3511ms
+ GET /api/auth/session 200 in 72ms
+ GET /api/auth/session 200 in 161ms
+ ✓ Compiled in 6.2s (1051 modules)

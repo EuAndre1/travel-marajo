@@ -1,4 +1,4 @@
-﻿import { NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getOptionalEnv } from '@/lib/env'
 import { parseJsonBodyWithLimit, RequestValidationError } from '@/lib/request-security'

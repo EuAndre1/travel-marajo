@@ -1,4 +1,4 @@
-﻿import type { CommercialEvent, Prisma } from '@prisma/client'
+import type { CommercialEvent, Prisma } from '@prisma/client'
 import { db } from '@/database/client'
 
 export async function findCommercialEventByIdempotencyKey(idempotencyKey: string) {

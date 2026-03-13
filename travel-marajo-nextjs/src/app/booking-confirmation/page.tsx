@@ -22,7 +22,7 @@ export default function BookingConfirmationPage() {
           </p>
 
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <p className="text-sm text-neutral-500 mb-1">Número da reserva</p>
+            <p className="text-sm text-neutral-500 mb-1">NÃºmero da reserva</p>
             <p className="text-lg font-mono font-bold text-neutral-800">
               TMJ-{Math.random().toString(36).substr(2, 9).toUpperCase()}
             </p>
@@ -39,7 +39,7 @@ export default function BookingConfirmationPage() {
               href="/"
               className="block w-full border border-gray-200 text-neutral-700 font-semibold py-3 rounded-lg hover:bg-gray-50 transition-colors"
             >
-              Voltar para Início
+              Voltar para InÃ­cio
             </Link>
           </div>
         </div>

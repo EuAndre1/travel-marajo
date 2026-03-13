@@ -1,4 +1,4 @@
-﻿import { EventProcessingStatus, Prisma } from '@prisma/client'
+import { EventProcessingStatus, Prisma } from '@prisma/client'
 import {
   createEventProcessingLock,
   findEventProcessingLock,

@@ -1,12 +1,12 @@
-﻿'use client'
+'use client'
 
 import { siteContent } from '@/config/site-content'
 import { useSiteLanguage } from '@/lib/use-site-language'
 
 const experiences = [
   {
-    title: 'Passeio de Búfalo na Praia',
-    category: 'Experiência exclusiva',
+    title: 'Passeio de BÃºfalo na Praia',
+    category: 'ExperiÃªncia exclusiva',
     duration: '2 horas',
     price: 'R$ 180',
     rating: '4.9',
@@ -14,7 +14,7 @@ const experiences = [
     cta: '/activities',
   },
   {
-    title: 'Praia do Pesqueiro ao Pôr do Sol',
+    title: 'Praia do Pesqueiro ao PÃ´r do Sol',
     category: 'Natureza',
     duration: 'Meio dia',
     price: 'R$ 150',
@@ -23,7 +23,7 @@ const experiences = [
     cta: '/activities',
   },
   {
-    title: 'Vivência Cultural em Soure',
+    title: 'VivÃªncia Cultural em Soure',
     category: 'Cultura local',
     duration: '3 horas',
     price: 'R$ 120',
@@ -43,13 +43,13 @@ export default function PremiumExperiencesLanding() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="inline-flex items-center rounded-full bg-[#FFF1E8] px-3 py-1 text-sm font-medium text-[#FF6600] mb-4">
-              {content.expBadge}
+              {content.experienceBadge}
             </span>
             <h2 className="text-3xl md:text-5xl font-bold text-[#003366] mb-4">
-              {content.expTitle1} <span className="text-[#FF6600]">{content.expTitle2}</span>
+              {content.premiumTitle1} <span className="text-[#FF6600]">{content.premiumTitle2}</span>
             </h2>
             <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-              {content.expSubtitle}
+              {content.premiumText}
             </p>
           </div>
 
@@ -63,7 +63,7 @@ export default function PremiumExperiencesLanding() {
                     <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-[#003366]">{item.category}</span>
                   </div>
                   <div className="absolute top-4 right-4">
-                    <span className="rounded-full bg-[#FF6600] px-3 py-1 text-xs font-semibold text-white">★ {item.rating}</span>
+                    <span className="rounded-full bg-[#FF6600] px-3 py-1 text-xs font-semibold text-white">â˜… {item.rating}</span>
                   </div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
                     <p className="text-sm text-white/80 mb-1">{item.duration}</p>
@@ -81,7 +81,7 @@ export default function PremiumExperiencesLanding() {
                   </div>
 
                   <a href={item.cta} className="inline-flex w-full items-center justify-center rounded-lg bg-[#FF6600] px-5 py-3 text-white font-semibold hover:bg-[#e55a00] transition-colors">
-                    {content.reserveNow}
+                    {content.bookNow}
                   </a>
                 </div>
               </article>
@@ -92,3 +92,4 @@ export default function PremiumExperiencesLanding() {
     </section>
   )
 }
+

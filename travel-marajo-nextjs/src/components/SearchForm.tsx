@@ -6,7 +6,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
 
 const searchTypes = [
   { value: 'flights', label: 'Voos' },
-  { value: 'hotels', label: 'Hotéis' },
+  { value: 'hotels', label: 'HotÃ©is' },
   { value: 'packages', label: 'Pacotes' },
 ]
 
@@ -75,7 +75,7 @@ export default function SearchForm() {
             <label className="text-xs font-medium text-gray-500 uppercase">Destino</label>
             <input
               type="text"
-              placeholder="Marajó ou cidade"
+              placeholder="MarajÃ³ ou cidade"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
               className="w-full px-4 py-3 border border-gray-200 rounded-lg text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -125,7 +125,7 @@ export default function SearchForm() {
           {/* Guests */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-500 uppercase">
-              {searchType === 'flights' ? 'Adultos' : 'Hóspedes'}
+              {searchType === 'flights' ? 'Adultos' : 'HÃ³spedes'}
             </label>
             <input
               type="number"

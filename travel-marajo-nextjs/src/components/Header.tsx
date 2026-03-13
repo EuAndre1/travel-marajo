@@ -7,9 +7,9 @@ import { useSession, signOut } from 'next-auth/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const navLinks = [
-  { href: '/', label: 'Início' },
+  { href: '/', label: 'InÃ­cio' },
   { href: '/flights', label: 'Voos' },
-  { href: '/hotels', label: 'Hotéis' },
+  { href: '/hotels', label: 'HotÃ©is' },
   { href: '/packages', label: 'Pacotes' },
 ]
 
@@ -28,7 +28,7 @@ export default function Header() {
             </svg>
           </div>
           <span className="text-xl font-bold text-neutral-800">
-            Travel <span className="text-primary">Marajó</span>
+            Travel <span className="text-primary">MarajÃ³</span>
           </span>
         </Link>
 

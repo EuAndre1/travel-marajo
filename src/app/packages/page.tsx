@@ -1,7 +1,14 @@
-﻿import Image from "next/image"
+"use client"
+
+import Image from "next/image"
 import Link from "next/link"
+import { siteContent } from "@/config/site-content"
+import { useSiteLanguage } from "@/lib/use-site-language"
 
 export default function PackagesPage() {
+  const { lang } = useSiteLanguage()
+  const content = siteContent[lang]
+
   return (
     <main className="bg-white min-h-screen">
       <section className="py-16 md:py-24">
@@ -9,13 +16,13 @@ export default function PackagesPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <span className="inline-flex items-center rounded-full bg-[#FFF1E8] px-4 py-2 text-sm font-medium text-[#FF6600] mb-4">
-                Pacotes em destaque
+                {content.packagesBadge}
               </span>
               <h1 className="text-4xl md:text-5xl font-bold text-[#003366] mb-4">
-                Pacotes de Viagem
+                {content.packagesTitle}
               </h1>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Experiências selecionadas para viajantes que desejam viver o melhor da Ilha de Marajó.
+                {content.packagesSubtitle}
               </p>
             </div>
 
@@ -32,7 +39,7 @@ export default function PackagesPage() {
 
               <div className="p-8 md:p-10">
                 <span className="inline-flex items-center rounded-full bg-[#FFF1E8] px-3 py-1 text-sm font-medium text-[#FF6600] mb-4">
-                  Oferta premium
+                  {content.offerBadge}
                 </span>
 
                 <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">
@@ -40,11 +47,11 @@ export default function PackagesPage() {
                 </h2>
 
                 <p className="text-gray-600 text-lg mb-6">
-                  Uma das experiências mais emblemáticas de Soure, com paisagem marajoara, forte apelo fotográfico e conexão autêntica com a cultura local.
+                  {content.offerDescription}
                 </p>
 
                 <div className="mb-6">
-                  <p className="text-sm text-gray-500 mb-1">Investimento</p>
+                  <p className="text-sm text-gray-500 mb-1">{content.investmentLabel}</p>
                   <p className="text-2xl font-bold text-[#FF6600]">A partir de R$ 250 por pessoa</p>
                 </div>
 
@@ -53,14 +60,14 @@ export default function PackagesPage() {
                     href="/experiences/pesqueiro"
                     className="inline-flex items-center justify-center rounded-xl bg-[#003366] px-6 py-3 text-white font-semibold hover:bg-[#00264d] transition"
                   >
-                    Ver detalhes
+                    {content.detailsButton}
                   </Link>
 
                   <Link
                     href="/checkout?experience=pesqueiro"
                     className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
                   >
-                    Reservar agora
+                    {content.bookNow}
                   </Link>
                 </div>
               </div>
@@ -71,4 +78,3 @@ export default function PackagesPage() {
     </main>
   )
 }
-

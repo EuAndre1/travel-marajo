@@ -10,7 +10,7 @@ const flightSearchSchema = z.object({
   currency: z.string().min(3).max(3).toUpperCase().default('BRL'),
 })
 
-// Voos simulados para demonstração
+// Voos simulados para demonstraÃ§Ã£o
 const mockFlights = [
   {
     id: 'FL001',
@@ -53,7 +53,7 @@ const mockFlights = [
   },
   {
     id: 'FL004',
-    airline: 'GOL Linhas Aéreas',
+    airline: 'GOL Linhas AÃ©reas',
     flightNumber: 'G31234',
     origin: 'BSB',
     destination: 'BEL',
@@ -66,7 +66,7 @@ const mockFlights = [
   },
   {
     id: 'FL005',
-    airline: 'Azul Linhas Aéreas',
+    airline: 'Azul Linhas AÃ©reas',
     flightNumber: 'AD4567',
     origin: 'CNF',
     destination: 'BEL',
@@ -94,7 +94,7 @@ export async function GET(request: Request) {
 
     const validatedQuery = flightSearchSchema.parse(query)
 
-    // Filtrar voos baseado nos parâmetros
+    // Filtrar voos baseado nos parÃ¢metros
     let filteredFlights = [...mockFlights]
 
     if (validatedQuery.origin) {
@@ -109,7 +109,7 @@ export async function GET(request: Request) {
       )
     }
 
-    // Se não houver filtros ou nenhum resultado, retornar todos
+    // Se nÃ£o houver filtros ou nenhum resultado, retornar todos
     if (filteredFlights.length === 0) {
       filteredFlights = mockFlights
     }

@@ -1,4 +1,4 @@
-﻿export type LeadSource =
+export type LeadSource =
   | 'HOME_NEWSLETTER'
   | 'HERO_SEARCH'
   | 'PACKAGES_PAGE'

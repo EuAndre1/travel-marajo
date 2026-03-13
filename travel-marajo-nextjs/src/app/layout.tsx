@@ -9,21 +9,21 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-montserrat' })
 
 export const metadata: Metadata = {
-  title: 'Travel Marajó - Descubra a Amazônia Autêntica',
-  description: 'Sua porta de entrada para o arquipélago do Marajó. Voos, hotéis e pacotes para uma experiência inesquecível na Amazônia.',
-  keywords: ['Marajó', 'Amazônia', 'Turismo', 'Viagens', 'Brasil', 'África', 'Europa', 'América Latina'],
+  title: 'Travel MarajÃ³ - Descubra a AmazÃ´nia AutÃªntica',
+  description: 'Sua porta de entrada para o arquipÃ©lago do MarajÃ³. Voos, hotÃ©is e pacotes para uma experiÃªncia inesquecÃ­vel na AmazÃ´nia.',
+  keywords: ['MarajÃ³', 'AmazÃ´nia', 'Turismo', 'Viagens', 'Brasil', 'Ãfrica', 'Europa', 'AmÃ©rica Latina'],
   openGraph: {
-    title: 'Travel Marajó',
-    description: 'Descubra a Amazônia Autêntica',
+    title: 'Travel MarajÃ³',
+    description: 'Descubra a AmazÃ´nia AutÃªntica',
     url: 'https://www.travelmarajo.com',
-    siteName: 'Travel Marajó',
+    siteName: 'Travel MarajÃ³',
     locale: 'pt_BR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Travel Marajó',
-    description: 'Descubra a Amazônia Autêntica',
+    title: 'Travel MarajÃ³',
+    description: 'Descubra a AmazÃ´nia AutÃªntica',
   },
 }
 

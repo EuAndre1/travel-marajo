@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState } from "react"
 import Link from "next/link"
@@ -22,7 +22,7 @@ export default function HeroLanding() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 animate-ken-burns">
-          <img src="/hero-bg.jpg" alt="Praia tropical de Marajó" className="w-full h-full object-cover" />
+          <img src="/hero-bg.jpg" alt={content.heroImageAlt} className="w-full h-full object-cover" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#003366]/70 via-[#003366]/50 to-[#003366]/80" />
       </div>
@@ -75,10 +75,10 @@ export default function HeroLanding() {
 
             <div className="p-4 sm:p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <input placeholder="Origem" className="h-12 border border-gray-200 rounded-lg px-4" />
-                <input placeholder="Destino" className="h-12 border border-gray-200 rounded-lg px-4" />
-                <input placeholder="Datas" className="h-12 border border-gray-200 rounded-lg px-4" />
-                <input placeholder="Passageiros" className="h-12 border border-gray-200 rounded-lg px-4" />
+                <input placeholder={content.heroFieldOrigin} className="h-12 border border-gray-200 rounded-lg px-4" />
+                <input placeholder={content.heroFieldDestination} className="h-12 border border-gray-200 rounded-lg px-4" />
+                <input placeholder={content.heroFieldDates} className="h-12 border border-gray-200 rounded-lg px-4" />
+                <input placeholder={content.heroFieldPassengers} className="h-12 border border-gray-200 rounded-lg px-4" />
               </div>
               <div className="mt-4 flex justify-end">
                 <Link href={ctaHref} className="bg-[#FF6600] hover:bg-[#e55a00] text-white px-8 h-12 inline-flex items-center rounded-lg text-base font-semibold transition-all duration-300 hover:scale-105">

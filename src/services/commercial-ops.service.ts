@@ -1,4 +1,4 @@
-﻿import { cleanupExpiredPendingCommerce, getCommercialHealthSnapshot } from '@/repositories/booking.repository'
+import { cleanupExpiredPendingCommerce, getCommercialHealthSnapshot } from '@/repositories/booking.repository'
 
 export async function runCommercialCleanup(input?: { olderThanHours?: number; limit?: number }) {
   return cleanupExpiredPendingCommerce({

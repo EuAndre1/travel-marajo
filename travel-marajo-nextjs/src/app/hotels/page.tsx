@@ -3,21 +3,21 @@
 import { useState } from 'react'
 import SearchForm from '@/components/SearchForm'
 
-// Hotéis simulados
+// HotÃ©is simulados
 const mockHotels = [
   {
     id: 'H001',
-    name: 'Pousada dos Guarás',
+    name: 'Pousada dos GuarÃ¡s',
     type: 'Pousada',
     city: 'Soure',
     pricePerNight: 250,
     currency: 'BRL',
     rating: 4.5,
-    amenities: ['Wi-Fi', 'Café da manhã', 'Piscina'],
+    amenities: ['Wi-Fi', 'CafÃ© da manhÃ£', 'Piscina'],
   },
   {
     id: 'H002',
-    name: 'Hotel Marajó',
+    name: 'Hotel MarajÃ³',
     type: 'Hotel',
     city: 'Salvaterra',
     pricePerNight: 350,
@@ -53,7 +53,7 @@ export default function HotelsPage() {
       <div className="bg-primary py-8">
         <div className="container mx-auto px-4">
           <h1 className="text-3xl font-display font-bold text-white mb-4">
-            Buscar Hotéis
+            Buscar HotÃ©is
           </h1>
           <SearchForm />
         </div>
@@ -63,7 +63,7 @@ export default function HotelsPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <p className="text-neutral-600">
-            {hotels.length} {hotels.length === 1 ? 'hotel encontrado' : 'hotéis encontrados'}
+            {hotels.length} {hotels.length === 1 ? 'hotel encontrado' : 'hotÃ©is encontrados'}
           </p>
         </div>
 
@@ -117,7 +117,7 @@ export default function HotelsPage() {
                 {/* Price */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                   <div>
-                    <p className="text-xs text-neutral-500">Diária a partir de</p>
+                    <p className="text-xs text-neutral-500">DiÃ¡ria a partir de</p>
                     <p className="text-2xl font-bold text-primary">
                       {formatPrice(hotel.pricePerNight, hotel.currency)}
                     </p>

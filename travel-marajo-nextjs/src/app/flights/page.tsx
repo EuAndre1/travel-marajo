@@ -72,7 +72,7 @@ export default function FlightsPage() {
           </div>
         ) : flights.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-neutral-600">Nenhum voo encontrado para os critérios selecionados.</p>
+            <p className="text-neutral-600">Nenhum voo encontrado para os critÃ©rios selecionados.</p>
           </div>
         ) : (
           <>

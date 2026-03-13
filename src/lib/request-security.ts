@@ -1,4 +1,4 @@
-﻿import { randomUUID } from 'crypto'
+import { randomUUID } from 'crypto'
 
 export class RequestValidationError extends Error {
   status: number

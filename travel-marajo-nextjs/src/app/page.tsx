@@ -4,7 +4,7 @@ import FlightCard from '@/components/FlightCard'
 import PackageCard from '@/components/PackageCard'
 import DestinationCard from '@/components/DestinationCard'
 
-// Dados de exemplo para demonstração
+// Dados de exemplo para demonstraÃ§Ã£o
 const featuredFlights = [
   {
     id: 'f1',
@@ -51,33 +51,33 @@ const featuredPackages = [
   {
     id: 'p1',
     name: 'Aventura Marajoara 5 Dias',
-    description: 'Explore búfalos, praias e a cultura local em uma experiência única.',
+    description: 'Explore bÃºfalos, praias e a cultura local em uma experiÃªncia Ãºnica.',
     price: 1500,
     currency: 'BRL',
     durationDays: 5,
-    includes: ['Hospedagem', 'Passeios', 'Refeições', 'Transfer'],
+    includes: ['Hospedagem', 'Passeios', 'RefeiÃ§Ãµes', 'Transfer'],
     destinations: ['Soure', 'Salvaterra'],
     images: ['/images/package-1.jpg'],
   },
   {
     id: 'p2',
-    name: 'Expedição Ecológica Marajó',
-    description: 'Imersão na natureza e vida selvagem do maior arquipélago fluviomarinho.',
+    name: 'ExpediÃ§Ã£o EcolÃ³gica MarajÃ³',
+    description: 'ImersÃ£o na natureza e vida selvagem do maior arquipÃ©lago fluviomarinho.',
     price: 2200,
     currency: 'BRL',
     durationDays: 7,
-    includes: ['Hospedagem', 'Guias', 'Equipamento', 'Refeições'],
+    includes: ['Hospedagem', 'Guias', 'Equipamento', 'RefeiÃ§Ãµes'],
     destinations: ['Soure', 'Cachoeira do Arari'],
     images: ['/images/package-2.jpg'],
   },
   {
     id: 'p3',
-    name: 'Fim de Semana Romântico',
-    description: 'Praias paradisíacas e pôr do sol inesquecível para casais.',
+    name: 'Fim de Semana RomÃ¢ntico',
+    description: 'Praias paradisÃ­acas e pÃ´r do sol inesquecÃ­vel para casais.',
     price: 800,
     currency: 'BRL',
     durationDays: 3,
-    includes: ['Hospedagem', 'Jantar Romântico', 'Passeio de Barco'],
+    includes: ['Hospedagem', 'Jantar RomÃ¢ntico', 'Passeio de Barco'],
     destinations: ['Praia do Pesqueiro'],
     images: ['/images/package-3.jpg'],
   },
@@ -87,26 +87,26 @@ const destinations = [
   {
     id: 'd1',
     name: 'Soure',
-    description: 'Conhecida por suas praias de água doce, fazendas de búfalos e cultura local vibrante.',
+    description: 'Conhecida por suas praias de Ã¡gua doce, fazendas de bÃºfalos e cultura local vibrante.',
     images: ['/images/soure.jpg'],
     country: 'Brasil',
-    state: 'Pará',
+    state: 'ParÃ¡',
   },
   {
     id: 'd2',
     name: 'Salvaterra',
-    description: 'Praias tranquilas, paisagens naturais deslumbrantes e história colonial.',
+    description: 'Praias tranquilas, paisagens naturais deslumbrantes e histÃ³ria colonial.',
     images: ['/images/salvaterra.jpg'],
     country: 'Brasil',
-    state: 'Pará',
+    state: 'ParÃ¡',
   },
   {
     id: 'd3',
     name: 'Cachoeira do Arari',
-    description: 'Natureza exuberante, cachoeiras e trilhas ecológicas imperdíveis.',
+    description: 'Natureza exuberante, cachoeiras e trilhas ecolÃ³gicas imperdÃ­veis.',
     images: ['/images/cachoeira.jpg'],
     country: 'Brasil',
-    state: 'Pará',
+    state: 'ParÃ¡',
   },
 ]
 
@@ -120,11 +120,11 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-display font-bold text-primary-dark mb-4">
-              Explore o Marajó
+              Explore o MarajÃ³
             </h2>
             <p className="text-lg text-neutral-600 max-w-3xl mx-auto">
-              O maior arquipélago fluviomarinho do mundo espera por você com sua cultura única, 
-              praias paradisíacas e natureza exuberante.
+              O maior arquipÃ©lago fluviomarinho do mundo espera por vocÃª com sua cultura Ãºnica, 
+              praias paradisÃ­acas e natureza exuberante.
             </p>
           </div>
 
@@ -144,7 +144,7 @@ export default function HomePage() {
               Voos em Destaque
             </h2>
             <p className="text-neutral-600">
-              As melhores conexões para chegar ao Marajó
+              As melhores conexÃµes para chegar ao MarajÃ³
             </p>
           </div>
 
@@ -164,7 +164,7 @@ export default function HomePage() {
               Pacotes em Destaque
             </h2>
             <p className="text-neutral-600">
-              Experiências completas para aproveitar ao máximo sua viagem
+              ExperiÃªncias completas para aproveitar ao mÃ¡ximo sua viagem
             </p>
           </div>
 
@@ -183,7 +183,7 @@ export default function HomePage() {
             Receba as Melhores Ofertas
           </h2>
           <p className="text-white/80 mb-8 max-w-2xl mx-auto">
-            Cadastre-se e receba promoções exclusivas para sua viagem à Marajó 
+            Cadastre-se e receba promoÃ§Ãµes exclusivas para sua viagem Ã  MarajÃ³ 
             diretamente no seu e-mail.
           </p>
           
@@ -202,9 +202,9 @@ export default function HomePage() {
           </form>
           
           <div className="mt-6 flex justify-center gap-8 text-white/70 text-sm">
-            <span>✓ +50.000 viajantes</span>
-            <span>✓ Promoções semanais</span>
-            <span>✓ Cancele quando quiser</span>
+            <span>âœ“ +50.000 viajantes</span>
+            <span>âœ“ PromoÃ§Ãµes semanais</span>
+            <span>âœ“ Cancele quando quiser</span>
           </div>
         </div>
       </section>

@@ -4,18 +4,18 @@ import Link from 'next/link'
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline'
 
 const quickLinks = [
-  { href: '/', label: 'Início' },
+  { href: '/', label: 'InÃ­cio' },
   { href: '/flights', label: 'Voos' },
-  { href: '/hotels', label: 'Hotéis' },
+  { href: '/hotels', label: 'HotÃ©is' },
   { href: '/packages', label: 'Pacotes' },
-  { href: '/about', label: 'Sobre Nós' },
+  { href: '/about', label: 'Sobre NÃ³s' },
 ]
 
 const supportLinks = [
   { href: '/contact', label: 'Fale Conosco' },
   { href: '/faq', label: 'Perguntas Frequentes' },
   { href: '/terms', label: 'Termos de Uso' },
-  { href: '/privacy', label: 'Política de Privacidade' },
+  { href: '/privacy', label: 'PolÃ­tica de Privacidade' },
 ]
 
 const socialLinks = [
@@ -29,7 +29,7 @@ export default function Footer() {
     <footer className="bg-neutral-800 text-neutral-200 py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Logo e Descrição */}
+          {/* Logo e DescriÃ§Ã£o */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
@@ -38,12 +38,12 @@ export default function Footer() {
                 </svg>
               </div>
               <span className="text-xl font-bold text-white">
-                Travel <span className="text-primary">Marajó</span>
+                Travel <span className="text-primary">MarajÃ³</span>
               </span>
             </Link>
             <p className="text-neutral-400 text-sm mb-4">
-              Sua porta de entrada para o arquipélago do Marajó. 
-              Descubra a Amazônia autêntica com a gente.
+              Sua porta de entrada para o arquipÃ©lago do MarajÃ³. 
+              Descubra a AmazÃ´nia autÃªntica com a gente.
             </p>
             <div className="flex gap-3">
               {socialLinks.map((social) => (
@@ -61,9 +61,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links Rápidos */}
+          {/* Links RÃ¡pidos */}
           <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Links Rápidos</h4>
+            <h4 className="text-lg font-semibold text-white mb-4">Links RÃ¡pidos</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.href}>
@@ -101,7 +101,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-neutral-400">
                 <MapPinIcon className="w-5 h-5 text-primary" />
-                <span>Soure, Ilha de Marajó - PA, Brasil</span>
+                <span>Soure, Ilha de MarajÃ³ - PA, Brasil</span>
               </li>
               <li className="flex items-center gap-2 text-neutral-400">
                 <PhoneIcon className="w-5 h-5 text-primary" />
@@ -119,7 +119,7 @@ export default function Footer() {
         <div className="border-t border-neutral-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-neutral-500 text-sm text-center md:text-left">
-              © {new Date().getFullYear()} Travel Marajó. Todos os direitos reservados.
+              Â© {new Date().getFullYear()} Travel MarajÃ³. Todos os direitos reservados.
             </p>
             <div className="flex items-center gap-4 text-neutral-500 text-xs">
               <span>CNPJ: 00.000.000/0001-00</span>
