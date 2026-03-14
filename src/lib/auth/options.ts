@@ -2,8 +2,10 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { type AuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
+import { DEFAULT_LOCALE } from "@/config/i18n"
 import { db } from "@/database/client"
-import { getSafeAuthSecret } from "@/lib/env"
+import { getSafeAuthSecret, normalizeLocalizedAppPath } from "@/lib/env"
+import { getLocalizedPath } from "@/i18n/routing"
 import { validateUserCredentials } from "@/services/user.service"
 
 const providers: AuthOptions["providers"] = [
@@ -65,6 +67,24 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id as string
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return `${baseUrl}${normalizeLocalizedAppPath(url, DEFAULT_LOCALE)}`
+      }
+
+      try {
+        const targetUrl = new URL(url)
+        const base = new URL(baseUrl)
+
+        if (targetUrl.origin === base.origin) {
+          return `${baseUrl}${normalizeLocalizedAppPath(`${targetUrl.pathname}${targetUrl.search}`, DEFAULT_LOCALE)}`
+        }
+      } catch {
+        return `${baseUrl}${getLocalizedPath(DEFAULT_LOCALE, "home")}`
+      }
+
+      return baseUrl
     },
   },
   secret: getSafeAuthSecret(),

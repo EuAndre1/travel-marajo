@@ -5,6 +5,7 @@ import Link from "next/link"
 import { homeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
+import { getLocalizedPath } from "@/i18n/routing"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeFeatureExperience() {
@@ -53,13 +54,13 @@ export default function HomeFeatureExperience() {
 
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
-                href="/experiencias/pesqueiro"
+                href={getLocalizedPath(lang, "experienceDetail", { slug: "pesqueiro" })}
                 className="bg-primary text-white px-6 py-3 rounded-full text-sm font-semibold transition hover:bg-primary-dark"
               >
                 {featureExperience.ctas.primary}
               </Link>
               <Link
-                href="/experiencias/pesqueiro"
+                href={getLocalizedPath(lang, "experienceDetail", { slug: "pesqueiro" })}
                 className="border border-primary/30 text-primary px-6 py-3 rounded-full text-sm font-semibold transition hover:border-primary"
               >
                 {featureExperience.ctas.secondary}

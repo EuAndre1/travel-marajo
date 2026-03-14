@@ -6,6 +6,7 @@ import SectionHeader from "@/components/home/SectionHeader"
 import { experiences } from "@/data/experiencias"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { siteContent } from "@/config/site-content"
+import { getLocalizedPath } from "@/i18n/routing"
 
 const localeMap: Record<"pt" | "en" | "es" | "fr", string> = {
   pt: "pt-BR",
@@ -71,7 +72,7 @@ export default function ExperiencesPage() {
                       <span className="text-slate-500">{experience.rating} / 5</span>
                     </div>
                     <Link
-                      href={`/experiencias/${experience.slug}`}
+                      href={getLocalizedPath(lang, "experienceDetail", { slug: experience.slug })}
                       className="text-sm font-semibold text-primary inline-flex items-center gap-2"
                     >
                       {content.pages.experiences.detailsCta}

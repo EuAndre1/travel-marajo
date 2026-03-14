@@ -90,7 +90,7 @@ export default function Header() {
                   {chrome.profileLabel}
                 </Link>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: getLocalizedPath(lang, "home") })}
                   className="rounded-full bg-accent px-4 py-2 font-semibold text-white transition-colors hover:bg-accent-dark"
                 >
                   {chrome.signOutLabel}
@@ -169,7 +169,7 @@ export default function Header() {
                 </Link>
                 <button
                   onClick={() => {
-                    signOut()
+                    signOut({ callbackUrl: getLocalizedPath(lang, "home") })
                     setIsMobileMenuOpen(false)
                   }}
                   className="text-red-600"

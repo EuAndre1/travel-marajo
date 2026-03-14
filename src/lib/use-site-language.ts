@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { DEFAULT_LOCALE, isAppLocale, type AppLocale } from "@/config/i18n"
 import {
@@ -36,6 +36,11 @@ export function useSiteLanguage() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const lang = useMemo<SiteLang>(() => {
     const detected = detectLocaleFromPathname(pathname)
@@ -43,6 +48,10 @@ export function useSiteLanguage() {
   }, [pathname])
 
   const setLang = (value: SiteLang) => {
+    if (!mounted) {
+      return
+    }
+
     if (!isAppLocale(value)) {
       return
     }

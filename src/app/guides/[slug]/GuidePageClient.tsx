@@ -3,10 +3,11 @@
 import Link from "next/link"
 import SectionHeader from "@/components/home/SectionHeader"
 import GuideInternalLinks from "@/components/seo/GuideInternalLinks"
-import { getExperienceBySlug } from "@/data/experiencias"
-import { getPackageBySlug } from "@/data/pacotes"
-import type { GuideContentItem } from "@/data/guides"
 import { siteContent } from "@/config/site-content"
+import { getExperienceBySlug } from "@/data/experiencias"
+import type { GuideContentItem } from "@/data/guides"
+import { getPackageBySlug } from "@/data/pacotes"
+import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
 interface GuidePageClientProps {
@@ -21,6 +22,8 @@ const guideLabels = {
     faq: "Perguntas frequentes",
     keyTakeaways: "Principais destaques",
     planTrip: "Planejar viagem",
+    faqTitle: "Perguntas uteis para planejar a viagem",
+    faqSubtitle: "Respostas rapidas que apoiam descoberta internacional, pesquisa de roteiro e prontidao para conversao.",
   },
   en: {
     intro: "Introduction",
@@ -29,6 +32,8 @@ const guideLabels = {
     faq: "Frequently asked questions",
     keyTakeaways: "Key highlights",
     planTrip: "Plan trip",
+    faqTitle: "Helpful questions for trip planning",
+    faqSubtitle: "Quick answers that support international discovery, itinerary research, and conversion readiness.",
   },
   es: {
     intro: "Introduccion",
@@ -37,6 +42,8 @@ const guideLabels = {
     faq: "Preguntas frecuentes",
     keyTakeaways: "Puntos clave",
     planTrip: "Planear viaje",
+    faqTitle: "Preguntas utiles para planificar el viaje",
+    faqSubtitle: "Respuestas rapidas que apoyan descubrimiento internacional, investigacion de itinerario y preparacion para la conversion.",
   },
   fr: {
     intro: "Introduction",
@@ -45,12 +52,15 @@ const guideLabels = {
     faq: "Questions frequentes",
     keyTakeaways: "Points cles",
     planTrip: "Planifier le voyage",
+    faqTitle: "Questions utiles pour planifier le voyage",
+    faqSubtitle: "Reponses rapides qui soutiennent la decouverte internationale, la recherche d itineraire et la preparation a la conversion.",
   },
 } as const
 
 export default function GuidePageClient({ guide }: GuidePageClientProps) {
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
+  const guideContent = content.pages.guides
   const labels = guideLabels[lang]
 
   const relatedExperiences = guide.relatedExperiences
@@ -69,26 +79,26 @@ export default function GuidePageClient({ guide }: GuidePageClientProps) {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,102,0,0.22),_transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.12),_transparent_30%)]" />
         <div className="relative px-4 sm:px-6 lg:px-10 xl:px-16">
           <div className="mx-auto max-w-5xl">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/60">Global Travel Guide</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-white/60">{guideContent.detailHeroEyebrow}</p>
             <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight md:text-6xl">
               {guide.heroTitle}
             </h1>
             <p className="mt-6 max-w-3xl text-lg text-white/85">{guide.heroSubtitle}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/experiencias"
+                href={getLocalizedPath(lang, "experiences")}
                 className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#e55a00]"
               >
                 {content.pages.experiences.detailsCta}
               </Link>
               <Link
-                href="/pacotes"
+                href={getLocalizedPath(lang, "packages")}
                 className="inline-flex items-center justify-center rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 {content.pages.packages.reserveCta}
               </Link>
               <Link
-                href="/planejar-viagem"
+                href={getLocalizedPath(lang, "planTrip")}
                 className="inline-flex items-center justify-center rounded-xl border border-white/25 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
                 {labels.planTrip}
@@ -128,14 +138,14 @@ export default function GuidePageClient({ guide }: GuidePageClientProps) {
               <div className="mt-14">
                 <SectionHeader
                   eyebrow={labels.recommendations}
-                  title="Bookable experiences connected to this guide"
-                  subtitle="Move from inspiration to action with curated activities already aligned to the themes of this page."
+                  title={guideContent.detailBookableTitle}
+                  subtitle={guideContent.detailBookableSubtitle}
                 />
                 <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                   {relatedExperiences.map((experience) => (
                     <Link
                       key={experience!.slug}
-                      href={`/experiencias/${experience!.slug}`}
+                      href={getLocalizedPath(lang, "experienceDetail", { slug: experience!.slug })}
                       className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md"
                     >
                       <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{experience!.category}</p>
@@ -155,14 +165,14 @@ export default function GuidePageClient({ guide }: GuidePageClientProps) {
               <div className="mt-14">
                 <SectionHeader
                   eyebrow={labels.packages}
-                  title="Package options for deeper planning"
-                  subtitle="For visitors who need a complete itinerary, these package formats reduce friction and support international trip design."
+                  title={guideContent.detailPackagesTitle}
+                  subtitle={guideContent.detailPackagesSubtitle}
                 />
                 <div className="mt-8 grid gap-5 lg:grid-cols-2">
                   {relatedPackages.map((item) => (
                     <Link
                       key={item!.slug}
-                      href="/pacotes"
+                      href={getLocalizedPath(lang, "packages")}
                       className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
                     >
                       <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{item!.duration}</p>
@@ -180,24 +190,19 @@ export default function GuidePageClient({ guide }: GuidePageClientProps) {
             <section className="mt-14 rounded-3xl bg-[#FFF1E8] p-6 sm:p-8">
               <div className="grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-center">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.25em] text-[#FF6600]">Conversion CTA</p>
-                  <h2 className="mt-2 text-2xl font-semibold text-[#0B1C2C]">
-                    Turn this guide into a real itinerary
-                  </h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
-                    Use the concierge planning flow when you need help aligning season, transfers, experiences,
-                    and package options into one booking-ready trip.
-                  </p>
+                  <p className="text-xs uppercase tracking-[0.25em] text-[#FF6600]">{guideContent.detailConversionEyebrow}</p>
+                  <h2 className="mt-2 text-2xl font-semibold text-[#0B1C2C]">{guideContent.detailConversionTitle}</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">{guideContent.detailConversionSubtitle}</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                   <Link
-                    href="/planejar-viagem"
+                    href={getLocalizedPath(lang, "planTrip")}
                     className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#e55a00]"
                   >
                     {content.pages.planTrip.whatsappCta}
                   </Link>
                   <Link
-                    href="/pacotes"
+                    href={getLocalizedPath(lang, "packages")}
                     className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-5 py-3 text-sm font-semibold text-[#003366] transition hover:bg-[#003366] hover:text-white"
                   >
                     {content.pages.packages.consultCta}
@@ -210,27 +215,22 @@ export default function GuidePageClient({ guide }: GuidePageClientProps) {
               <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
                 <div className="grid gap-6 md:grid-cols-[1.4fr_1fr] md:items-center">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.25em] text-slate-400">Travel service</p>
-                    <h2 className="mt-2 text-2xl font-semibold text-[#0B1C2C]">
-                      Need help understanding Brazil visa requirements first?
-                    </h2>
-                    <p className="mt-3 text-sm leading-6 text-slate-600">
-                      For international visitors, visa clarity can be the missing step before flights,
-                      packages, or concierge planning start to make sense.
-                    </p>
+                    <p className="text-xs uppercase tracking-[0.25em] text-slate-400">{guideContent.detailVisaEyebrow}</p>
+                    <h2 className="mt-2 text-2xl font-semibold text-[#0B1C2C]">{guideContent.detailVisaTitle}</h2>
+                    <p className="mt-3 text-sm leading-6 text-slate-600">{guideContent.detailVisaSubtitle}</p>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     <Link
-                      href="/services/brazil-visa-consulting"
+                      href={getLocalizedPath(lang, "serviceBrazilVisa")}
                       className="inline-flex items-center justify-center rounded-xl bg-[#003366] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0B1C2C]"
                     >
-                      Explore visa consulting
+                      {guideContent.detailVisaPrimaryCta}
                     </Link>
                     <Link
-                      href="/services"
+                      href={getLocalizedPath(lang, "services")}
                       className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-5 py-3 text-sm font-semibold text-[#003366] transition hover:bg-[#003366] hover:text-white"
                     >
-                      View all services
+                      {guideContent.detailVisaSecondaryCta}
                     </Link>
                   </div>
                 </div>
@@ -241,8 +241,8 @@ export default function GuidePageClient({ guide }: GuidePageClientProps) {
               <div className="mt-14">
                 <SectionHeader
                   eyebrow={labels.faq}
-                  title="Helpful questions for trip planning"
-                  subtitle="Quick answers that support international discovery, itinerary research, and conversion readiness."
+                  title={labels.faqTitle}
+                  subtitle={labels.faqSubtitle}
                 />
                 <div className="mt-8 grid gap-4">
                   {guide.faq.map((item) => (

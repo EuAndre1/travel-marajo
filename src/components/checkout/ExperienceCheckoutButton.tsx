@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useSiteLanguage } from "@/lib/use-site-language"
 
 interface ExperienceCheckoutButtonProps {
   slug: string
@@ -14,6 +15,7 @@ export default function ExperienceCheckoutButton({
   className,
 }: ExperienceCheckoutButtonProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const { lang } = useSiteLanguage()
 
   const handleCheckout = async () => {
     try {
@@ -21,7 +23,7 @@ export default function ExperienceCheckoutButton({
       const response = await fetch("/api/stripe/experience-checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug }),
+        body: JSON.stringify({ slug, locale: lang }),
       })
 
       const data = await response.json()

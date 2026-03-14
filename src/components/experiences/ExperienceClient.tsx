@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { experiences } from "@/data/experiences"
 import { siteContent } from "@/config/site-content"
+import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
 type Props = {
@@ -50,14 +51,14 @@ export default function ExperienceClient({ slug }: Props) {
 
             <div className="flex flex-wrap gap-4">
               <Link
-                href={`/checkout?experience=${experience.slug}`}
+                href={`${getLocalizedPath(lang, "checkout")}?experience=${experience.slug}`}
                 className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
               >
                 {content.bookNow}
               </Link>
 
               <Link
-                href="/packages"
+                href={getLocalizedPath(lang, "packages")}
                 className="inline-flex items-center justify-center rounded-xl border border-white px-6 py-3 text-white font-semibold hover:bg-white hover:text-[#003366] transition"
               >
                 {content.backToPackages}
@@ -129,7 +130,7 @@ export default function ExperienceClient({ slug }: Props) {
                   </div>
 
                   <Link
-                    href={`/checkout?experience=${experience.slug}`}
+                    href={`${getLocalizedPath(lang, "checkout")}?experience=${experience.slug}`}
                     className="w-full inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
                   >
                     {content.continueBooking}

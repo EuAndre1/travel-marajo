@@ -1,9 +1,14 @@
+"use client"
+
 import Link from "next/link"
 import SectionHeader from "@/components/home/SectionHeader"
 import { homeContent } from "@/data/homepage"
+import { getLocalizedPath } from "@/i18n/routing"
+import { useSiteLanguage } from "@/lib/use-site-language"
 
 export default function GuidePage() {
   const { travelGuide } = homeContent
+  const { lang } = useSiteLanguage()
 
   return (
     <main className="bg-white min-h-screen">
@@ -31,7 +36,7 @@ export default function GuidePage() {
                   <p className="mt-3 text-sm text-slate-600">{item.description}</p>
                   <div className="mt-4 flex items-center justify-between text-xs text-slate-500">
                     <span>{item.readTime} de leitura</span>
-                    <Link href="/planejar-viagem" className="text-primary font-semibold">
+                    <Link href={getLocalizedPath(lang, "planTrip")} className="text-primary font-semibold">
                       Planejar viagem
                     </Link>
                   </div>

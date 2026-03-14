@@ -1,10 +1,15 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
 import SectionHeader from "@/components/home/SectionHeader"
 import { homeContent } from "@/data/homepage"
+import { getLocalizedPath } from "@/i18n/routing"
+import { useSiteLanguage } from "@/lib/use-site-language"
 
 export default function OffersPage() {
   const { offers } = homeContent
+  const { lang } = useSiteLanguage()
 
   return (
     <main className="bg-white min-h-screen">
@@ -34,7 +39,7 @@ export default function OffersPage() {
                     <p className="text-sm text-slate-600">{offer.description}</p>
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-semibold text-primary">{offer.price}</span>
-                      <Link href="/planejar-viagem" className="text-primary font-semibold">
+                      <Link href={getLocalizedPath(lang, "planTrip")} className="text-primary font-semibold">
                         Consultar disponibilidade
                       </Link>
                     </div>

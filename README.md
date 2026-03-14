@@ -216,3 +216,11 @@ Em caso de dúvidas ou problemas:
 - Legacy routes such as `/experiencias`, `/experiences`, `/pacotes`, `/packages`, `/guia`, and `/guides` are compatibility routes and should redirect to canonical localized URLs.
 - The active locale is derived from the URL path instead of localStorage-only state.
 - `NEXT_PUBLIC_SITE_URL` must be set in every environment for canonical URLs, sitemap, robots, and Stripe redirect URLs.
+
+## Launch validation
+
+- Manual browser QA and staging go-live steps now live in `GUIA_DEPLOY.md`.
+- Internal preflight helpers:
+  - `src/lib/platform-health.ts` -> `getPlatformHealthReport()` and `getPlatformPreflightReport()`
+  - `src/lib/env.ts` -> `getEnvReadinessReport()`
+- Use these helpers as internal tooling references before browser/staging validation. They are not public product features.

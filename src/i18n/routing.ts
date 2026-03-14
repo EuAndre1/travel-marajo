@@ -85,39 +85,39 @@ const ROUTES: Record<AppRouteKey, RouteDefinition> = {
   },
 }
 
-const LEGACY_STATIC_PATHS: Array<{ path: string; key: AppRouteKey; params?: Record<string, string> }> = [
+const LEGACY_STATIC_PATHS: Array<{ path: string; key: AppRouteKey; locale?: AppLocale; params?: Record<string, string> }> = [
   { path: "/", key: "home" },
-  { path: "/experiencias", key: "experiences" },
-  { path: "/experiences", key: "experiences" },
-  { path: "/pacotes", key: "packages" },
-  { path: "/packages", key: "packages" },
-  { path: "/destinos", key: "destinations" },
-  { path: "/destinations", key: "destinations" },
-  { path: "/guia", key: "guides" },
-  { path: "/guides", key: "guides" },
-  { path: "/planejar-viagem", key: "planTrip" },
-  { path: "/plan-trip", key: "planTrip" },
-  { path: "/ofertas", key: "offers" },
-  { path: "/offers", key: "offers" },
-  { path: "/parceiros", key: "partners" },
-  { path: "/partners", key: "partners" },
-  { path: "/services", key: "services" },
-  { path: "/servicos", key: "services" },
-  { path: "/services/brazil-visa-consulting", key: "serviceBrazilVisa" },
-  { path: "/hotels", key: "hotels" },
-  { path: "/hoteis", key: "hotels" },
-  { path: "/flights", key: "flights" },
-  { path: "/voos", key: "flights" },
-  { path: "/activities", key: "activities" },
-  { path: "/atividades", key: "activities" },
-  { path: "/login", key: "login" },
-  { path: "/entrar", key: "login" },
-  { path: "/register", key: "register" },
-  { path: "/cadastro", key: "register" },
-  { path: "/profile", key: "profile" },
-  { path: "/perfil", key: "profile" },
-  { path: "/booking-confirmation", key: "bookingConfirmation" },
-  { path: "/confirmacao-reserva", key: "bookingConfirmation" },
+  { path: "/experiencias", key: "experiences", locale: "pt" },
+  { path: "/experiences", key: "experiences", locale: "en" },
+  { path: "/pacotes", key: "packages", locale: "pt" },
+  { path: "/packages", key: "packages", locale: "en" },
+  { path: "/destinos", key: "destinations", locale: "pt" },
+  { path: "/destinations", key: "destinations", locale: "en" },
+  { path: "/guia", key: "guides", locale: "pt" },
+  { path: "/guides", key: "guides", locale: "en" },
+  { path: "/planejar-viagem", key: "planTrip", locale: "pt" },
+  { path: "/plan-trip", key: "planTrip", locale: "en" },
+  { path: "/ofertas", key: "offers", locale: "pt" },
+  { path: "/offers", key: "offers", locale: "en" },
+  { path: "/parceiros", key: "partners", locale: "pt" },
+  { path: "/partners", key: "partners", locale: "en" },
+  { path: "/services", key: "services", locale: "en" },
+  { path: "/servicos", key: "services", locale: "pt" },
+  { path: "/services/brazil-visa-consulting", key: "serviceBrazilVisa", locale: "en" },
+  { path: "/hotels", key: "hotels", locale: "en" },
+  { path: "/hoteis", key: "hotels", locale: "pt" },
+  { path: "/flights", key: "flights", locale: "en" },
+  { path: "/voos", key: "flights", locale: "pt" },
+  { path: "/activities", key: "activities", locale: "en" },
+  { path: "/atividades", key: "activities", locale: "pt" },
+  { path: "/login", key: "login", locale: "en" },
+  { path: "/entrar", key: "login", locale: "pt" },
+  { path: "/register", key: "register", locale: "en" },
+  { path: "/cadastro", key: "register", locale: "pt" },
+  { path: "/profile", key: "profile", locale: "en" },
+  { path: "/perfil", key: "profile", locale: "pt" },
+  { path: "/booking-confirmation", key: "bookingConfirmation", locale: "en" },
+  { path: "/confirmacao-reserva", key: "bookingConfirmation", locale: "pt" },
   { path: "/checkout", key: "checkout" },
   { path: "/checkout/success", key: "checkoutSuccess" },
   { path: "/checkout/cancel", key: "checkoutCancel" },
@@ -198,28 +198,30 @@ export function resolveCanonicalRoute(locale: AppLocale, segments: string[]): Ro
   return null
 }
 
-export function resolveLegacyRoute(pathname: string): { key: AppRouteKey; params?: { slug: string } } | null {
+export function resolveLegacyRoute(pathname: string): { key: AppRouteKey; locale?: AppLocale; params?: { slug: string } } | null {
   const normalized = pathname === "/" ? "/" : pathname.replace(/\/+$/, "")
 
   const staticMatch = LEGACY_STATIC_PATHS.find((entry) => entry.path === normalized)
   if (staticMatch) {
-    return staticMatch.params ? { key: staticMatch.key, params: { slug: staticMatch.params.slug } } : { key: staticMatch.key }
+    return staticMatch.params
+      ? { key: staticMatch.key, locale: staticMatch.locale, params: { slug: staticMatch.params.slug } }
+      : { key: staticMatch.key, locale: staticMatch.locale }
   }
 
   const dynamicPatterns = [
-    { prefix: "/experiencias/", key: "experienceDetail" as const },
-    { prefix: "/experiences/", key: "experienceDetail" as const },
-    { prefix: "/destinos/", key: "destinationDetail" as const },
-    { prefix: "/destinations/", key: "destinationDetail" as const },
-    { prefix: "/guides/", key: "guideDetail" as const },
-    { prefix: "/guia/", key: "guideDetail" as const },
+    { prefix: "/experiencias/", key: "experienceDetail" as const, locale: "pt" as const },
+    { prefix: "/experiences/", key: "experienceDetail" as const, locale: "en" as const },
+    { prefix: "/destinos/", key: "destinationDetail" as const, locale: "pt" as const },
+    { prefix: "/destinations/", key: "destinationDetail" as const, locale: "en" as const },
+    { prefix: "/guides/", key: "guideDetail" as const, locale: "en" as const },
+    { prefix: "/guia/", key: "guideDetail" as const, locale: "pt" as const },
   ]
 
   for (const pattern of dynamicPatterns) {
     if (normalized.startsWith(pattern.prefix)) {
       const slug = normalized.slice(pattern.prefix.length)
       if (slug) {
-        return { key: pattern.key, params: { slug } }
+        return { key: pattern.key, locale: pattern.locale, params: { slug } }
       }
     }
   }

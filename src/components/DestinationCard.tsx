@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { getLocalizedPath } from '@/i18n/routing'
+import { useSiteLanguage } from '@/lib/use-site-language'
 
 interface DestinationCardProps {
   destination: {
@@ -14,6 +16,8 @@ interface DestinationCardProps {
 }
 
 export default function DestinationCard({ destination }: DestinationCardProps) {
+  const { lang } = useSiteLanguage()
+
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 hover:border-primary hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
       {/* Image Placeholder */}
@@ -41,7 +45,7 @@ export default function DestinationCard({ destination }: DestinationCardProps) {
         <p className="text-neutral-600 text-sm mb-4 line-clamp-3">{destination.description}</p>
         
         <Link 
-          href={`/destinations/${destination.id}`}
+          href={getLocalizedPath(lang, 'destinationDetail', { slug: destination.id })}
           className="inline-flex items-center text-primary hover:text-primary-dark font-medium transition-colors"
         >
           Saiba Mais

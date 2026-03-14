@@ -18,9 +18,10 @@ const protectedRouteKeys = new Set(["profile", "bookingConfirmation"])
 function isPublicAsset(pathname: string) {
   return (
     pathname.startsWith("/api") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon") ||
     pathname.startsWith("/images") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/stripe/webhook") ||
+    pathname.startsWith("/favicon") ||
     pathname.startsWith("/public") ||
     pathname.includes(".")
   )
@@ -38,19 +39,29 @@ export async function middleware(request: NextRequest) {
 
   if (!locale) {
     const legacyMatch = resolveLegacyRoute(pathname)
-    const nextLocale = cookieLocale ?? DEFAULT_LOCALE
+    const nextLocale = legacyMatch?.locale ?? cookieLocale ?? DEFAULT_LOCALE
 
     if (legacyMatch) {
+      const canonicalPath = getLocalizedPath(nextLocale, legacyMatch.key, legacyMatch.params)
+      if (canonicalPath !== pathname) {
+        const redirectUrl = request.nextUrl.clone()
+        redirectUrl.pathname = canonicalPath
+        redirectUrl.search = search
+        return NextResponse.redirect(redirectUrl)
+      }
+    }
+
+    const homepagePath = getLocalizedPath(nextLocale, "home")
+    if (homepagePath !== pathname) {
       const redirectUrl = request.nextUrl.clone()
-      redirectUrl.pathname = getLocalizedPath(nextLocale, legacyMatch.key, legacyMatch.params)
+      redirectUrl.pathname = homepagePath
       redirectUrl.search = search
       return NextResponse.redirect(redirectUrl)
     }
+  }
 
-    const redirectUrl = request.nextUrl.clone()
-    redirectUrl.pathname = getLocalizedPath(nextLocale, "home")
-    redirectUrl.search = search
-    return NextResponse.redirect(redirectUrl)
+  if (!locale) {
+    return NextResponse.next()
   }
 
   const canonicalMatch = resolveCanonicalRoute(locale, segments)
@@ -64,7 +75,7 @@ export async function middleware(request: NextRequest) {
     if (!token) {
       const loginUrl = request.nextUrl.clone()
       loginUrl.pathname = getLocalizedPath(locale, "login")
-      loginUrl.searchParams.set("callbackUrl", pathname)
+      loginUrl.searchParams.set("callbackUrl", `${pathname}${search}`)
       return NextResponse.redirect(loginUrl)
     }
   }
@@ -83,5 +94,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|images|favicon.ico|.*\\..*).*)"],
 }

@@ -3,8 +3,11 @@
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import SectionHeader from "@/components/home/SectionHeader"
-import { getExperienceBySlug } from "@/data/experiencias"
+import { siteContent } from "@/config/site-content"
 import { getPackageBySlug } from "@/data/pacotes"
+import { getLocalizedPath } from "@/i18n/routing"
+import { getExperienceBySlug } from "@/lib/experiences"
+import { useSiteLanguage } from "@/lib/use-site-language"
 
 function buildWhatsappLink(message: string) {
   const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
@@ -14,56 +17,54 @@ function buildWhatsappLink(message: string) {
 }
 
 export default function CheckoutSuccessClient() {
+  const { lang } = useSiteLanguage()
+  const content = siteContent[lang]
   const params = useSearchParams()
   const slug = params.get("item")
   const type = params.get("type")
 
   const experience = slug ? getExperienceBySlug(slug) : null
   const packageItem = slug ? getPackageBySlug(slug) : null
-
   const itemName = type === "pacote" ? packageItem?.title : experience?.title
-
   const message = itemName
-    ? `Ol! Conclu o checkout da experincia/pacote: ${itemName}. Pode confirmar os prximos passos?`
-    : "Ol! Conclu o checkout e gostaria de confirmar os prximos passos da minha reserva."
+    ? content.checkoutSuccessWhatsappMessage.replace("{itemName}", itemName)
+    : content.checkoutSuccessWhatsappFallback
 
   const whatsappLink = buildWhatsappLink(message)
 
   return (
-    <main className="bg-white min-h-screen">
-      <section className="py-20 bg-[#F7F7F8]">
+    <main className="min-h-screen bg-white">
+      <section className="bg-[#F7F7F8] py-20">
         <div className="px-4 sm:px-6 lg:px-10 xl:px-16">
-          <div className="max-w-4xl mx-auto">
+          <div className="mx-auto max-w-4xl">
             <SectionHeader
-              eyebrow="Reserva confirmada"
-              title="Pagamento aprovado. Estamos preparando sua experincia"
-              subtitle="Nossa equipe concierge j recebeu seu pedido e entrar em contato para alinhar detalhes e logstica."
+              eyebrow={content.checkoutSuccessEyebrow}
+              title={content.checkoutSuccessTitle}
+              subtitle={content.checkoutSuccessSubtitle}
             />
 
             <div className="mt-10 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-sm text-slate-600">
-                {itemName ? `Experincia/Pacote: ${itemName}` : "Seu pedido foi registrado com sucesso."}
+                {itemName ? `${content.checkoutSuccessItemLabel}: ${itemName}` : content.checkoutSuccessDefault}
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 {whatsappLink ? (
                   <a
                     href={whatsappLink}
-                    className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-5 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-5 py-3 font-semibold text-white transition hover:bg-[#e55a00]"
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Continuar no WhatsApp
+                    {content.checkoutSuccessWhatsapp}
                   </a>
                 ) : (
-                  <span className="text-sm text-slate-500">
-                    Configure `NEXT_PUBLIC_WHATSAPP_NUMBER` para habilitar o contato.
-                  </span>
+                  <span className="text-sm text-slate-500">{content.pages.planTrip.whatsappFallback}</span>
                 )}
                 <Link
-                  href="/experiencias"
-                  className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-5 py-3 text-[#003366] font-semibold hover:bg-[#003366] hover:text-white transition"
+                  href={getLocalizedPath(lang, "experiences")}
+                  className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-5 py-3 font-semibold text-[#003366] transition hover:bg-[#003366] hover:text-white"
                 >
-                  Ver mais experincias
+                  {content.checkoutSuccessMore}
                 </Link>
               </div>
             </div>

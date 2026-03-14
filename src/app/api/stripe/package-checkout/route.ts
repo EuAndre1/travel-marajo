@@ -1,23 +1,25 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
+import { buildLocalizedAbsoluteUrl, resolveRequestLocale } from "@/lib/env"
 import { getStripe } from "@/lib/stripe"
 import { getPackageBySlug } from "@/data/pacotes"
 
 const schema = z.object({
   slug: z.string().min(1),
+  locale: z.string().optional(),
 })
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { slug } = schema.parse(body)
+    const { slug, locale } = schema.parse(body)
 
     const packageItem = getPackageBySlug(slug)
     if (!packageItem) {
       return NextResponse.json({ error: "Package not found" }, { status: 404 })
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin
+    const requestLocale = resolveRequestLocale(locale ?? request.headers.get("referer") ?? request.url)
     const stripe = getStripe()
 
     const session = await stripe.checkout.sessions.create({
@@ -36,12 +38,19 @@ export async function POST(request: Request) {
           },
         },
       ],
-      success_url: `${siteUrl}/checkout/success?item=${encodeURIComponent(slug)}&type=pacote` +
-        `&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/checkout/cancel?item=${encodeURIComponent(slug)}&type=pacote`,
+      success_url:
+        `${buildLocalizedAbsoluteUrl(requestLocale, "checkoutSuccess", undefined, {
+          item: slug,
+          type: "pacote",
+        })}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: buildLocalizedAbsoluteUrl(requestLocale, "checkoutCancel", undefined, {
+        item: slug,
+        type: "pacote",
+      }),
       metadata: {
         itemType: "package",
         slug,
+        locale: requestLocale,
       },
     })
 

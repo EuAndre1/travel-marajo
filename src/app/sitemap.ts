@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next"
 import { destinations } from "@/data/destinos"
-import { experiences } from "@/data/experiencias"
-import { guides } from "@/data/guides"
-import { packages } from "@/data/pacotes"
 import { buildAbsoluteUrl } from "@/lib/env"
+import { getActiveExperiences } from "@/lib/experiences"
+import { getImplementedSeoPages } from "@/lib/seo"
 import { SUPPORTED_LOCALES } from "@/config/i18n"
 import { getLocalizedPath } from "@/i18n/routing"
 
@@ -38,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   )
 
   const localizedExperienceRoutes = SUPPORTED_LOCALES.flatMap((locale) =>
-    experiences.map((experience) => ({
+    getActiveExperiences().map((experience) => ({
       url: buildAbsoluteUrl(getLocalizedPath(locale, "experienceDetail", { slug: experience.slug })),
       lastModified,
       changeFrequency: "weekly" as const,
@@ -56,20 +55,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
   )
 
   const localizedGuideRoutes = SUPPORTED_LOCALES.flatMap((locale) =>
-    guides.map((guide) => ({
+    getImplementedSeoPages().map((guide) => ({
       url: buildAbsoluteUrl(getLocalizedPath(locale, "guideDetail", { slug: guide.slug })),
       lastModified,
       changeFrequency: "weekly" as const,
       priority: 0.84,
-    })),
-  )
-
-  const packageRoutes = SUPPORTED_LOCALES.flatMap((locale) =>
-    packages.map((item) => ({
-      url: buildAbsoluteUrl(`${getLocalizedPath(locale, "packages")}#${item.slug}`),
-      lastModified,
-      changeFrequency: "weekly" as const,
-      priority: 0.68,
     })),
   )
 
@@ -78,6 +68,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...localizedExperienceRoutes,
     ...localizedDestinationRoutes,
     ...localizedGuideRoutes,
-    ...packageRoutes,
   ]
 }

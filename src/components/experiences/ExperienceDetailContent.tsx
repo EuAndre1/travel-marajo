@@ -7,6 +7,7 @@ import ExperienceCheckoutButton from "@/components/checkout/ExperienceCheckoutBu
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedExperience, type ExperienceItem } from "@/data/experiencias"
 import { getGuideSlugsForExperience, getGuidesBySlugs } from "@/data/guides"
+import { getLocalizedPath } from "@/i18n/routing"
 
 interface ExperienceDetailContentProps {
   experience: ExperienceItem
@@ -242,7 +243,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
               />
               <Link
-                href="/planejar-viagem"
+                href={getLocalizedPath(lang, "planTrip")}
                 className="inline-flex items-center justify-center rounded-xl border border-white px-6 py-3 text-white font-semibold hover:bg-white hover:text-[#003366] transition"
               >
                 {detailLabels.planWithConcierge}
@@ -300,7 +301,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                     {relatedGuides.map((guide) => (
                       <Link
                         key={guide!.slug}
-                        href={`/guides/${guide!.slug}`}
+                        href={getLocalizedPath(lang, "guideDetail", { slug: guide!.slug })}
                         className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700 transition hover:border-[#003366] hover:shadow-sm"
                       >
                         <span className="font-semibold text-[#0B1C2C]">
@@ -326,7 +327,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 className="w-full inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
               />
               <Link
-                href="/planejar-viagem"
+                href={getLocalizedPath(lang, "planTrip")}
                 className="mt-4 w-full inline-flex items-center justify-center rounded-xl border border-[#003366] px-6 py-3 text-[#003366] font-semibold hover:bg-[#003366] hover:text-white transition"
               >
                 {detailLabels.talkToConsultant}

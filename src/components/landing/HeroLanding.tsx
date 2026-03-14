@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { siteContent } from "@/config/site-content"
+import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
 export default function HeroLanding() {
@@ -12,11 +13,11 @@ export default function HeroLanding() {
   const tabs = content.tabs
 
   const ctaHref =
-    activeTab === 0 ? "/flights" :
-    activeTab === 1 ? "/hotels" :
-    activeTab === 2 ? "/packages" :
-    activeTab === 3 ? "/activities" :
-    "/flights"
+    activeTab === 0 ? getLocalizedPath(lang, "flights") :
+    activeTab === 1 ? getLocalizedPath(lang, "hotels") :
+    activeTab === 2 ? getLocalizedPath(lang, "packages") :
+    activeTab === 3 ? getLocalizedPath(lang, "activities") :
+    getLocalizedPath(lang, "flights")
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">

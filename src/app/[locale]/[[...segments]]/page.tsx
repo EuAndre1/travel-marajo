@@ -24,10 +24,10 @@ import CheckoutPage from "@/app/checkout/page"
 import CheckoutSuccessPage from "@/app/checkout/success/page"
 import CheckoutCancelPage from "@/app/checkout/cancel/page"
 import { getDestinationBySlug } from "@/data/destinos"
-import { getExperienceBySlug } from "@/data/experiencias"
 import { getGuideBySlug } from "@/data/guides"
 import { DEFAULT_LOCALE, LOCALE_TO_BCP47, isAppLocale, type AppLocale } from "@/config/i18n"
 import { buildAbsoluteUrl } from "@/lib/env"
+import { getExperienceBySlug } from "@/lib/experiences"
 import { getLocalizedAlternates, getLocalizedPath, resolveCanonicalRoute, type AppRouteKey } from "@/i18n/routing"
 
 type PageProps = {
@@ -37,18 +37,43 @@ type PageProps = {
   }
 }
 
+const NON_INDEXABLE_ROUTE_POLICIES: Partial<
+  Record<AppRouteKey, { index: boolean; follow: boolean; includeCanonical: boolean }>
+> = {
+  login: { index: false, follow: true, includeCanonical: false },
+  register: { index: false, follow: true, includeCanonical: false },
+  profile: { index: false, follow: false, includeCanonical: false },
+  bookingConfirmation: { index: false, follow: false, includeCanonical: false },
+  checkout: { index: false, follow: false, includeCanonical: false },
+  checkoutSuccess: { index: false, follow: false, includeCanonical: false },
+  checkoutCancel: { index: false, follow: false, includeCanonical: false },
+}
+
 function getMetadataForRoute(locale: AppLocale, key: AppRouteKey, slug?: string): Metadata {
+  const robotsPolicy = NON_INDEXABLE_ROUTE_POLICIES[key]
   const base: Metadata = {
-    alternates: {
-      canonical: getLocalizedPath(locale, key, slug ? { slug } : undefined),
-      languages: getLocalizedAlternates(key, slug ? { slug } : undefined),
-    },
+    ...(robotsPolicy?.includeCanonical === false
+      ? {}
+      : {
+          alternates: {
+            canonical: getLocalizedPath(locale, key, slug ? { slug } : undefined),
+            languages: getLocalizedAlternates(key, slug ? { slug } : undefined),
+          },
+        }),
     openGraph: {
       locale: LOCALE_TO_BCP47[locale].replace("-", "_"),
       url: buildAbsoluteUrl(getLocalizedPath(locale, key, slug ? { slug } : undefined)),
       siteName: "Travel Marajo",
       type: "website",
     },
+    ...(robotsPolicy
+      ? {
+          robots: {
+            index: robotsPolicy.index,
+            follow: robotsPolicy.follow,
+          },
+        }
+      : {}),
   }
 
   if (key === "experienceDetail" && slug) {

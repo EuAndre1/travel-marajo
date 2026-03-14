@@ -6,6 +6,7 @@ import { packages } from "@/data/pacotes"
 import PackageCheckoutButton from "@/components/checkout/PackageCheckoutButton"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { siteContent } from "@/config/site-content"
+import { getLocalizedPath } from "@/i18n/routing"
 
 const localeMap: Record<"pt" | "en" | "es" | "fr", string> = {
   pt: "pt-BR",
@@ -82,7 +83,7 @@ export default function PackagesPage() {
                       className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-5 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
                     />
                     <Link
-                      href="/planejar-viagem"
+                      href={getLocalizedPath(lang, "planTrip")}
                       className="inline-flex items-center justify-center rounded-xl border border-[#003366] px-5 py-3 text-[#003366] font-semibold hover:bg-[#003366] hover:text-white transition"
                     >
                       {content.pages.packages.consultCta}

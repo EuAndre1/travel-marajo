@@ -1,6 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { siteContent } from '@/config/site-content'
+import { getLocalizedPath } from '@/i18n/routing'
 import { useSiteLanguage } from '@/lib/use-site-language'
 
 const experiences = [
@@ -80,9 +82,9 @@ export default function PremiumExperiencesLanding() {
                     <p className="text-sm text-gray-500">por pessoa</p>
                   </div>
 
-                  <a href={item.cta} className="inline-flex w-full items-center justify-center rounded-lg bg-[#FF6600] px-5 py-3 text-white font-semibold hover:bg-[#e55a00] transition-colors">
+                  <Link href={item.cta === '/packages' ? getLocalizedPath(lang, 'packages') : getLocalizedPath(lang, 'activities')} className="inline-flex w-full items-center justify-center rounded-lg bg-[#FF6600] px-5 py-3 text-white font-semibold hover:bg-[#e55a00] transition-colors">
                     {content.bookNow}
-                  </a>
+                  </Link>
                 </div>
               </article>
             ))}

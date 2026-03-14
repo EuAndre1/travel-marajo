@@ -1,12 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { siteContent } from '@/config/site-content'
+import { getLocalizedPath } from '@/i18n/routing'
+import { useSiteLanguage } from '@/lib/use-site-language'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { lang } = useSiteLanguage()
+  const content = siteContent[lang]
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -29,7 +34,7 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error ?? 'Nao foi possivel criar a conta')
+        setError(data.error ?? content.registerError)
         return
       }
 
@@ -40,43 +45,43 @@ export default function RegisterPage() {
       })
 
       if (loginResult?.error) {
-        router.push('/login')
+        router.push(getLocalizedPath(lang, 'login'))
         return
       }
 
-      router.push('/profile')
+      router.push(getLocalizedPath(lang, 'profile'))
       router.refresh()
     } catch {
-      setError('Erro inesperado. Tente novamente.')
+      setError(content.registerUnexpectedError)
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleGoogleSignIn = () => {
-    signIn('google', { callbackUrl: '/profile' })
+    signIn('google', { callbackUrl: getLocalizedPath(lang, 'profile') })
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-neutral-800">Criar conta</h1>
-            <p className="text-neutral-600 mt-1">Comece sua jornada pelo Marajo</p>
+    <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="rounded-2xl bg-white p-8 shadow-xl">
+          <div className="mb-8 text-center">
+            <h1 className="text-2xl font-bold text-neutral-800">{content.registerTitle}</h1>
+            <p className="mt-1 text-neutral-600">{content.registerSubtitle}</p>
           </div>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+          {error ? (
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
               {error}
             </div>
-          )}
+          ) : null}
 
           <button
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-200 rounded-lg text-neutral-700 hover:bg-gray-50 transition-colors mb-4"
+            className="mb-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-200 px-4 py-3 text-neutral-700 transition-colors hover:bg-gray-50"
           >
-            Continuar com Google
+            {content.registerGoogle}
           </button>
 
           <div className="relative my-6">
@@ -84,49 +89,49 @@ export default function RegisterPage() {
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-neutral-500">ou</span>
+              <span className="bg-white px-2 text-neutral-500">{content.loginDivider}</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Nome completo</label>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">{content.registerName}</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Email</label>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">{content.email}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Senha</label>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">{content.loginPassword}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 required
                 minLength={8}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-neutral-700 mb-1">Confirmar senha</label>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">{content.registerConfirmPassword}</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                className="w-full rounded-lg border border-gray-200 px-4 py-3 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                 required
                 minLength={8}
               />
@@ -134,17 +139,17 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50"
+              className="w-full rounded-lg bg-primary py-3 font-semibold text-white transition-colors hover:bg-primary-dark disabled:opacity-50"
             >
-              {isLoading ? 'Criando conta...' : 'Criar conta'}
+              {isLoading ? content.registerSubmitting : content.registerSubmit}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-neutral-600">
-              Ja tem uma conta?{' '}
-              <Link href="/login" className="text-primary hover:text-primary-dark font-medium">
-                Entrar
+              {content.registerHasAccount}{" "}
+              <Link href={getLocalizedPath(lang, 'login')} className="font-medium text-primary hover:text-primary-dark">
+                {content.registerLogin}
               </Link>
             </p>
           </div>

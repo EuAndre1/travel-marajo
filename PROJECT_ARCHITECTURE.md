@@ -73,6 +73,10 @@ Last updated: 2026-03-13
 - Site URL resolution uses `NEXT_PUBLIC_SITE_URL` first, then `NEXTAUTH_URL`.
 - Auth secret now fails explicitly in production when missing.
 - Stripe secret access is centralized through `getRequiredEnv`.
+- Internal preflight helpers now live in:
+  - `src/lib/env.ts` -> `getEnvReadinessReport()`
+  - `src/lib/platform-health.ts` -> `getPlatformHealthReport()` and `getPlatformPreflightReport()`
+- These helpers are tooling-only and support manual QA, staging readiness, and cross-domain integrity checks without creating new public functionality.
 
 ## Media proof readiness
 - Shared media/testimonial typing lives in `src/types/media.ts`.
