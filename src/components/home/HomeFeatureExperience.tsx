@@ -2,15 +2,15 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { homeContent } from "@/data/homepage"
+import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeFeatureExperience() {
-  const { featureExperience } = homeContent
   const { lang } = useSiteLanguage()
+  const { featureExperience } = getHomeContent(lang)
   const content = siteContent[lang]
 
   return (

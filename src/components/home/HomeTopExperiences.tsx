@@ -2,21 +2,25 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useMemo, useState } from "react"
-import { homeContent, ExperienceFilter } from "@/data/homepage"
+import { useEffect, useMemo, useState } from "react"
+import { getHomeContent, ExperienceFilter } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeTopExperiences() {
-  const { topExperiences } = homeContent
-  const [activeFilter, setActiveFilter] = useState<ExperienceFilter>("Todas")
   const { lang } = useSiteLanguage()
+  const { topExperiences } = getHomeContent(lang)
+  const [activeFilter, setActiveFilter] = useState<ExperienceFilter>(topExperiences.filters[0] ?? "")
   const content = siteContent[lang]
+
+  useEffect(() => {
+    setActiveFilter(topExperiences.filters[0] ?? "")
+  }, [topExperiences.filters])
 
   // Filtro simples para comparar experiencias com rapidez.
   const filtered = useMemo(() => {
-    if (activeFilter === "Todas") return topExperiences.items
+    if (activeFilter === topExperiences.filters[0]) return topExperiences.items
     return topExperiences.items.filter((item) => item.category === activeFilter)
   }, [activeFilter, topExperiences.items])
 

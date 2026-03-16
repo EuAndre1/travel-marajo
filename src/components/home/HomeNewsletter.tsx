@@ -1,13 +1,13 @@
 "use client"
 
 import Image from "next/image"
-import { homeContent } from "@/data/homepage"
+import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
 export default function HomeNewsletter() {
-  const { newsletter } = homeContent
   const { lang } = useSiteLanguage()
+  const { newsletter } = getHomeContent(lang)
   const content = siteContent[lang]
 
   return (

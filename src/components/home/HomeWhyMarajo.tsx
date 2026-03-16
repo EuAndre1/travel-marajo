@@ -1,13 +1,13 @@
 "use client"
 
-import { homeContent } from "@/data/homepage"
+import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeWhyMarajo() {
-  const { whyMarajo } = homeContent
   const { lang } = useSiteLanguage()
+  const { whyMarajo } = getHomeContent(lang)
   const content = siteContent[lang]
 
   return (

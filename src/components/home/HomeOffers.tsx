@@ -2,14 +2,14 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { homeContent } from "@/data/homepage"
+import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeOffers() {
-  const { offers } = homeContent
   const { lang } = useSiteLanguage()
+  const { offers } = getHomeContent(lang)
   const content = siteContent[lang]
 
   return (

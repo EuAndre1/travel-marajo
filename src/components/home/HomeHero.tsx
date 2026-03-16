@@ -3,15 +3,15 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { homeContent } from "@/data/homepage"
+import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
 export default function HomeHero() {
-  const { hero } = homeContent
   const [activeTab, setActiveTab] = useState(0)
-  const active = hero.tabs[activeTab]
   const { lang } = useSiteLanguage()
+  const { hero } = getHomeContent(lang)
+  const active = hero.tabs[activeTab]
   const content = siteContent[lang]
 
   return (
