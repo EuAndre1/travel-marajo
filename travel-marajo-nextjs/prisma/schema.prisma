@@ -1,0 +1,327 @@
+// ============================================
+// TRAVEL MARAJO - SCHEMA PRISMA
+// Banco de dados PostgreSQL completo
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// MODELOS DE AUTENTICACAO (NextAuth.js)
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  name                String?
+  email               String?   @unique
+  emailVerified       DateTime?
+  image               String?
+  accounts            Account[]
+  sessions            Session[]
+  bookings            Booking[]
+  reviews             Review[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  phoneNumber         String?
+  country             String?
+  preferredLanguage   String    @default("pt")
+  preferredCurrency   String    @default("BRL")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// MODELOS DE RESERVAS
+// ============================================
+
+model Booking {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  bookingDate     DateTime        @default(now())
+  startDate       DateTime
+  endDate         DateTime?
+  totalPrice      Float
+  currency        String
+  status          BookingStatus   @default(PENDING)
+  paymentId       String?         @unique
+  payment         Payment?        @relation(fields: [paymentId], references: [id])
+  flightBookings  FlightBooking[]
+  hotelBookings   HotelBooking[]
+  packageBookings PackageBooking[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  REFUNDED
+}
+
+// ============================================
+// MODELOS DE PAGAMENTO
+// ============================================
+
+model Payment {
+  id            String        @id @default(cuid())
+  bookingId     String        @unique
+  booking       Booking       @relation(fields: [bookingId], references: [id])
+  amount        Float
+  currency      String
+  method        String
+  transactionId String        @unique
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status])
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// ============================================
+// MODELOS DE VOOS
+// ============================================
+
+model Flight {
+  id                String          @id @default(cuid())
+  flightNumber      String
+  airline           String
+  departureAirport  String
+  arrivalAirport    String
+  departureTime     DateTime
+  arrivalTime       DateTime
+  price             Float
+  currency          String
+  availableSeats    Int
+  flightBookings    FlightBooking[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@unique([flightNumber, departureTime])
+  @@index([departureAirport])
+  @@index([arrivalAirport])
+}
+
+model FlightBooking {
+  id                  String   @id @default(cuid())
+  bookingId           String
+  booking             Booking  @relation(fields: [bookingId], references: [id])
+  flightId            String
+  flight              Flight   @relation(fields: [flightId], references: [id])
+  numPassengers       Int
+  seatNumbers         String[]
+  priceAtBooking      Float
+  currencyAtBooking   String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([bookingId, flightId])
+  @@index([bookingId])
+  @@index([flightId])
+}
+
+// ============================================
+// MODELOS DE HOSPEDAGEM
+// ============================================
+
+model Accommodation {
+  id              String          @id @default(cuid())
+  name            String
+  type            String
+  description     String          @db.Text
+  address         String
+  city            String
+  state           String
+  country         String
+  latitude        Float?
+  longitude       Float?
+  pricePerNight   Float
+  currency        String
+  rating          Float?
+  images          String[]
+  amenities       String[]
+  hotelBookings   HotelBooking[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([city])
+  @@index([country])
+  @@index([type])
+}
+
+model HotelBooking {
+  id                  String        @id @default(cuid())
+  bookingId           String
+  booking             Booking       @relation(fields: [bookingId], references: [id])
+  accommodationId     String
+  accommodation       Accommodation @relation(fields: [accommodationId], references: [id])
+  checkInDate         DateTime
+  checkOutDate        DateTime
+  numGuests           Int
+  numRooms            Int
+  priceAtBooking      Float
+  currencyAtBooking   String
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@unique([bookingId, accommodationId])
+  @@index([bookingId])
+  @@index([accommodationId])
+}
+
+// ============================================
+// MODELOS DE PACOTES
+// ============================================
+
+model Package {
+  id              String           @id @default(cuid())
+  name            String
+  description     String           @db.Text
+  price           Float
+  currency        String
+  durationDays    Int
+  includes        String[]
+  destinations    String[]
+  images          String[]
+  availableFrom   DateTime
+  availableTo     DateTime
+  packageBookings PackageBooking[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@index([name])
+  @@index([price])
+}
+
+model PackageBooking {
+  id                  String   @id @default(cuid())
+  bookingId           String
+  booking             Booking  @relation(fields: [bookingId], references: [id])
+  packageId           String
+  package             Package  @relation(fields: [packageId], references: [id])
+  numTravelers        Int
+  priceAtBooking      Float
+  currencyAtBooking   String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([bookingId, packageId])
+  @@index([bookingId])
+  @@index([packageId])
+}
+
+// ============================================
+// MODELOS DE AVALIACOES
+// ============================================
+
+model Review {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  entityType  String
+  entityId    String
+  rating      Int
+  comment     String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([entityType, entityId])
+}
+
+// ============================================
+// MODELOS DE DESTINOS
+// ============================================
+
+model Destination {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String   @db.Text
+  images      String[]
+  latitude    Float?
+  longitude   Float?
+  country     String
+  state       String
+  city        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([country])
+  @@index([state])
+}
+
+// ============================================
+// MODELOS DE PROMOCOES
+// ============================================
+
+model Promotion {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  discountValue Float
+  discountType  String
+  minOrderValue Float?
+  maxDiscount   Float?
+  validFrom     DateTime
+  validTo       DateTime
+  isActive      Boolean  @default(true)
+  appliesTo     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+}
