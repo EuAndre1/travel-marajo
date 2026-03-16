@@ -402,3 +402,87 @@ For each failure, classify it immediately as one of:
   2. deploy to staging
   3. run the manual QA checklist in staging
   4. validate auth, Stripe, webhook, robots, sitemap, canonical, and hreflang there
+
+## Prisma execution outside this Windows host
+
+### Current decision
+
+- Do not retry Prisma schema execution locally on this Windows machine.
+- The local Prisma schema engine is blocked here by `spawn EPERM`.
+- Apply the current schema from another machine or from CI/staging only.
+
+### Authoritative Railway URL format
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/railway?sslmode=require&connect_timeout=15"
+```
+
+### Option 1: another machine
+
+1. Use another machine with Node `20.x` LTS.
+2. Set the Railway `DATABASE_URL` in the shell or `.env`.
+3. Run:
+
+```bash
+npx prisma db push
+```
+
+### Option 2: CI or staging runner
+
+1. Inject the Railway `DATABASE_URL` in the runner environment.
+2. Use Node `20.x` LTS.
+3. Run:
+
+```bash
+npx prisma db push
+```
+
+### Option 3: one-off GitHub Action
+
+1. Create the GitHub secret:
+   - `DATABASE_URL`
+2. Use the Railway external PostgreSQL format:
+
+```env
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/railway?sslmode=require&connect_timeout=15"
+```
+
+3. Open GitHub:
+   - `Actions` -> `Prisma DB Push` -> `Run workflow`
+4. Expected success signal:
+   - `Validate Prisma schema` passes
+   - `Push current Prisma schema` passes
+   - workflow finishes with a green check
+
+### Verification after `db push`
+
+1. Run:
+
+```bash
+npx prisma validate
+```
+
+2. Confirm the current schema objects exist in PostgreSQL for the existing models only:
+   - `User`
+   - `Account`
+   - `Session`
+   - `VerificationToken`
+   - `Booking`
+   - `BookingItem`
+   - `Payment`
+   - `Destination`
+   - `Package`
+   - `PackageItem`
+   - `Activity`
+   - `Lead`
+   - `CommercialEvent`
+   - `EventProcessingLock`
+   - `Flight`
+   - `FlightBooking`
+   - `Accommodation`
+   - `HotelBooking`
+   - `PackageBooking`
+   - `Review`
+   - `Promotion`
+
+3. Only after `db push` succeeds, proceed with staging smoke tests.

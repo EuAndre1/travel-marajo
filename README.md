@@ -224,3 +224,17 @@ Em caso de dúvidas ou problemas:
   - `src/lib/platform-health.ts` -> `getPlatformHealthReport()` and `getPlatformPreflightReport()`
   - `src/lib/env.ts` -> `getEnvReadinessReport()`
 - Use these helpers as internal tooling references before browser/staging validation. They are not public product features.
+
+## Prisma note
+
+- Prisma schema execution is currently blocked on this Windows host by `spawn EPERM`.
+- The safe path is to run the current schema outside this machine with Node `20.x` LTS using:
+  - `npx prisma db push`
+- Use the Railway external PostgreSQL format documented in `GUIA_DEPLOY.md`:
+  - `postgresql://USER:PASSWORD@HOST:PORT/railway?sslmode=require&connect_timeout=15`
+- A manual one-off GitHub Action is available at:
+  - `.github/workflows/prisma-db-push.yml`
+- Required GitHub secret:
+  - `DATABASE_URL`
+- Manual trigger path:
+  - `Actions` -> `Prisma DB Push` -> `Run workflow`
