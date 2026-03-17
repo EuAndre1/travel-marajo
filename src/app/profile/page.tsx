@@ -75,6 +75,7 @@ export default function ProfilePage() {
   const firstName = (session.user?.name ?? content.profileTravelerBadge).split(' ')[0]
   const bookingCount = bookings.length
   const nextPrimaryAction = bookingCount > 0 ? getLocalizedPath(lang, 'packages') : getLocalizedPath(lang, 'experiences')
+  const nextPrimaryActionLabel = bookingCount > 0 ? content.profileActionPackages : content.profileActionExperiences
   const quickActions = [
     {
       title: content.profileActionFlights,
@@ -157,6 +158,26 @@ export default function ProfilePage() {
       cta: content.profileActionPlanTrip,
     },
   ]
+  const onboardingCards = [
+    {
+      title: content.profileActionExperiences,
+      body: content.profileExperiencesCardBody,
+      href: getLocalizedPath(lang, 'experiences'),
+      cta: content.profileExperiencesCardCta,
+    },
+    {
+      title: content.profileActionPackages,
+      body: content.profilePackagesCardBody,
+      href: getLocalizedPath(lang, 'packages'),
+      cta: content.profilePackagesCardCta,
+    },
+    {
+      title: content.profileActionPlanTrip,
+      body: content.pages.planTrip.subtitle,
+      href: getLocalizedPath(lang, 'planTrip'),
+      cta: content.profileReservationsSecondaryCta,
+    },
+  ]
   const recentBookingsLabel = useMemo(() => {
     if (bookingCount === 0) {
       return content.profileEmptySubtitle
@@ -230,6 +251,31 @@ export default function ProfilePage() {
                   ) : null}
                 </div>
 
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href={nextPrimaryAction}
+                    className="inline-flex rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark"
+                  >
+                    {nextPrimaryActionLabel}
+                  </Link>
+                  <Link
+                    href={getLocalizedPath(lang, 'planTrip')}
+                    className="inline-flex rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  >
+                    {content.profileActionPlanTrip}
+                  </Link>
+                  {whatsappHref ? (
+                    <a
+                      href={whatsappHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                    >
+                      {content.profileActionWhatsapp}
+                    </a>
+                  ) : null}
+                </div>
+
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
                   {quickActions.map((action) => (
                     <Link
@@ -258,6 +304,61 @@ export default function ProfilePage() {
               </div>
             </div>
           </section>
+
+          {isWelcomeState ? (
+            <section className="grid gap-6 lg:grid-cols-[1.3fr,0.8fr]">
+              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+                <div className="mb-6">
+                  <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileQuickActionsTitle}</p>
+                  <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileWelcomeTitle}</h2>
+                  <p className="mt-2 max-w-2xl text-sm text-slate-500">{content.profileQuickActionsSubtitle}</p>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3">
+                  {onboardingCards.map((card, index) => (
+                    <Link
+                      key={card.title}
+                      href={card.href}
+                      className={`rounded-2xl border p-5 transition hover:-translate-y-0.5 ${
+                        index === 0
+                          ? 'border-[#0B1C2C] bg-[#0B1C2C] text-white'
+                          : 'border-slate-200 bg-slate-50 text-[#0B1C2C]'
+                      }`}
+                    >
+                      <h3 className="text-lg font-semibold">{card.title}</h3>
+                      <p className={`mt-2 text-sm ${index === 0 ? 'text-white/75' : 'text-slate-500'}`}>{card.body}</p>
+                      <span className={`mt-5 inline-flex text-sm font-semibold ${index === 0 ? 'text-accent-light' : 'text-primary'}`}>
+                        {card.cta}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[1.75rem] bg-[linear-gradient(145deg,#f6efe4,#fff9f2)] p-6 shadow-lg">
+                <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileSupportTitle}</p>
+                <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{firstName}, {content.profileTravelerBadge}</h2>
+                <p className="mt-3 text-sm text-slate-500">{content.profileWelcomeSubtitle}</p>
+
+                <div className="mt-6 space-y-3">
+                  <div className="rounded-2xl bg-white/80 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{content.profileBookingsTitle}</p>
+                    <p className="mt-2 text-sm font-semibold text-[#0B1C2C]">
+                      {bookingCount > 0 ? recentBookingsLabel : content.profileEmptyTitle}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl bg-white/80 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{content.pages.planTrip.responseTitle}</p>
+                    <p className="mt-2 text-sm font-semibold text-[#0B1C2C]">{content.pages.planTrip.responseText}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white/80 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{content.profileSupportEmailLabel}</p>
+                    <p className="mt-2 text-sm font-semibold text-[#0B1C2C]">{session.user?.email}</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          ) : null}
 
           <section className="grid gap-6 lg:grid-cols-[1.4fr,0.9fr]">
             <div className="space-y-6">
