@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const router = useRouter()
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
+  const profileWelcomeUrl = `${getLocalizedPath(lang, 'profile')}?welcome=1`
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -42,7 +43,7 @@ export default function RegisterPage() {
         email,
         password,
         redirect: false,
-        callbackUrl: getLocalizedPath(lang, 'profile'),
+        callbackUrl: profileWelcomeUrl,
       })
 
       if (loginResult?.error) {
@@ -50,7 +51,7 @@ export default function RegisterPage() {
         return
       }
 
-      router.push(loginResult?.url ?? getLocalizedPath(lang, 'profile'))
+      router.push(loginResult?.url ?? profileWelcomeUrl)
       router.refresh()
     } catch {
       setError(content.registerUnexpectedError)
@@ -60,7 +61,7 @@ export default function RegisterPage() {
   }
 
   const handleGoogleSignIn = () => {
-    signIn('google', { callbackUrl: getLocalizedPath(lang, 'profile') })
+    signIn('google', { callbackUrl: profileWelcomeUrl })
   }
 
   return (
