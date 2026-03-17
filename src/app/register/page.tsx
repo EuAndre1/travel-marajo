@@ -42,6 +42,7 @@ export default function RegisterPage() {
         email,
         password,
         redirect: false,
+        callbackUrl: getLocalizedPath(lang, 'profile'),
       })
 
       if (loginResult?.error) {
@@ -49,7 +50,7 @@ export default function RegisterPage() {
         return
       }
 
-      router.push(getLocalizedPath(lang, 'profile'))
+      router.push(loginResult?.url ?? getLocalizedPath(lang, 'profile'))
       router.refresh()
     } catch {
       setError(content.registerUnexpectedError)

@@ -25,6 +25,21 @@ const RECOMMENDED_ENV_VARS = [
   "GOOGLE_CLIENT_SECRET",
 ] as const
 
+export function getAdminEmails(): string[] {
+  return (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean)
+}
+
+export function isAdminEmail(email?: string | null): boolean {
+  if (!email) {
+    return false
+  }
+
+  return getAdminEmails().includes(email.trim().toLowerCase())
+}
+
 export interface EnvReadinessReport {
   critical: {
     present: string[]

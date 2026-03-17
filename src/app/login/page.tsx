@@ -36,7 +36,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError(content.loginInvalid)
       } else {
-        router.push(callbackUrl)
+        router.push(result?.url ?? callbackUrl)
         router.refresh()
       }
     } catch {

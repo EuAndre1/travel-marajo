@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { DEFAULT_LOCALE } from "@/config/i18n"
 import { db } from "@/database/client"
-import { getSafeAuthSecret, normalizeLocalizedAppPath } from "@/lib/env"
+import { getSafeAuthSecret, isAdminEmail, normalizeLocalizedAppPath } from "@/lib/env"
 import { getLocalizedPath } from "@/i18n/routing"
 import { validateUserCredentials } from "@/services/user.service"
 
@@ -59,12 +59,19 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.isAdmin = isAdminEmail(user.email ?? token.email)
       }
+
+      if (typeof token.isAdmin !== "boolean") {
+        token.isAdmin = isAdminEmail(token.email)
+      }
+
       return token
     },
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string
+        session.user.isAdmin = Boolean(token.isAdmin)
       }
       return session
     },
