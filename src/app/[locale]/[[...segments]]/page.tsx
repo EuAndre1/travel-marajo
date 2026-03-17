@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import HomePage from "@/app/page"
 import ExperiencesPage from "@/app/experiencias/page"
 import ExperienceDetailPage from "@/app/experiencias/[slug]/page"
@@ -28,7 +28,14 @@ import { getGuideBySlug } from "@/data/guides"
 import { DEFAULT_LOCALE, LOCALE_TO_BCP47, isAppLocale, type AppLocale } from "@/config/i18n"
 import { buildAbsoluteUrl } from "@/lib/env"
 import { getExperienceBySlug } from "@/lib/experiences"
-import { getLocalizedAlternates, getLocalizedPath, resolveCanonicalRoute, type AppRouteKey } from "@/i18n/routing"
+import {
+  getLocalizedAlternates,
+  getLocalizedPath,
+  resolveCanonicalRoute,
+  resolveLegacyRoute,
+  resolveLocalizedAliasRoute,
+  type AppRouteKey,
+} from "@/i18n/routing"
 
 type PageProps = {
   params: {
@@ -159,9 +166,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function LocalizedPage({ params }: PageProps) {
   const { locale, segments = [] } = params
+  const requestedPath = `/${[locale, ...segments].join("/")}`
 
   if (!isAppLocale(locale)) {
+    const legacyMatch = resolveLegacyRoute(requestedPath)
+    if (legacyMatch) {
+      redirect(getLocalizedPath(legacyMatch.locale ?? DEFAULT_LOCALE, legacyMatch.key, legacyMatch.params))
+    }
+
     notFound()
+  }
+
+  const localizedAliasMatch = resolveLocalizedAliasRoute(locale, segments)
+  if (localizedAliasMatch) {
+    redirect(getLocalizedPath(locale, localizedAliasMatch.key, localizedAliasMatch.params))
   }
 
   const matched = resolveCanonicalRoute(locale, segments)
