@@ -13,7 +13,11 @@ import {
 
 export type SiteLang = AppLocale
 
-function buildLocalizedCurrentPath(pathname: string, targetLocale: AppLocale) {
+function buildLocalizedCurrentPath(pathname: string | null | undefined, targetLocale: AppLocale) {
+  if (!pathname) {
+    return getLocalizedPath(targetLocale, "home")
+  }
+
   const currentLocale = detectLocaleFromPathname(pathname)
 
   if (currentLocale) {
@@ -43,6 +47,10 @@ export function useSiteLanguage() {
   }, [])
 
   const lang = useMemo<SiteLang>(() => {
+    if (!pathname) {
+      return DEFAULT_LOCALE
+    }
+
     const detected = detectLocaleFromPathname(pathname)
     return detected ?? DEFAULT_LOCALE
   }, [pathname])
@@ -57,7 +65,7 @@ export function useSiteLanguage() {
     }
 
     const nextPath = buildLocalizedCurrentPath(pathname, value)
-    const query = searchParams.toString()
+    const query = searchParams?.toString() ?? ""
     router.push(query ? `${nextPath}?${query}` : nextPath)
   }
 

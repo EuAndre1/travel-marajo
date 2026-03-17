@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -39,32 +38,55 @@ export default function ProfilePage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const isWelcomeState = searchParams.get('welcome') === '1'
+  const isWelcomeState = searchParams?.get('welcome') === '1'
   const supportMessage = content.pages.planTrip.whatsappMessage
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
   const whatsappHref = whatsappNumber
     ? `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(supportMessage)}`
     : null
+  const avatarSrc =
+    typeof session?.user?.image === 'string' && session.user.image.trim().length > 0
+      ? session.user.image
+      : '/images/default-avatar.png'
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push(getLocalizedPath(lang, 'login'))
+      setIsLoading(false)
+      router.replace(getLocalizedPath(lang, 'login'))
     }
   }, [lang, router, status])
 
   useEffect(() => {
+    if (status !== 'authenticated' || !session) {
+      if (status !== 'loading') {
+        setIsLoading(false)
+      }
+
+      return
+    }
+
+    let isActive = true
+
     const fetchTravelerHubData = async () => {
+      setIsLoading(true)
+
       try {
         const [bookingsResult, activitiesResult] = await Promise.allSettled([
           fetch('/api/bookings'),
           fetch('/api/activities'),
         ])
 
+        if (!isActive) {
+          return
+        }
+
         if (bookingsResult.status === 'fulfilled') {
           const response = bookingsResult.value
           if (response.ok) {
             const data = await response.json()
-            setBookings(data.bookings || [])
+            if (isActive) {
+              setBookings(data.bookings || [])
+            }
           }
         } else {
           console.error('Error while fetching bookings:', bookingsResult.reason)
@@ -74,7 +96,9 @@ export default function ProfilePage() {
           const response = activitiesResult.value
           if (response.ok) {
             const data = await response.json()
-            setActivities(data.activities || [])
+            if (isActive) {
+              setActivities(data.activities || [])
+            }
           }
         } else {
           console.error('Error while fetching activities:', activitiesResult.reason)
@@ -82,16 +106,20 @@ export default function ProfilePage() {
       } catch (error) {
         console.error('Error while fetching traveler hub data:', error)
       } finally {
-        setIsLoading(false)
+        if (isActive) {
+          setIsLoading(false)
+        }
       }
     }
 
-    if (session) {
-      fetchTravelerHubData()
-    }
-  }, [session])
+    fetchTravelerHubData()
 
-  if (status === 'loading' || isLoading) {
+    return () => {
+      isActive = false
+    }
+  }, [session, status])
+
+  if (status === 'loading' || (status === 'authenticated' && isLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-50">
         <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -99,7 +127,7 @@ export default function ProfilePage() {
     )
   }
 
-  if (!session) {
+  if (status !== 'authenticated' || !session) {
     return null
   }
 
@@ -251,11 +279,10 @@ export default function ProfilePage() {
           <section className="overflow-hidden rounded-[2rem] bg-[#0B1C2C] text-white shadow-2xl">
             <div className="grid gap-8 px-6 py-8 md:grid-cols-[auto,1fr] md:px-8 lg:px-10">
               <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/10 md:mx-0">
-                <Image
-                  src={session.user?.image || '/images/default-avatar.png'}
+                <img
+                  src={avatarSrc}
                   alt={session.user?.name || 'User'}
-                  fill
-                  className="object-cover"
+                  className="h-full w-full object-cover"
                 />
               </div>
               <div className="space-y-5">

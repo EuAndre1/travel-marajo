@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { getServerSession } from "next-auth"
 import { notFound, redirect } from "next/navigation"
 import HomePage from "@/app/page"
 import ExperiencesPage from "@/app/experiencias/page"
@@ -26,6 +27,7 @@ import CheckoutCancelPage from "@/app/checkout/cancel/page"
 import { getDestinationBySlug } from "@/data/destinos"
 import { getGuideBySlug } from "@/data/guides"
 import { DEFAULT_LOCALE, LOCALE_TO_BCP47, isAppLocale, type AppLocale } from "@/config/i18n"
+import { authOptions } from "@/lib/auth"
 import { buildAbsoluteUrl } from "@/lib/env"
 import { getExperienceBySlug } from "@/lib/experiences"
 import {
@@ -185,6 +187,14 @@ export default async function LocalizedPage({ params }: PageProps) {
   const matched = resolveCanonicalRoute(locale, segments)
   if (!matched) {
     notFound()
+  }
+
+  if (matched.key === "profile" || matched.key === "bookingConfirmation") {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user?.id) {
+      redirect(`${getLocalizedPath(locale, "login")}?callbackUrl=${encodeURIComponent(requestedPath)}`)
+    }
   }
 
   switch (matched.key) {
