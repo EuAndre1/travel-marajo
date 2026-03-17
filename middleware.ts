@@ -8,6 +8,7 @@ import {
   getLocalizedPath,
   resolveCanonicalRoute,
   resolveLegacyRoute,
+  resolveLocalizedAliasRoute,
   stripLocalePrefix,
 } from "@/i18n/routing"
 
@@ -62,6 +63,14 @@ export async function middleware(request: NextRequest) {
 
   if (!locale) {
     return NextResponse.next()
+  }
+
+  const localizedAliasMatch = resolveLocalizedAliasRoute(locale, segments)
+  if (localizedAliasMatch) {
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = getLocalizedPath(locale, localizedAliasMatch.key, localizedAliasMatch.params)
+    redirectUrl.search = search
+    return NextResponse.redirect(redirectUrl)
   }
 
   const canonicalMatch = resolveCanonicalRoute(locale, segments)

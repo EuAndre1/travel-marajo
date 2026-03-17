@@ -87,6 +87,7 @@ const ROUTES: Record<AppRouteKey, RouteDefinition> = {
 
 const LEGACY_STATIC_PATHS: Array<{ path: string; key: AppRouteKey; locale?: AppLocale; params?: Record<string, string> }> = [
   { path: "/", key: "home" },
+  { path: "/meuperfil", key: "profile", locale: "pt" },
   { path: "/experiencias", key: "experiences", locale: "pt" },
   { path: "/experiences", key: "experiences", locale: "en" },
   { path: "/pacotes", key: "packages", locale: "pt" },
@@ -121,6 +122,15 @@ const LEGACY_STATIC_PATHS: Array<{ path: string; key: AppRouteKey; locale?: AppL
   { path: "/checkout", key: "checkout" },
   { path: "/checkout/success", key: "checkoutSuccess" },
   { path: "/checkout/cancel", key: "checkoutCancel" },
+]
+
+const LOCALIZED_ALIAS_PATHS: Array<{
+  locale: AppLocale
+  segments: string[]
+  key: AppRouteKey
+  params?: Record<string, string>
+}> = [
+  { locale: "pt", segments: ["meuperfil"], key: "profile" },
 ]
 
 export function getLocalizedPath(
@@ -227,6 +237,26 @@ export function resolveLegacyRoute(pathname: string): { key: AppRouteKey; locale
   }
 
   return null
+}
+
+export function resolveLocalizedAliasRoute(
+  locale: AppLocale,
+  segments: string[],
+): { key: AppRouteKey; params?: { slug: string } } | null {
+  const aliasMatch = LOCALIZED_ALIAS_PATHS.find(
+    (entry) =>
+      entry.locale === locale &&
+      entry.segments.length === segments.length &&
+      entry.segments.every((segment, index) => segment === segments[index]),
+  )
+
+  if (!aliasMatch) {
+    return null
+  }
+
+  return aliasMatch.params
+    ? { key: aliasMatch.key, params: { slug: aliasMatch.params.slug } }
+    : { key: aliasMatch.key }
 }
 
 export function getLocaleFromCookie(cookieValue?: string): AppLocale {

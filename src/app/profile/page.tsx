@@ -19,6 +19,17 @@ interface Booking {
   status: string
 }
 
+interface Activity {
+  id: string
+  slug: string
+  name: string
+  shortDescription: string | null
+  description: string
+  price: number
+  currency: string
+  durationMinutes: number | null
+}
+
 export default function ProfilePage() {
   const { data: session, status } = useSession()
   const router = useRouter()
@@ -26,6 +37,7 @@ export default function ProfilePage() {
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
   const [bookings, setBookings] = useState<Booking[]>([])
+  const [activities, setActivities] = useState<Activity[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const isWelcomeState = searchParams.get('welcome') === '1'
   const supportMessage = content.pages.planTrip.whatsappMessage
@@ -41,22 +53,41 @@ export default function ProfilePage() {
   }, [lang, router, status])
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchTravelerHubData = async () => {
       try {
-        const response = await fetch('/api/bookings')
-        if (response.ok) {
-          const data = await response.json()
-          setBookings(data.bookings || [])
+        const [bookingsResult, activitiesResult] = await Promise.allSettled([
+          fetch('/api/bookings'),
+          fetch('/api/activities'),
+        ])
+
+        if (bookingsResult.status === 'fulfilled') {
+          const response = bookingsResult.value
+          if (response.ok) {
+            const data = await response.json()
+            setBookings(data.bookings || [])
+          }
+        } else {
+          console.error('Error while fetching bookings:', bookingsResult.reason)
+        }
+
+        if (activitiesResult.status === 'fulfilled') {
+          const response = activitiesResult.value
+          if (response.ok) {
+            const data = await response.json()
+            setActivities(data.activities || [])
+          }
+        } else {
+          console.error('Error while fetching activities:', activitiesResult.reason)
         }
       } catch (error) {
-        console.error('Error while fetching bookings:', error)
+        console.error('Error while fetching traveler hub data:', error)
       } finally {
         setIsLoading(false)
       }
     }
 
     if (session) {
-      fetchBookings()
+      fetchTravelerHubData()
     }
   }, [session])
 
@@ -178,6 +209,7 @@ export default function ProfilePage() {
       cta: content.profileReservationsSecondaryCta,
     },
   ]
+  const activityHighlights = useMemo(() => activities.slice(0, 3), [activities])
   const recentBookingsLabel = useMemo(() => {
     if (bookingCount === 0) {
       return content.profileEmptySubtitle
@@ -429,6 +461,61 @@ export default function ProfilePage() {
                             <p className="text-xl font-bold text-primary">{formatPrice(booking.totalPrice, booking.currency)}</p>
                           </div>
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+                <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileActivitiesTitle}</p>
+                    <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileActivitiesTitle}</h2>
+                    <p className="mt-2 max-w-2xl text-sm text-slate-500">{content.profileActivitiesSubtitle}</p>
+                  </div>
+                  <Link
+                    href={getLocalizedPath(lang, 'activities')}
+                    className="inline-flex rounded-full border border-primary/20 px-4 py-2 text-sm font-semibold text-primary transition hover:border-primary"
+                  >
+                    {content.profileActivitiesBrowseCta}
+                  </Link>
+                </div>
+
+                {activityHighlights.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center">
+                    <p className="text-lg font-semibold text-[#0B1C2C]">{content.profileActivitiesEmpty}</p>
+                    <Link
+                      href={getLocalizedPath(lang, 'activities')}
+                      className="mt-5 inline-flex rounded-full bg-[#0B1C2C] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#10283d]"
+                    >
+                      {content.profileActivitiesBrowseCta}
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-3">
+                    {activityHighlights.map((activity) => (
+                      <div key={activity.id} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                        <h3 className="text-lg font-semibold text-[#0B1C2C]">{activity.name}</h3>
+                        <p className="mt-2 text-sm text-slate-500">
+                          {activity.shortDescription ?? activity.description}
+                        </p>
+                        <div className="mt-4 flex items-center justify-between gap-3 text-sm text-slate-400">
+                          <span>
+                            {activity.durationMinutes
+                              ? `${activity.durationMinutes} min`
+                              : content.profileActivitiesDurationFallback}
+                          </span>
+                          <span className="font-semibold text-primary">
+                            {formatPrice(activity.price, activity.currency)}
+                          </span>
+                        </div>
+                        <Link
+                          href={getLocalizedPath(lang, 'activities')}
+                          className="mt-5 inline-flex text-sm font-semibold text-primary transition hover:text-primary-dark"
+                        >
+                          {content.profileActivitiesCta}
+                        </Link>
                       </div>
                     ))}
                   </div>
