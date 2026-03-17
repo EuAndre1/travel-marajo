@@ -56,10 +56,15 @@ export const authOptions: AuthOptions = {
     error: "/pt/entrar",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id
         token.isAdmin = isAdminEmail(user.email ?? token.email)
+        token.picture = user.image ?? token.picture
+      }
+
+      if (trigger === "update" && typeof session?.image === "string") {
+        token.picture = session.image
       }
 
       if (typeof token.isAdmin !== "boolean") {
@@ -72,6 +77,9 @@ export const authOptions: AuthOptions = {
       if (session.user && token.id) {
         session.user.id = token.id as string
         session.user.isAdmin = Boolean(token.isAdmin)
+        if (typeof token.picture === "string") {
+          session.user.image = token.picture
+        }
       }
       return session
     },

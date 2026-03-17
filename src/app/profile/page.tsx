@@ -30,7 +30,7 @@ interface Activity {
 }
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession()
+  const { data: session, status, update } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
   const { lang } = useSiteLanguage()
@@ -40,6 +40,9 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [avatarFileName, setAvatarFileName] = useState('')
+  const [avatarMessage, setAvatarMessage] = useState('')
+  const [avatarError, setAvatarError] = useState('')
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement | null>(null)
   const isWelcomeState = searchParams?.get('welcome') === '1'
   const supportMessage = content.pages.planTrip.whatsappMessage
@@ -52,6 +55,10 @@ export default function ProfilePage() {
     (typeof session?.user?.image === 'string' && session.user.image.trim().length > 0
       ? session.user.image
       : '/images/default-avatar.png')
+  const canSaveAvatar =
+    Boolean(avatarPreview) &&
+    avatarPreview !== session?.user?.image &&
+    !isSavingAvatar
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -277,17 +284,59 @@ export default function ProfilePage() {
     const file = event.target.files?.[0]
 
     if (!file || !file.type.startsWith('image/')) {
+      setAvatarError(content.profileAvatarInvalid)
+      setAvatarMessage('')
       return
     }
 
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setAvatarPreview(reader.result)
+    setAvatarError('')
+    setAvatarMessage('')
+
+    optimizeAvatar(file)
+      .then((imageDataUrl) => {
+        setAvatarPreview(imageDataUrl)
         setAvatarFileName(file.name)
-      }
+      })
+      .catch((error) => {
+        console.error('Error while preparing avatar preview:', error)
+        setAvatarError(content.profileAvatarError)
+      })
+  }
+
+  const handleAvatarSave = async () => {
+    if (!avatarPreview || isSavingAvatar) {
+      return
     }
-    reader.readAsDataURL(file)
+
+    setIsSavingAvatar(true)
+    setAvatarError('')
+    setAvatarMessage('')
+
+    try {
+      const response = await fetch('/api/profile/avatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: avatarPreview }),
+      })
+
+      const data = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        setAvatarError(resolveAvatarErrorMessage(data?.error, content))
+        return
+      }
+
+      const savedImage = typeof data?.image === 'string' ? data.image : avatarPreview
+      await update({ image: savedImage })
+      setAvatarPreview(savedImage)
+      setAvatarMessage(content.profileAvatarSaved)
+      router.refresh()
+    } catch (error) {
+      console.error('Error while saving avatar:', error)
+      setAvatarError(content.profileAvatarError)
+    } finally {
+      setIsSavingAvatar(false)
+    }
   }
 
   return (
@@ -321,11 +370,21 @@ export default function ProfilePage() {
                   >
                     {avatarPreview ? content.profileAvatarReplaceCta : content.profileAvatarChooseCta}
                   </button>
+                  <button
+                    type="button"
+                    onClick={handleAvatarSave}
+                    disabled={!canSaveAvatar}
+                    className="mt-3 inline-flex rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 disabled:cursor-not-allowed disabled:border-white/10 disabled:text-white/40"
+                  >
+                    {isSavingAvatar ? content.profileAvatarSavingCta : content.profileAvatarSaveCta}
+                  </button>
                   {avatarFileName ? (
                     <p className="mt-3 text-xs text-white/70">
                       {content.profileAvatarSelectedLabel}: {avatarFileName}
                     </p>
                   ) : null}
+                  {avatarMessage ? <p className="mt-3 text-xs text-emerald-200">{avatarMessage}</p> : null}
+                  {avatarError ? <p className="mt-3 text-xs text-rose-200">{avatarError}</p> : null}
                   <p className="mt-3 text-xs text-white/55">{content.profileAvatarPreviewOnly}</p>
                 </div>
               </div>
@@ -708,4 +767,67 @@ export default function ProfilePage() {
       </div>
     </div>
   )
+}
+
+async function optimizeAvatar(file: File) {
+  const dataUrl = await readFileAsDataUrl(file)
+  const image = await loadImage(dataUrl)
+
+  const maxSize = 320
+  const scale = Math.min(maxSize / image.width, maxSize / image.height, 1)
+  const targetWidth = Math.max(1, Math.round(image.width * scale))
+  const targetHeight = Math.max(1, Math.round(image.height * scale))
+
+  const canvas = document.createElement('canvas')
+  canvas.width = targetWidth
+  canvas.height = targetHeight
+
+  const context = canvas.getContext('2d')
+  if (!context) {
+    throw new Error('Missing canvas context')
+  }
+
+  context.drawImage(image, 0, 0, targetWidth, targetHeight)
+  return canvas.toDataURL('image/jpeg', 0.82)
+}
+
+function readFileAsDataUrl(file: File) {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result)
+        return
+      }
+
+      reject(new Error('Invalid file result'))
+    }
+
+    reader.onerror = () => reject(reader.error ?? new Error('Failed to read file'))
+    reader.readAsDataURL(file)
+  })
+}
+
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error('Failed to load image'))
+    image.src = src
+  })
+}
+
+function resolveAvatarErrorMessage(
+  rawError: string | null | undefined,
+  content: (typeof siteContent)[keyof typeof siteContent]
+) {
+  switch (rawError) {
+    case 'INVALID_IMAGE_FORMAT':
+      return content.profileAvatarInvalid
+    case 'IMAGE_TOO_LARGE':
+      return content.profileAvatarTooLarge
+    default:
+      return content.profileAvatarError
+  }
 }
