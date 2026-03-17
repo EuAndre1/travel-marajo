@@ -2,23 +2,29 @@
 
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useMemo, useState } from 'react'
 import { siteContent } from '@/config/site-content'
 import { getLocalizedPath } from '@/i18n/routing'
 import { useSiteLanguage } from '@/lib/use-site-language'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
   const profileWelcomeUrl = `${getLocalizedPath(lang, 'profile')}?welcome=1`
+  const routeError = useMemo(
+    () => resolveRegisterErrorMessage(searchParams.get('error'), content),
+    [content, searchParams]
+  )
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const visibleError = error || routeError
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,28 +32,46 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
+      const trimmedName = name.trim()
+      const normalizedEmail = email.trim().toLowerCase()
+
+      if (trimmedName.length < 2) {
+        setError(content.registerNameValidation)
+        return
+      }
+
+      if (password !== confirmPassword) {
+        setError(content.registerPasswordMismatch)
+        return
+      }
+
+      if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+        setError(content.registerPasswordStrength)
+        return
+      }
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password, confirmPassword }),
+        body: JSON.stringify({ name: trimmedName, email: normalizedEmail, password, confirmPassword }),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        setError(data.error ?? content.registerError)
+        setError(resolveRegisterErrorMessage(data.error, content))
         return
       }
 
       const loginResult = await signIn('credentials', {
-        email,
+        email: normalizedEmail,
         password,
         redirect: false,
         callbackUrl: profileWelcomeUrl,
       })
 
       if (loginResult?.error) {
-        router.push(getLocalizedPath(lang, 'login'))
+        setError(resolveRegisterErrorMessage(loginResult.error, content))
         return
       }
 
@@ -73,9 +97,9 @@ export default function RegisterPage() {
             <p className="mt-1 text-neutral-600">{content.registerSubtitle}</p>
           </div>
 
-          {error ? (
+          {visibleError ? (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-              {error}
+              {visibleError}
             </div>
           ) : null}
 
@@ -159,4 +183,30 @@ export default function RegisterPage() {
       </div>
     </div>
   )
+}
+
+function resolveRegisterErrorMessage(
+  rawError: string | null | undefined,
+  content: (typeof siteContent)[keyof typeof siteContent]
+) {
+  if (!rawError) {
+    return ''
+  }
+
+  switch (rawError.toLowerCase()) {
+    case 'email already in use':
+      return content.registerEmailInUse
+    case 'passwords do not match':
+      return content.registerPasswordMismatch
+    case 'password must include letters and numbers':
+      return content.registerPasswordStrength
+    case 'invalid data':
+    case 'invalid json payload':
+    case 'data_invalid':
+      return content.registerInvalidData
+    case 'credentialssignin':
+      return content.loginInvalid
+    default:
+      return content.registerError
+  }
 }

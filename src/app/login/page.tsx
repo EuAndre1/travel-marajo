@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { siteContent } from '@/config/site-content'
 import { normalizeLocalizedAppPath } from '@/lib/env'
 import { useSiteLanguage } from '@/lib/use-site-language'
@@ -15,10 +15,15 @@ export default function LoginPage() {
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
   const callbackUrl = normalizeLocalizedAppPath(searchParams.get('callbackUrl'), lang)
+  const routeError = useMemo(
+    () => resolveLoginErrorMessage(searchParams.get('error'), content),
+    [content, searchParams]
+  )
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const visibleError = error || routeError
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,7 +39,7 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        setError(content.loginInvalid)
+        setError(resolveLoginErrorMessage(result.error, content))
       } else {
         router.push(result?.url ?? callbackUrl)
         router.refresh()
@@ -59,9 +64,9 @@ export default function LoginPage() {
             <p className="mt-1 text-neutral-600">{content.loginSubtitle}</p>
           </div>
 
-          {error ? (
+          {visibleError ? (
             <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-600">
-              {error}
+              {visibleError}
             </div>
           ) : null}
 
@@ -123,4 +128,27 @@ export default function LoginPage() {
       </div>
     </div>
   )
+}
+
+function resolveLoginErrorMessage(
+  rawError: string | null | undefined,
+  content: (typeof siteContent)[keyof typeof siteContent]
+) {
+  if (!rawError) {
+    return ''
+  }
+
+  switch (rawError.toLowerCase()) {
+    case 'credentialssignin':
+      return content.loginInvalid
+    case 'data_invalid':
+    case 'invalid data':
+    case 'callback':
+    case 'configuration':
+    case 'oauthsignin':
+    case 'oauthcallback':
+    case 'accessdenied':
+    default:
+      return content.loginGenericError
+  }
 }

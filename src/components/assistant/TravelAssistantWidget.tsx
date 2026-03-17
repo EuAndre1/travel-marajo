@@ -31,8 +31,6 @@ interface AssistantMessage {
   text: string
 }
 
-const AUTO_OPEN_DELAY = 10
-
 const defaultProfile: AssistantProfile = {
   language: "pt",
   currency: "BRL",
@@ -63,7 +61,6 @@ export default function TravelAssistantWidget() {
     travelerType: "" as TravelerType | "",
     interestFocus: "" as InterestFocus | "",
   })
-  const autoOpenedRef = useRef(false)
   const proactiveRef = useRef(false)
   const introShownRef = useRef(false)
 
@@ -80,7 +77,7 @@ export default function TravelAssistantWidget() {
     })
   }, [])
 
-  const ensureIntroMessages = useCallback((origin: "auto" | "user") => {
+  const ensureIntroMessages = useCallback((origin: "user") => {
     setMessages((prev) => {
       if (prev.length > 0) return prev
       return [
@@ -102,7 +99,7 @@ export default function TravelAssistantWidget() {
     }
   }, [copy.consent, copy.greeting, copy.question, currency, lang, pathname])
 
-  const handleOpen = useCallback((origin: "auto" | "user") => {
+  const handleOpen = useCallback((origin: "user") => {
     setIsOpen(true)
     ensureIntroMessages(origin)
 
@@ -172,23 +169,8 @@ export default function TravelAssistantWidget() {
   }, [currency, lang, pathname, profile.travelerType])
 
   useEffect(() => {
-    if (autoOpenedRef.current) return
-    const alreadyOpened = window.sessionStorage.getItem("tm_assistant_auto_opened")
-    if (alreadyOpened) {
-      autoOpenedRef.current = true
-      return
-    }
+    if (!isOpen) return
 
-    const timer = window.setTimeout(() => {
-      autoOpenedRef.current = true
-      window.sessionStorage.setItem("tm_assistant_auto_opened", "true")
-      handleOpen("auto")
-    }, AUTO_OPEN_DELAY * 1000)
-
-    return () => window.clearTimeout(timer)
-  }, [handleOpen])
-
-  useEffect(() => {
     const decision = decideAssistantAction(
       {
         lang,
@@ -203,10 +185,6 @@ export default function TravelAssistantWidget() {
     const message = decision.message
     if (decision.action !== "message" || !message || proactiveRef.current) return
     proactiveRef.current = true
-
-    if (!isOpen) {
-      setIsOpen(true)
-    }
 
     setMessages((prev) => {
       if (prev.find((item) => item.text === message)) return prev
