@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { siteContent } from '@/config/site-content'
 import { useSiteLanguage } from '@/lib/use-site-language'
 import { getLocalizedPath } from '@/i18n/routing'
@@ -38,6 +38,9 @@ export default function ProfilePage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+  const [avatarFileName, setAvatarFileName] = useState('')
+  const avatarInputRef = useRef<HTMLInputElement | null>(null)
   const isWelcomeState = searchParams?.get('welcome') === '1'
   const supportMessage = content.pages.planTrip.whatsappMessage
   const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
@@ -45,9 +48,10 @@ export default function ProfilePage() {
     ? `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=${encodeURIComponent(supportMessage)}`
     : null
   const avatarSrc =
-    typeof session?.user?.image === 'string' && session.user.image.trim().length > 0
+    avatarPreview ??
+    (typeof session?.user?.image === 'string' && session.user.image.trim().length > 0
       ? session.user.image
-      : '/images/default-avatar.png'
+      : '/images/default-avatar.png')
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -269,18 +273,61 @@ export default function ProfilePage() {
     }
   }
 
+  const handleAvatarSelection = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+
+    if (!file || !file.type.startsWith('image/')) {
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setAvatarPreview(reader.result)
+        setAvatarFileName(file.name)
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(13,91,145,0.14),_transparent_35%),linear-gradient(180deg,#f6efe4_0%,#f7f7f8_35%,#ffffff_100%)] py-12">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl space-y-8">
           <section className="overflow-hidden rounded-[2rem] bg-[#0B1C2C] text-white shadow-2xl">
-            <div className="grid gap-8 px-6 py-8 md:grid-cols-[auto,1fr] md:px-8 lg:px-10">
-              <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/10 md:mx-0">
-                <img
-                  src={avatarSrc}
-                  alt={session.user?.name || 'User'}
-                  className="h-full w-full object-cover"
-                />
+            <div className="grid gap-8 px-6 py-8 md:grid-cols-[220px,1fr] md:items-start md:px-8 lg:px-10">
+              <div className="space-y-4">
+                <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/10 md:mx-0">
+                  <img
+                    src={avatarSrc}
+                    alt={session.user?.name || 'User'}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="rounded-[1.5rem] border border-white/10 bg-white/6 p-4 backdrop-blur-sm">
+                  <p className="text-xs uppercase tracking-[0.24em] text-white/60">{content.profileAvatarTitle}</p>
+                  <p className="mt-2 text-sm text-white/80">{content.profileAvatarBody}</p>
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleAvatarSelection}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="mt-4 inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0B1C2C] transition hover:bg-white/90"
+                  >
+                    {avatarPreview ? content.profileAvatarReplaceCta : content.profileAvatarChooseCta}
+                  </button>
+                  {avatarFileName ? (
+                    <p className="mt-3 text-xs text-white/70">
+                      {content.profileAvatarSelectedLabel}: {avatarFileName}
+                    </p>
+                  ) : null}
+                  <p className="mt-3 text-xs text-white/55">{content.profileAvatarPreviewOnly}</p>
+                </div>
               </div>
               <div className="space-y-5">
                 <div className="space-y-3">
