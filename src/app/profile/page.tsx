@@ -77,6 +77,18 @@ export default function ProfilePage() {
   const nextPrimaryAction = bookingCount > 0 ? getLocalizedPath(lang, 'packages') : getLocalizedPath(lang, 'experiences')
   const quickActions = [
     {
+      title: content.profileActionFlights,
+      description: content.profileFlightsCardBody,
+      href: getLocalizedPath(lang, 'flights'),
+      tone: 'bg-white text-[#0B1C2C] border border-slate-200',
+    },
+    {
+      title: content.profileActionHotels,
+      description: content.profileHotelsCardBody,
+      href: getLocalizedPath(lang, 'hotels'),
+      tone: 'bg-white text-[#0B1C2C] border border-slate-200',
+    },
+    {
       title: content.profileActionExperiences,
       description: content.pages.experiences.subtitle,
       href: getLocalizedPath(lang, 'experiences'),
@@ -97,25 +109,52 @@ export default function ProfilePage() {
   ]
   const mochilaCards = [
     {
-      title: content.profileReservationsCardTitle,
-      body: content.profileReservationsCardBody,
-      empty: bookingCount > 0 ? `${bookingCount} ${content.profileBookingsTitle.toLowerCase()}` : content.profileReservationsCardEmpty,
-      href: nextPrimaryAction,
-      cta: content.profileReservationsCardCta,
+      title: content.profileFlightsCardTitle,
+      body: content.profileFlightsCardBody,
+      empty: content.profileFlightsCardEmpty,
+      href: getLocalizedPath(lang, 'flights'),
+      cta: content.profileFlightsCardCta,
     },
     {
-      title: content.profileSavedCardTitle,
-      body: content.profileSavedCardBody,
-      empty: content.profileSavedCardEmpty,
+      title: content.profileHotelsCardTitle,
+      body: content.profileHotelsCardBody,
+      empty: content.profileHotelsCardEmpty,
+      href: getLocalizedPath(lang, 'hotels'),
+      cta: content.profileHotelsCardCta,
+    },
+    {
+      title: content.profileExperiencesCardTitle,
+      body: content.profileExperiencesCardBody,
+      empty: content.profileExperiencesCardEmpty,
       href: getLocalizedPath(lang, 'experiences'),
-      cta: content.profileSavedCardCta,
+      cta: content.profileExperiencesCardCta,
     },
     {
-      title: content.profilePackagesCardTitle,
-      body: content.profilePackagesCardBody,
-      empty: content.profilePackagesCardEmpty,
+      title: content.profileItineraryCardTitle,
+      body: content.profileItineraryCardBody,
+      empty: content.profileItineraryCardEmpty,
+      href: getLocalizedPath(lang, 'planTrip'),
+      cta: content.profileItineraryCardCta,
+    },
+  ]
+  const suggestionCards = [
+    {
+      title: content.profileSuggestionOneTitle,
+      body: content.profileSuggestionOneBody,
+      href: getLocalizedPath(lang, 'experiences'),
+      cta: content.profileActionExperiences,
+    },
+    {
+      title: content.profileSuggestionTwoTitle,
+      body: content.profileSuggestionTwoBody,
       href: getLocalizedPath(lang, 'packages'),
-      cta: content.profilePackagesCardCta,
+      cta: content.profileActionPackages,
+    },
+    {
+      title: content.profileSuggestionThreeTitle,
+      body: content.profileSuggestionThreeBody,
+      href: getLocalizedPath(lang, 'planTrip'),
+      cta: content.profileActionPlanTrip,
     },
   ]
   const recentBookingsLabel = useMemo(() => {
@@ -191,7 +230,7 @@ export default function ProfilePage() {
                   ) : null}
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
                   {quickActions.map((action) => (
                     <Link
                       key={action.title}
@@ -225,23 +264,45 @@ export default function ProfilePage() {
               <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
                 <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileMochilaTitle}</p>
+                    <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileBookingsTitle}</p>
                     <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileBookingsTitle}</h2>
                     <p className="mt-2 max-w-2xl text-sm text-slate-500">{recentBookingsLabel}</p>
                   </div>
-                  <Link
-                    href={getLocalizedPath(lang, 'experiences')}
-                    className="inline-flex rounded-full border border-primary/20 px-4 py-2 text-sm font-semibold text-primary transition hover:border-primary"
-                  >
-                    {content.profileReservationsCardCta}
-                  </Link>
+                  <div className="flex flex-wrap gap-2">
+                    <Link
+                      href={nextPrimaryAction}
+                      className="inline-flex rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-dark"
+                    >
+                      {content.profileReservationsPrimaryCta}
+                    </Link>
+                    <Link
+                      href={getLocalizedPath(lang, 'planTrip')}
+                      className="inline-flex rounded-full border border-primary/20 px-4 py-2 text-sm font-semibold text-primary transition hover:border-primary"
+                    >
+                      {content.profileReservationsSecondaryCta}
+                    </Link>
+                  </div>
                 </div>
 
                 {bookings.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center">
+                  <div className="rounded-2xl border border-dashed border-slate-200 bg-[linear-gradient(135deg,#fffdf9,#f8f5ef)] px-6 py-10 text-center">
                     <p className="text-lg font-semibold text-[#0B1C2C]">{content.profileEmptyTitle}</p>
                     <p className="mt-2 text-sm text-slate-500">{content.profileReservationsCardBody}</p>
                     <p className="mt-3 text-sm text-slate-400">{content.profileEmptySubtitle}</p>
+                    <div className="mt-5 flex flex-wrap justify-center gap-3">
+                      <Link
+                        href={getLocalizedPath(lang, 'experiences')}
+                        className="inline-flex rounded-full bg-[#0B1C2C] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#10283d]"
+                      >
+                        {content.profileReservationsCardCta}
+                      </Link>
+                      <Link
+                        href={getLocalizedPath(lang, 'packages')}
+                        className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
+                      >
+                        {content.profileActionPackages}
+                      </Link>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -280,7 +341,7 @@ export default function ProfilePage() {
                   <p className="mt-2 text-sm text-slate-500">{content.profileMochilaSubtitle}</p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                   {mochilaCards.map((card) => (
                     <div key={card.title} className="rounded-2xl border border-slate-100 bg-slate-50 p-5">
                       <h3 className="text-lg font-semibold text-[#0B1C2C]">{card.title}</h3>
@@ -293,6 +354,36 @@ export default function ProfilePage() {
                         {card.cta}
                       </Link>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+                <div className="mb-6">
+                  <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileSuggestionsTitle}</p>
+                  <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileQuickActionsTitle}</h2>
+                  <p className="mt-2 text-sm text-slate-500">{content.profileSuggestionsSubtitle}</p>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-3">
+                  {suggestionCards.map((card, index) => (
+                    <Link
+                      key={card.title}
+                      href={card.href}
+                      className={`rounded-2xl p-5 transition hover:-translate-y-0.5 ${
+                        index === 0
+                          ? 'bg-[#0B1C2C] text-white'
+                          : index === 1
+                            ? 'bg-[#f6efe4] text-[#0B1C2C]'
+                            : 'bg-[#eef5fb] text-[#0B1C2C]'
+                      }`}
+                    >
+                      <h3 className="text-lg font-semibold">{card.title}</h3>
+                      <p className={`mt-2 text-sm ${index === 0 ? 'text-white/75' : 'text-slate-600'}`}>{card.body}</p>
+                      <span className={`mt-5 inline-flex text-sm font-semibold ${index === 0 ? 'text-accent-light' : 'text-primary'}`}>
+                        {card.cta}
+                      </span>
+                    </Link>
                   ))}
                 </div>
               </div>
