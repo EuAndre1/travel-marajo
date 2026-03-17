@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { siteContent } from '@/config/site-content'
 import { useSiteLanguage } from '@/lib/use-site-language'
 import { getLocalizedPath } from '@/i18n/routing'
@@ -237,14 +237,11 @@ export default function ProfilePage() {
       cta: content.profileReservationsSecondaryCta,
     },
   ]
-  const activityHighlights = useMemo(() => activities.slice(0, 3), [activities])
-  const recentBookingsLabel = useMemo(() => {
-    if (bookingCount === 0) {
-      return content.profileEmptySubtitle
-    }
-
-    return `${bookingCount} ${content.profileBookingsTitle.toLowerCase()}`
-  }, [bookingCount, content.profileBookingsTitle, content.profileEmptySubtitle])
+  const activityHighlights = activities.slice(0, 3)
+  const recentBookingsLabel =
+    bookingCount === 0
+      ? content.profileEmptySubtitle
+      : `${bookingCount} ${content.profileBookingsTitle.toLowerCase()}`
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString(lang === 'pt' ? 'pt-BR' : lang, {
