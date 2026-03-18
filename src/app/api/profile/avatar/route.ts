@@ -50,3 +50,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'FAILED_TO_SAVE_AVATAR' }, { status: 500 })
   }
 }
+
+export async function GET() {
+  const session = await getServerSession(authOptions)
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        image: true,
+      },
+    })
+
+    return NextResponse.json({ image: user?.image ?? null }, { status: 200 })
+  } catch (error) {
+    console.error('[api/profile/avatar] failed to fetch avatar', error)
+    return NextResponse.json({ error: 'FAILED_TO_FETCH_AVATAR' }, { status: 500 })
+  }
+}

@@ -31,7 +31,7 @@ interface Activity {
 }
 
 export default function ProfilePage() {
-  const { data: session, status, update } = useSession()
+  const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
   const { lang } = useSiteLanguage()
@@ -40,6 +40,7 @@ export default function ProfilePage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [persistedAvatar, setPersistedAvatar] = useState<string | null>(null)
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
   const [avatarFileName, setAvatarFileName] = useState('')
   const [avatarMessage, setAvatarMessage] = useState('')
@@ -54,12 +55,13 @@ export default function ProfilePage() {
     : null
   const avatarSrc =
     avatarPreview ??
+    persistedAvatar ??
     (typeof session?.user?.image === 'string' && session.user.image.trim().length > 0
       ? session.user.image
       : '/images/default-avatar.png')
   const canSaveAvatar =
     Boolean(avatarPreview) &&
-    avatarPreview !== session?.user?.image &&
+    avatarPreview !== (persistedAvatar ?? session?.user?.image ?? null) &&
     !isSavingAvatar
 
   useEffect(() => {
@@ -84,9 +86,10 @@ export default function ProfilePage() {
       setIsLoading(true)
 
       try {
-        const [bookingsResult, activitiesResult] = await Promise.allSettled([
+        const [bookingsResult, activitiesResult, avatarResult] = await Promise.allSettled([
           fetch('/api/bookings'),
           fetch('/api/activities'),
+          fetch('/api/profile/avatar'),
         ])
 
         if (!isActive) {
@@ -115,6 +118,18 @@ export default function ProfilePage() {
           }
         } else {
           console.error('Error while fetching activities:', activitiesResult.reason)
+        }
+
+        if (avatarResult.status === 'fulfilled') {
+          const response = avatarResult.value
+          if (response.ok) {
+            const data = await response.json()
+            if (isActive) {
+              setPersistedAvatar(typeof data.image === 'string' && data.image.trim().length > 0 ? data.image : null)
+            }
+          }
+        } else {
+          console.error('Error while fetching avatar:', avatarResult.reason)
         }
       } catch (error) {
         console.error('Error while fetching traveler hub data:', error)
@@ -329,10 +344,9 @@ export default function ProfilePage() {
       }
 
       const savedImage = typeof data?.image === 'string' ? data.image : avatarPreview
-      await update({ image: savedImage })
-      setAvatarPreview(savedImage)
+      setPersistedAvatar(savedImage)
+      setAvatarPreview(null)
       setAvatarMessage(content.profileAvatarSaved)
-      router.refresh()
     } catch (error) {
       console.error('Error while saving avatar:', error)
       setAvatarError(content.profileAvatarError)

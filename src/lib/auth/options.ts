@@ -45,6 +45,18 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   )
 }
 
+function isEmbeddableSessionImage(value: string | null | undefined) {
+  if (!value) {
+    return false
+  }
+
+  if (value.startsWith("data:image/")) {
+    return false
+  }
+
+  return value.length <= 2048
+}
+
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(db),
   providers,
@@ -60,15 +72,27 @@ export const authOptions: AuthOptions = {
       if (user) {
         token.id = user.id
         token.isAdmin = isAdminEmail(user.email ?? token.email)
-        token.picture = user.image ?? token.picture
+        if (isEmbeddableSessionImage(user.image)) {
+          token.picture = user.image
+        } else {
+          delete token.picture
+        }
       }
 
       if (trigger === "update" && typeof session?.image === "string") {
-        token.picture = session.image
+        if (isEmbeddableSessionImage(session.image)) {
+          token.picture = session.image
+        } else {
+          delete token.picture
+        }
       }
 
       if (typeof token.isAdmin !== "boolean") {
         token.isAdmin = isAdminEmail(token.email)
+      }
+
+      if (typeof token.picture === "string" && !isEmbeddableSessionImage(token.picture)) {
+        delete token.picture
       }
 
       return token
