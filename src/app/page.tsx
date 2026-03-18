@@ -1,20 +1,22 @@
 import type { Metadata } from "next"
 import HomeHero from "@/components/home/HomeHero"
+import HomeTrustStrip from "@/components/home/HomeTrustStrip"
 import HomeWhyMarajo from "@/components/home/HomeWhyMarajo"
 import HomeFeatureExperience from "@/components/home/HomeFeatureExperience"
 import HomeTopExperiences from "@/components/home/HomeTopExperiences"
 import HomeDestinations from "@/components/home/HomeDestinations"
 import HomeRoutesPackages from "@/components/home/HomeRoutesPackages"
-import HomeOffers from "@/components/home/HomeOffers"
+import HomePlanningSupport from "@/components/home/HomePlanningSupport"
 import HomeTravelGuide from "@/components/home/HomeTravelGuide"
 import HomeSocialProof from "@/components/home/HomeSocialProof"
 import HomePartners from "@/components/home/HomePartners"
-import HomeNewsletter from "@/components/home/HomeNewsletter"
+import HomeConciergeSupport from "@/components/home/HomeConciergeSupport"
+import HomeFinalCta from "@/components/home/HomeFinalCta"
 
 export const metadata: Metadata = {
   title: "Travel Marajo | Global gateway to Marajo Island",
   description:
-    "Discover what Marajo is, why it matters, and how to explore it through curated experiences, destination-led storytelling, travel planning, and direct booking support.",
+    "Discover, plan, and book Marajo through premium experiences, curated journeys, travel intelligence, and trusted local support.",
 }
 
 export default function HomePage() {
@@ -37,16 +39,18 @@ export default function HomePage() {
     <main className="overflow-hidden bg-[#f6f3ee]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HomeHero />
+      <HomeTrustStrip />
       <HomeWhyMarajo />
       <HomeTopExperiences />
-      <HomeRoutesPackages />
       <HomeFeatureExperience />
+      <HomeRoutesPackages />
+      <HomePlanningSupport />
       <HomeDestinations />
       <HomeTravelGuide />
       <HomeSocialProof />
       <HomePartners />
-      <HomeOffers />
-      <HomeNewsletter />
+      <HomeConciergeSupport />
+      <HomeFinalCta />
     </main>
   )
 }

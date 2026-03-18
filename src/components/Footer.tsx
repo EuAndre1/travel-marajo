@@ -67,7 +67,7 @@ export default function Footer() {
                   href={getLocalizedPath(lang, "experiences")}
                   className="inline-flex items-center justify-center rounded-full border border-white/14 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/8"
                 >
-                  {chrome.mainNav[0]?.label}
+                  {chrome.bookDirectLabel}
                 </Link>
               </div>
             </div>

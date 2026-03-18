@@ -7,11 +7,7 @@ import { useSession, signOut } from "next-auth/react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import { siteChrome } from "@/data/site"
 import { useSiteLanguage } from "@/lib/use-site-language"
-import {
-  detectLocaleFromPathname,
-  getLocalizedPath,
-  stripLocalePrefix,
-} from "@/i18n/routing"
+import { detectLocaleFromPathname, getLocalizedPath, stripLocalePrefix } from "@/i18n/routing"
 
 const HEADER_HEIGHT_CLASS = "h-[88px]"
 
@@ -65,19 +61,16 @@ export default function Header() {
   const secondaryButtonClass = usesOverlayHeader
     ? "border border-white/40 text-white hover:border-white hover:bg-white/10"
     : "border border-primary/20 text-primary hover:border-primary hover:bg-primary/5"
-  const profileLabel = session?.user?.name
-    ? `${chrome.profileLabel} · ${session.user.name.split(" ")[0]}`
-    : chrome.profileLabel
+  const utilityGhostClass = usesOverlayHeader
+    ? "text-white/82 hover:bg-white/10 hover:text-white"
+    : "text-slate-600 hover:bg-slate-100 hover:text-primary"
 
   return (
     <>
       <header className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${headerSurfaceClass}`}>
         <div className="tm-shell">
           <div className={`flex ${HEADER_HEIGHT_CLASS} items-center gap-4 lg:gap-6`}>
-            <Link
-              href={getLocalizedPath(lang, "home")}
-              className="flex min-w-0 shrink-0 items-center gap-3 pr-2"
-            >
+            <Link href={getLocalizedPath(lang, "home")} className="flex min-w-0 shrink-0 items-center gap-3 pr-2">
               <div
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
                   usesOverlayHeader ? "bg-white/15 backdrop-blur-sm" : "bg-primary"
@@ -100,10 +93,7 @@ export default function Header() {
               </div>
             </Link>
 
-            <nav
-              className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex"
-              aria-label="Primary navigation"
-            >
+            <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex" aria-label="Primary navigation">
               {chrome.mainNav.map((item) => (
                 <Link
                   key={item.label}
@@ -133,26 +123,28 @@ export default function Header() {
                     <option value="fr">FR</option>
                   </select>
                   <span className={`pointer-events-none absolute inset-y-0 right-0 flex items-center text-[10px] ${utilityMutedClass}`}>
-                    ▼
+                    v
                   </span>
                 </div>
               </div>
 
               {status === "loading" ? (
-                <span className={`inline-flex min-w-[126px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold opacity-70 ${secondaryButtonClass}`}>
+                <span
+                  className={`inline-flex min-w-[126px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold opacity-70 ${secondaryButtonClass}`}
+                >
                   ...
                 </span>
               ) : session ? (
                 <>
                   <Link
                     href={getLocalizedPath(lang, "profile")}
-                    className={`inline-flex min-w-[156px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${secondaryButtonClass}`}
+                    className={`inline-flex min-w-[170px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${secondaryButtonClass}`}
                   >
-                    {profileLabel}
+                    {chrome.profileLabel}
                   </Link>
                   <button
                     onClick={() => signOut({ callbackUrl: getLocalizedPath(lang, "home") })}
-                    className="inline-flex min-w-[116px] items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-dark"
+                    className={`inline-flex min-w-[96px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${utilityGhostClass}`}
                   >
                     {chrome.signOutLabel}
                   </button>
@@ -160,7 +152,7 @@ export default function Header() {
               ) : (
                 <Link
                   href={getLocalizedPath(lang, "login")}
-                  className="inline-flex min-w-[116px] items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-dark"
+                  className={`inline-flex min-w-[116px] items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${secondaryButtonClass}`}
                 >
                   {chrome.signInLabel}
                 </Link>
@@ -168,7 +160,7 @@ export default function Header() {
 
               <Link
                 href={getLocalizedPath(lang, "planTrip")}
-                className={`inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-semibold transition ${secondaryButtonClass}`}
+                className="inline-flex min-w-[138px] items-center justify-center rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent-dark"
               >
                 {chrome.planTripLabel}
               </Link>
@@ -177,7 +169,9 @@ export default function Header() {
             <div className="ml-auto xl:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-                className={`rounded-full p-2 transition ${usesOverlayHeader ? "text-white hover:bg-white/10" : "text-primary hover:bg-slate-100"}`}
+                className={`rounded-full p-2 transition ${
+                  usesOverlayHeader ? "text-white hover:bg-white/10" : "text-primary hover:bg-slate-100"
+                }`}
                 aria-label="Open menu"
               >
                 {isMobileMenuOpen ? <XMarkIcon className="h-7 w-7" /> : <Bars3Icon className="h-7 w-7" />}
@@ -220,7 +214,7 @@ export default function Header() {
 
                 <Link
                   href={getLocalizedPath(lang, "planTrip")}
-                  className="mt-2 inline-flex items-center justify-center rounded-full border border-primary/20 px-4 py-3 text-sm font-semibold text-primary transition hover:border-primary hover:bg-primary/5"
+                  className="mt-2 inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {chrome.planTripLabel}
@@ -244,7 +238,7 @@ export default function Header() {
                         signOut({ callbackUrl: getLocalizedPath(lang, "home") })
                         setIsMobileMenuOpen(false)
                       }}
-                      className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark"
+                      className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
                     >
                       {chrome.signOutLabel}
                     </button>
@@ -252,7 +246,7 @@ export default function Header() {
                 ) : (
                   <Link
                     href={getLocalizedPath(lang, "login")}
-                    className="inline-flex items-center justify-center rounded-full bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark"
+                    className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {chrome.signInLabel}

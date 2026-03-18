@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
+import { siteChrome } from "@/data/site"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 import SectionHeader from "./SectionHeader"
@@ -11,14 +12,21 @@ export default function HomeTravelGuide() {
   const { lang } = useSiteLanguage()
   const { travelGuide } = getHomeContent(lang)
   const content = siteContent[lang]
+  const chrome = siteChrome[lang]
+  const journalTitles = {
+    pt: "Diario de viagem para decidir com confianca",
+    en: "Travel journal for better Marajo decisions",
+    es: "Diario de viaje para decidir mejor en Marajo",
+    fr: "Journal de voyage pour mieux decider votre Marajo",
+  } as const
 
   return (
-    <section id="guia" className="tm-section bg-white">
+    <section id="journal" className="tm-section bg-white">
       <div className="tm-shell">
         <div className="grid gap-8 xl:grid-cols-[0.95fr_1.05fr] xl:items-end">
           <SectionHeader
-            eyebrow={content.home.travelGuideEyebrow}
-            title={travelGuide.title}
+            eyebrow={chrome.mainNav[4]?.label ?? content.home.travelGuideEyebrow}
+            title={journalTitles[lang]}
             subtitle={travelGuide.subtitle}
           />
 
