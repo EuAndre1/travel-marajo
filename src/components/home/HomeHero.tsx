@@ -30,14 +30,14 @@ export default function HomeHero() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(229,122,31,0.26),transparent_22%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.08),transparent_28%)]" />
       </div>
 
-      <div className="relative z-10 tm-shell pb-16 pt-32 lg:pb-20 lg:pt-40">
-        <div className="grid gap-10 xl:grid-cols-[1.08fr_0.92fr] xl:items-end">
+      <div className="relative z-10 tm-shell pb-14 pt-28 lg:pb-18 lg:pt-36">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-end">
           <div className="space-y-8 text-white">
             <div className="space-y-5">
               <div className="inline-flex items-center rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-white/78">
                 {content.home.heroKicker}
               </div>
-              <h1 className="max-w-4xl text-4xl font-display leading-[1.02] sm:text-5xl lg:text-6xl xl:text-[4.7rem]">
+              <h1 className="max-w-4xl text-4xl font-display leading-[1.02] sm:text-5xl lg:text-6xl xl:text-[4.2rem]">
                 {hero.title}
               </h1>
               <p className="max-w-3xl text-base leading-8 text-white/80 sm:text-lg">
@@ -76,7 +76,7 @@ export default function HomeHero() {
             </div>
           </div>
 
-          <div className="tm-card-dark overflow-hidden border-white/12 bg-[linear-gradient(155deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-6 sm:p-7">
+          <div className="tm-card-dark overflow-hidden border-white/12 bg-[linear-gradient(155deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-6 sm:p-7 xl:ml-auto xl:w-full">
             <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/76">
               {chrome.authorityLabel}
             </div>
