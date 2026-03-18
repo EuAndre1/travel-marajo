@@ -5,6 +5,7 @@ import { signOut, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { type ChangeEvent, useEffect, useRef, useState } from 'react'
 import { siteContent } from '@/config/site-content'
+import { siteChrome } from '@/data/site'
 import { useSiteLanguage } from '@/lib/use-site-language'
 import { getLocalizedPath } from '@/i18n/routing'
 
@@ -35,6 +36,7 @@ export default function ProfilePage() {
   const searchParams = useSearchParams()
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
+  const chrome = siteChrome[lang]
   const [bookings, setBookings] = useState<Booking[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -341,9 +343,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(13,91,145,0.14),_transparent_35%),linear-gradient(180deg,#f6efe4_0%,#f7f7f8_35%,#ffffff_100%)] py-12">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-6xl space-y-8">
-          <section className="overflow-hidden rounded-[2rem] bg-[#0B1C2C] text-white shadow-2xl">
+      <div className="tm-shell">
+        <div className="space-y-8">
+          <section className="overflow-hidden rounded-[2.4rem] bg-[linear-gradient(145deg,#071521,#0B1C2C_56%,#10283d_100%)] text-white shadow-[0_34px_80px_rgba(11,28,44,0.22)]">
             <div className="grid gap-8 px-6 py-8 md:grid-cols-[220px,1fr] md:items-start md:px-8 lg:px-10">
               <div className="space-y-4">
                 <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-[1.5rem] border border-white/15 bg-white/10 md:mx-0">
@@ -390,6 +392,9 @@ export default function ProfilePage() {
               </div>
               <div className="space-y-5">
                 <div className="space-y-3">
+                  <div className="inline-flex rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-white/70">
+                    {chrome.authorityLabel}
+                  </div>
                   <p className="text-xs uppercase tracking-[0.32em] text-white/60">{content.profileHubTitle}</p>
                   <h1 className="text-3xl font-display leading-tight md:text-4xl">
                     {isWelcomeState ? content.profileWelcomeTitle : `${firstName}, ${content.profileHubTitle}`}
@@ -469,7 +474,7 @@ export default function ProfilePage() {
 
           {isWelcomeState ? (
             <section className="grid gap-6 lg:grid-cols-[1.3fr,0.8fr]">
-              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+              <div className="tm-card p-6">
                 <div className="mb-6">
                   <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileQuickActionsTitle}</p>
                   <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileWelcomeTitle}</h2>
@@ -524,7 +529,7 @@ export default function ProfilePage() {
 
           <section className="grid gap-6 lg:grid-cols-[1.4fr,0.9fr]">
             <div className="space-y-6">
-              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+              <div className="tm-card p-6">
                 <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileBookingsTitle}</p>
@@ -597,7 +602,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+              <div className="tm-card p-6">
                 <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileActivitiesTitle}</p>
@@ -652,7 +657,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+              <div className="tm-card p-6">
                 <div className="mb-6">
                   <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileQuickActionsTitle}</p>
                   <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileMochilaTitle}</h2>
@@ -676,7 +681,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+              <div className="tm-card p-6">
                 <div className="mb-6">
                   <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileSuggestionsTitle}</p>
                   <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileQuickActionsTitle}</h2>
@@ -708,7 +713,7 @@ export default function ProfilePage() {
             </div>
 
             <aside className="space-y-6">
-              <div className="rounded-[1.75rem] bg-white p-6 shadow-lg">
+              <div className="tm-card p-6">
                 <p className="text-xs uppercase tracking-[0.28em] text-slate-400">{content.profileSupportTitle}</p>
                 <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{content.profileSupportSubtitle}</h2>
 

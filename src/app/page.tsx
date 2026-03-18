@@ -12,19 +12,19 @@ import HomePartners from "@/components/home/HomePartners"
 import HomeNewsletter from "@/components/home/HomeNewsletter"
 
 export const metadata: Metadata = {
-  title: "Travel Marajó | Plataforma de destino",
+  title: "Travel Marajo | Global gateway to Marajo Island",
   description:
-    "Plataforma premium para descobrir experiências, roteiros e parceiros locais na Ilha de Marajó. Curadoria internacional com foco em confiança e reserva.",
+    "Discover what Marajo is, why it matters, and how to explore it through curated experiences, destination-led storytelling, travel planning, and direct booking support.",
 }
 
 export default function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "Travel Marajó",
+    name: "Travel Marajo",
     url: "https://www.travelmarajo.com",
     description:
-      "Plataforma de destino para experiências e roteiros na Ilha de Marajó com curadoria local.",
+      "Destination platform for discovering, planning, and booking Marajo with local curation and international-facing support.",
     areaServed: ["Brazil", "Europe", "Latin America"],
     potentialAction: {
       "@type": "SearchAction",
@@ -34,19 +34,19 @@ export default function HomePage() {
   }
 
   return (
-    <>
+    <main className="overflow-hidden bg-[#f6f3ee]">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HomeHero />
       <HomeWhyMarajo />
-      <HomeFeatureExperience />
       <HomeTopExperiences />
-      <HomeDestinations />
       <HomeRoutesPackages />
-      <HomeOffers />
+      <HomeFeatureExperience />
+      <HomeDestinations />
       <HomeTravelGuide />
       <HomeSocialProof />
       <HomePartners />
+      <HomeOffers />
       <HomeNewsletter />
-    </>
+    </main>
   )
 }

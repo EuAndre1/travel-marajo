@@ -14,13 +14,16 @@ type FooterColumn = {
 type SiteChromeContent = {
   brandName: string
   brandTagline: string
+  authorityLabel: string
   languageLabel: string
   signInLabel: string
   signOutLabel: string
   profileLabel: string
   planTripLabel: string
   mainNav: ChromeLink[]
+  footerHeadline: string
   footerDescription: string
+  footerHighlights: string[]
   footerColumns: FooterColumn[]
   footerContactTitle: string
   footerLegalLabel: string
@@ -29,7 +32,8 @@ type SiteChromeContent = {
 export const siteChrome: Record<AppLocale, SiteChromeContent> = {
   pt: {
     brandName: "Travel Marajo",
-    brandTagline: "Plataforma de destino",
+    brandTagline: "Gateway global de Marajo",
+    authorityLabel: "Autoridade editorial, descoberta premium e reserva com suporte local",
     languageLabel: "Idioma",
     signInLabel: "Entrar",
     signOutLabel: "Sair",
@@ -43,8 +47,14 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
       { label: "Guia", route: "guides" },
       { label: "Parceiros", route: "partners" },
     ],
+    footerHeadline: "Travel Marajo apresenta Marajo ao mundo com confianca editorial e prontidao para reserva.",
     footerDescription:
-      "Plataforma de destino para a Ilha de Marajo, com curadoria premium de experiencias, roteiros e parceiros locais.",
+      "A plataforma que apresenta Marajo ao mundo com curadoria premium, contexto editorial e confianca para planejar, reservar ou pedir suporte humano.",
+    footerHighlights: [
+      "Descoberta de destino com contexto real",
+      "Curadoria local com confianca internacional",
+      "Planejamento, reserva e concierge no mesmo fluxo",
+    ],
     footerColumns: [
       {
         title: "Explorar",
@@ -80,7 +90,8 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
   },
   en: {
     brandName: "Travel Marajo",
-    brandTagline: "Destination platform",
+    brandTagline: "Global gateway to Marajo",
+    authorityLabel: "Editorial authority, premium discovery, and booking confidence with local support",
     languageLabel: "Language",
     signInLabel: "Login",
     signOutLabel: "Sign out",
@@ -94,8 +105,14 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
       { label: "Guides", route: "guides" },
       { label: "Partners", route: "partners" },
     ],
+    footerHeadline: "Travel Marajo introduces Marajo to the world with editorial confidence and booking readiness.",
     footerDescription:
-      "Destination platform for Marajo Island with premium curation across experiences, itineraries, and local partners.",
+      "The platform introducing Marajo to the world through premium curation, destination intelligence, and direct booking confidence.",
+    footerHighlights: [
+      "Destination discovery with real context",
+      "Local curation with international confidence",
+      "Planning, booking, and concierge in one flow",
+    ],
     footerColumns: [
       {
         title: "Explore",
@@ -131,7 +148,8 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
   },
   es: {
     brandName: "Travel Marajo",
-    brandTagline: "Plataforma de destino",
+    brandTagline: "Puerta global a Marajo",
+    authorityLabel: "Autoridad editorial, descubrimiento premium y reserva con soporte local",
     languageLabel: "Idioma",
     signInLabel: "Acceso",
     signOutLabel: "Salir",
@@ -145,8 +163,14 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
       { label: "Guias", route: "guides" },
       { label: "Socios", route: "partners" },
     ],
+    footerHeadline: "Travel Marajo presenta Marajo al mundo con autoridad editorial y confianza para reservar.",
     footerDescription:
-      "Plataforma de destino para la Isla de Marajo con curaduria premium de experiencias, itinerarios y aliados locales.",
+      "La plataforma que presenta Marajo al mundo con curaduria premium, contexto editorial y confianza para planificar o reservar.",
+    footerHighlights: [
+      "Descubrimiento del destino con contexto real",
+      "Curaduria local con confianza internacional",
+      "Planificacion, reserva y concierge en un mismo flujo",
+    ],
     footerColumns: [
       {
         title: "Explorar",
@@ -182,7 +206,8 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
   },
   fr: {
     brandName: "Travel Marajo",
-    brandTagline: "Plateforme destination",
+    brandTagline: "Portail mondial vers Marajo",
+    authorityLabel: "Autorite editoriale, decouverte premium et reservation avec support local",
     languageLabel: "Langue",
     signInLabel: "Connexion",
     signOutLabel: "Deconnexion",
@@ -196,8 +221,14 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
       { label: "Guides", route: "guides" },
       { label: "Partenaires", route: "partners" },
     ],
+    footerHeadline: "Travel Marajo presente Marajo au monde avec autorite editoriale et confiance pour reserver.",
     footerDescription:
-      "Plateforme destination pour Marajo avec curation premium d'experiences, d'itineraires et de partenaires locaux.",
+      "La plateforme qui presente Marajo au monde grace a une curation premium, une vraie autorite destination et une reservation plus rassurante.",
+    footerHighlights: [
+      "Decouverte destination avec vrai contexte",
+      "Curation locale avec confiance internationale",
+      "Planification, reservation et concierge dans un meme flux",
+    ],
     footerColumns: [
       {
         title: "Explorer",

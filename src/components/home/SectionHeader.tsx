@@ -13,23 +13,29 @@ export default function SectionHeader({
   align = "left",
   tone = "dark",
 }: SectionHeaderProps) {
-  const alignment = align === "center" ? "text-center items-center" : "text-left items-start"
+  const alignment = align === "center" ? "items-center text-center" : "items-start text-left"
   const titleColor = tone === "light" ? "text-white" : "text-[#0B1C2C]"
-  const subtitleColor = tone === "light" ? "text-white/70" : "text-slate-600"
-  const eyebrowColor = tone === "light" ? "text-white/60" : "text-primary/70"
+  const subtitleColor = tone === "light" ? "text-white/72" : "text-slate-600"
+  const eyebrowColor = tone === "light" ? "text-accent-light" : "text-primary/80"
+  const dividerColor = tone === "light" ? "bg-white/30" : "bg-primary/20"
 
   return (
-    <div className={`flex flex-col gap-3 ${alignment}`}>
+    <div className={`flex max-w-3xl flex-col gap-4 ${alignment}`}>
       {eyebrow ? (
-        <span className={`text-xs uppercase tracking-[0.3em] ${eyebrowColor}`}>
-          {eyebrow}
-        </span>
+        <div className={`flex items-center gap-3 ${align === "center" ? "justify-center" : ""}`}>
+          <span className={`h-px w-12 ${dividerColor}`} />
+          <span className={`text-[11px] font-semibold uppercase tracking-[0.34em] ${eyebrowColor}`}>
+            {eyebrow}
+          </span>
+        </div>
       ) : null}
-      <h2 className={`text-3xl sm:text-4xl font-display leading-tight ${titleColor}`}>
+
+      <h2 className={`text-3xl font-display leading-tight sm:text-4xl lg:text-[2.8rem] ${titleColor}`}>
         {title}
       </h2>
+
       {subtitle ? (
-        <p className={`text-base sm:text-lg ${subtitleColor} max-w-2xl`}>
+        <p className={`text-base leading-7 sm:text-lg ${subtitleColor}`}>
           {subtitle}
         </p>
       ) : null}

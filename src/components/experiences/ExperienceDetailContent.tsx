@@ -25,7 +25,7 @@ const guideSectionLabels = {
     eyebrow: "Guias de viagem",
     fallbackTitle: "Leia antes de reservar",
     fallbackBody:
-      "Esses guias adicionam contexto cultural, sazonal e logístico para ajudar você a escolher a experiência certa para o seu estilo de viagem.",
+      "Esses guias adicionam contexto cultural, sazonal e logistico para ajudar voce a escolher a experiencia certa para o seu estilo de viagem.",
     guideTitlePrefix: "Guia relacionado:",
   },
   en: {
@@ -36,31 +36,31 @@ const guideSectionLabels = {
     guideTitlePrefix: "Related guide:",
   },
   es: {
-    eyebrow: "Guías de viaje",
+    eyebrow: "Guias de viaje",
     fallbackTitle: "Lee antes de reservar",
     fallbackBody:
-      "Estas guías añaden contexto cultural, estacional y logístico para ayudarte a elegir la experiencia adecuada para tu estilo de viaje.",
-    guideTitlePrefix: "Guía relacionada:",
+      "Estas guias anaden contexto cultural, estacional y logistico para ayudarte a elegir la experiencia adecuada para tu estilo de viaje.",
+    guideTitlePrefix: "Guia relacionada:",
   },
   fr: {
     eyebrow: "Guides de voyage",
-    fallbackTitle: "À lire avant de réserver",
+    fallbackTitle: "A lire avant de reserver",
     fallbackBody:
-      "Ces guides ajoutent un contexte culturel, saisonnier et logistique pour vous aider à choisir l'expérience la plus adaptée à votre style de voyage.",
-    guideTitlePrefix: "Guide associé :",
+      "Ces guides ajoutent un contexte culturel, saisonnier et logistique pour vous aider a choisir l'experience la plus adaptee a votre style de voyage.",
+    guideTitlePrefix: "Guide associe :",
   },
 } as const
 
 const detailPageLabels = {
   pt: {
     eyebrow: "Detalhes",
-    title: "O que torna essa experiência única",
-    includedTitle: "O que está incluído",
+    title: "O que torna essa experiencia unica",
+    includedTitle: "O que esta incluido",
     priceLabel: "Investimento a partir de",
-    perPersonLabel: "Por pessoa • avaliação",
+    perPersonLabel: "Por pessoa • avaliacao",
     reserveNow: "Reservar agora",
     planWithConcierge: "Planejar com concierge",
-    reserveExperience: "Reservar experiência",
+    reserveExperience: "Reservar experiencia",
     talkToConsultant: "Falar com consultor",
   },
   en: {
@@ -76,78 +76,78 @@ const detailPageLabels = {
   },
   es: {
     eyebrow: "Detalles",
-    title: "Qué hace única esta experiencia",
-    includedTitle: "Qué está incluido",
-    priceLabel: "Inversión desde",
-    perPersonLabel: "Por persona • calificación",
+    title: "Que hace unica esta experiencia",
+    includedTitle: "Que esta incluido",
+    priceLabel: "Inversion desde",
+    perPersonLabel: "Por persona • calificacion",
     reserveNow: "Reservar ahora",
     planWithConcierge: "Planear con concierge",
     reserveExperience: "Reservar experiencia",
     talkToConsultant: "Hablar con un consultor",
   },
   fr: {
-    eyebrow: "Détails",
-    title: "Ce qui rend cette expérience unique",
+    eyebrow: "Details",
+    title: "Ce qui rend cette experience unique",
     includedTitle: "Ce qui est inclus",
-    priceLabel: "Investissement à partir de",
+    priceLabel: "Investissement a partir de",
     perPersonLabel: "Par personne • note",
-    reserveNow: "Réserver maintenant",
+    reserveNow: "Reserver maintenant",
     planWithConcierge: "Planifier avec le concierge",
-    reserveExperience: "Réserver l'expérience",
-    talkToConsultant: "Parler à un conseiller",
+    reserveExperience: "Reserver l'experience",
+    talkToConsultant: "Parler a un conseiller",
   },
 } as const
 
 const guideContextByExperience = {
   pesqueiro: {
     pt: {
-      title: "Planeje a experiência de praia mais icônica com mais contexto",
+      title: "Planeje a experiencia de praia mais iconica com mais contexto",
       body:
-        "Esses guias ajudam a entender quando ir, como o Pesqueiro se encaixa em um primeiro roteiro no Marajó e o que combinar com o pôr do sol mais emblemático da ilha.",
+        "Esses guias ajudam a entender quando ir, como o Pesqueiro se encaixa em um primeiro roteiro no Marajo e o que combinar com o por do sol mais emblematico da ilha.",
     },
     en: {
       title: "Plan the island's signature beach experience with more context",
       body:
-        "These guides explain when to go, how Pesqueiro fits into a first Marajó itinerary, and what pairs well with the island's flagship sunset experience.",
+        "These guides explain when to go, how Pesqueiro fits into a first Marajo itinerary, and what pairs well with the island's flagship sunset experience.",
     },
     es: {
-      title: "Planifica la experiencia de playa más icónica con más contexto",
+      title: "Planifica la experiencia de playa mas iconica con mas contexto",
       body:
-        "Estas guías explican cuándo ir, cómo encaja Pesqueiro en un primer itinerario por Marajó y qué combinar con el atardecer más emblemático de la isla.",
+        "Estas guias explican cuando ir, como encaja Pesqueiro en un primer itinerario por Marajo y que combinar con el atardecer mas emblematico de la isla.",
     },
     fr: {
-      title: "Préparez l'expérience de plage la plus emblématique avec plus de contexte",
+      title: "Preparez l'experience de plage la plus emblematique avec plus de contexte",
       body:
-        "Ces guides expliquent quand partir, comment Pesqueiro s'intègre à un premier itinéraire sur Marajó et quoi associer au coucher du soleil le plus emblématique de l'île.",
+        "Ces guides expliquent quand partir, comment Pesqueiro s'integre a un premier itineraire sur Marajo et quoi associer au coucher du soleil le plus emblematique de l'ile.",
     },
   },
   "bufalos-queijaria": {
     pt: {
-      title: "Entenda a dimensão cultural antes de reservar",
+      title: "Entenda a dimensao cultural antes de reservar",
       body:
-        "Experiências com búfalos e queijo convertem melhor quando o viajante entende a identidade gastronômica da ilha, a cultura das fazendas e por que esse tema é central no Marajó.",
+        "Experiencias com bufalos e queijo convertem melhor quando o viajante entende a identidade gastronomica da ilha, a cultura das fazendas e por que esse tema e central no Marajo.",
     },
     en: {
       title: "Understand the cultural side before you book",
       body:
-        "Buffalo and cheese experiences work better when travelers understand the island's food identity, farm culture, and why this theme is central to Marajó.",
+        "Buffalo and cheese experiences work better when travelers understand the island's food identity, farm culture, and why this theme is central to Marajo.",
     },
     es: {
       title: "Comprende el lado cultural antes de reservar",
       body:
-        "Las experiencias con búfalos y queso funcionan mejor cuando el viajero entiende la identidad gastronómica de la isla, la cultura de las haciendas y por qué este tema es central en Marajó.",
+        "Las experiencias con bufalos y queso funcionan mejor cuando el viajero entiende la identidad gastronomica de la isla, la cultura de las haciendas y por que este tema es central en Marajo.",
     },
     fr: {
-      title: "Comprenez la dimension culturelle avant de réserver",
+      title: "Comprenez la dimension culturelle avant de reserver",
       body:
-        "Les expériences autour des buffles et du fromage prennent plus de sens quand les voyageurs comprennent l'identité gastronomique de l'île, la culture des fermes et l'importance de ce thème à Marajó.",
+        "Les experiences autour des buffles et du fromage prennent plus de sens quand les voyageurs comprennent l'identite gastronomique de l'ile, la culture des fermes et l'importance de ce theme a Marajo.",
     },
   },
   "manguezais-salvaterra": {
     pt: {
       title: "Adicione contexto de vida selvagem e rios a este passeio",
       body:
-        "Esses guias ajudam a conectar manguezais, aves, sazonalidade e planejamento mais amplo do destino antes de escolher uma experiência guiada pela natureza.",
+        "Esses guias ajudam a conectar manguezais, aves, sazonalidade e planejamento mais amplo do destino antes de escolher uma experiencia guiada pela natureza.",
     },
     en: {
       title: "Add wildlife and river context to this outing",
@@ -155,21 +155,21 @@ const guideContextByExperience = {
         "These guides connect mangroves, birds, seasonality, and broader destination planning before travelers choose a nature-led experience.",
     },
     es: {
-      title: "Añade contexto de fauna y ríos a esta salida",
+      title: "Anade contexto de fauna y rios a esta salida",
       body:
-        "Estas guías conectan manglares, aves, estacionalidad y planificación más amplia del destino antes de elegir una experiencia centrada en la naturaleza.",
+        "Estas guias conectan manglares, aves, estacionalidad y planificacion mas amplia del destino antes de elegir una experiencia centrada en la naturaleza.",
     },
     fr: {
-      title: "Ajoutez un contexte faune et rivières à cette sortie",
+      title: "Ajoutez un contexte faune et rivieres a cette sortie",
       body:
-        "Ces guides relient mangroves, oiseaux, saisonnalité et planification plus large de la destination avant de choisir une expérience axée sur la nature.",
+        "Ces guides relient mangroves, oiseaux, saisonnalite et planification plus large de la destination avant de choisir une experience axee sur la nature.",
     },
   },
   "cavalgada-praia": {
     pt: {
       title: "Veja como a cavalgada se encaixa no destino",
       body:
-        "As experiências a cavalo ganham mais força quando o viajante entende o melhor momento de praia, a cultura dos búfalos e a paisagem ampla que dá sentido ao percurso.",
+        "As experiencias a cavalo ganham mais forca quando o viajante entende o melhor momento de praia, a cultura dos bufalos e a paisagem ampla que da sentido ao percurso.",
     },
     en: {
       title: "See how horseback riding fits the destination",
@@ -177,14 +177,14 @@ const guideContextByExperience = {
         "Horseback outings feel stronger when travelers understand beach timing, buffalo culture, and the broader landscape story behind the ride.",
     },
     es: {
-      title: "Descubre cómo encaja la cabalgata en el destino",
+      title: "Descubre como encaja la cabalgata en el destino",
       body:
-        "Las salidas a caballo tienen más sentido cuando el viajero entiende el mejor momento de playa, la cultura del búfalo y la historia del paisaje detrás del recorrido.",
+        "Las salidas a caballo tienen mas sentido cuando el viajero entiende el mejor momento de playa, la cultura del bufalo y la historia del paisaje detras del recorrido.",
     },
     fr: {
-      title: "Voyez comment l'expérience à cheval s'inscrit dans la destination",
+      title: "Voyez comment l'experience a cheval s'inscrit dans la destination",
       body:
-        "Les sorties à cheval prennent plus de sens quand les voyageurs comprennent le bon moment pour la plage, la culture du buffle et l'histoire paysagère derrière la balade.",
+        "Les sorties a cheval prennent plus de sens quand les voyageurs comprennent le bon moment pour la plage, la culture du buffle et l'histoire paysagere derriere la balade.",
     },
   },
 } as const
@@ -207,8 +207,8 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
   const guideContext = guideContextByExperience[experience.slug as keyof typeof guideContextByExperience]?.[lang]
 
   return (
-    <main className="bg-white min-h-screen">
-      <section className="relative min-h-[60vh] flex items-center">
+    <main className="min-h-screen bg-[linear-gradient(180deg,#f7f7f8_0%,#ffffff_100%)]">
+      <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
             src={experience.heroImage}
@@ -217,71 +217,86 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
             priority
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#003366]/70 via-[#003366]/50 to-[#003366]/85" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,28,44,0.46)_0%,rgba(11,28,44,0.68)_38%,rgba(11,28,44,0.92)_100%)]" />
         </div>
 
-        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20">
-          <div className="max-w-6xl mx-auto text-white">
-            <span className="inline-flex items-center rounded-full bg-white/15 px-4 py-2 text-sm font-medium text-white mb-4 backdrop-blur-sm">
-              {localizedExperience.category}
-            </span>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">{localizedExperience.title}</h1>
-            <p className="text-lg md:text-xl text-white/90 max-w-3xl mb-6">
-              {localizedExperience.fullDescription}
-            </p>
-            <div className="flex flex-wrap items-center gap-4 text-white/90 mb-8">
-              <span className="rounded-full bg-white/10 px-4 py-2">{localizedExperience.location}</span>
-              <span className="rounded-full bg-[#FF6600] px-4 py-2 text-white">
-                {formatPrice(experience.priceFrom, locale)}
+        <div className="relative z-10 tm-shell pb-16 pt-36 lg:pb-20">
+          <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
+            <div className="text-white">
+              <span className="inline-flex items-center rounded-full border border-white/16 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/82">
+                {localizedExperience.category}
               </span>
-              <span className="rounded-full bg-white/10 px-4 py-2">{localizedExperience.duration}</span>
+              <h1 className="mt-5 max-w-4xl text-4xl font-display leading-[1.02] sm:text-5xl xl:text-6xl">
+                {localizedExperience.title}
+              </h1>
+              <p className="mt-5 max-w-3xl text-base leading-8 text-white/82 sm:text-lg">
+                {localizedExperience.fullDescription}
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/82">
+                <span className="rounded-full border border-white/14 bg-white/10 px-4 py-2">{localizedExperience.location}</span>
+                <span className="rounded-full border border-white/14 bg-white/10 px-4 py-2">{localizedExperience.duration}</span>
+                <span className="rounded-full bg-[#E57A1F] px-4 py-2 text-white">
+                  {formatPrice(experience.priceFrom, locale)}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-4">
-              <ExperienceCheckoutButton
-                slug={experience.slug}
-                label={detailLabels.reserveNow}
-                className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
-              />
-              <Link
-                href={getLocalizedPath(lang, "planTrip")}
-                className="inline-flex items-center justify-center rounded-xl border border-white px-6 py-3 text-white font-semibold hover:bg-white hover:text-[#003366] transition"
-              >
-                {detailLabels.planWithConcierge}
-              </Link>
+
+            <div className="tm-card-dark border-white/10 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-6 sm:p-7">
+              <div className="tm-chip !border-white/14 !bg-white/10 !text-white/70">{detailLabels.eyebrow}</div>
+              <h2 className="mt-5 text-2xl font-display text-white">{detailLabels.title}</h2>
+              <div className="mt-6 grid gap-3">
+                {localizedExperience.highlights.slice(0, 4).map((item) => (
+                  <div key={item} className="rounded-[1.4rem] border border-white/8 bg-white/6 px-4 py-4 text-sm text-white/78">
+                    {item}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <ExperienceCheckoutButton
+                  slug={experience.slug}
+                  label={detailLabels.reserveNow}
+                  className="inline-flex items-center justify-center rounded-full bg-[#E57A1F] px-5 py-3 font-semibold text-white transition hover:bg-[#c96815]"
+                />
+                <Link
+                  href={getLocalizedPath(lang, "planTrip")}
+                  className="inline-flex items-center justify-center rounded-full border border-white/18 px-5 py-3 font-semibold text-white transition hover:bg-white/10"
+                >
+                  {detailLabels.planWithConcierge}
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="px-4 sm:px-6 lg:px-10 xl:px-16">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-10">
-            <div>
-              <SectionHeader
-                eyebrow={detailLabels.eyebrow}
-                title={detailLabels.title}
-                subtitle={localizedExperience.shortDescription}
-              />
-              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {localizedExperience.highlights.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-gray-200 px-5 py-4 text-[#003366] font-medium"
-                  >
-                    {item}
-                  </div>
-                ))}
+      <section className="tm-section pt-12">
+        <div className="tm-shell">
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.75fr_0.95fr]">
+            <div className="space-y-8">
+              <div className="tm-card p-6 sm:p-8">
+                <SectionHeader
+                  eyebrow={detailLabels.eyebrow}
+                  title={detailLabels.title}
+                  subtitle={localizedExperience.shortDescription}
+                />
+                <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  {localizedExperience.highlights.map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-[1.6rem] border border-slate-200/80 bg-slate-50/70 px-5 py-4 text-sm font-medium leading-7 text-[#0B1C2C]"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="mt-10">
-                <h3 className="text-2xl font-bold text-[#003366] mb-4">
-                  {detailLabels.includedTitle}
-                </h3>
-                <ul className="space-y-2 text-slate-600">
+
+              <div className="tm-card p-6 sm:p-8">
+                <h3 className="text-2xl font-display text-[#0B1C2C]">{detailLabels.includedTitle}</h3>
+                <ul className="mt-6 space-y-3 text-sm leading-7 text-slate-600">
                   {localizedExperience.included.map((item) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span aria-hidden="true" className="text-[#FF6600]">
-                        •
-                      </span>
+                    <li key={item} className="flex items-start gap-3">
+                      <span aria-hidden="true" className="mt-3 h-1.5 w-1.5 rounded-full bg-accent" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -289,20 +304,20 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
               </div>
 
               {relatedGuides.length > 0 ? (
-                <div className="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-6">
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{guideLabels.eyebrow}</p>
-                  <h3 className="mt-2 text-2xl font-bold text-[#003366]">
+                <div className="tm-card bg-[linear-gradient(135deg,#fffaf4,#f8fbfd)] p-6 sm:p-8">
+                  <p className="tm-chip">{guideLabels.eyebrow}</p>
+                  <h3 className="mt-5 text-2xl font-display text-[#0B1C2C]">
                     {guideContext?.title ?? guideLabels.fallbackTitle}
                   </h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                  <p className="mt-3 text-sm leading-7 text-slate-600">
                     {guideContext?.body ?? guideLabels.fallbackBody}
                   </p>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     {relatedGuides.map((guide) => (
                       <Link
                         key={guide!.slug}
                         href={getLocalizedPath(lang, "guideDetail", { slug: guide!.slug })}
-                        className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700 transition hover:border-[#003366] hover:shadow-sm"
+                        className="rounded-[1.6rem] border border-slate-200/80 bg-white px-4 py-4 text-sm text-slate-700 transition hover:border-[#003366] hover:shadow-sm"
                       >
                         <span className="font-semibold text-[#0B1C2C]">
                           {guideLabels.guideTitlePrefix} {guide!.title}
@@ -315,23 +330,36 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
               ) : null}
             </div>
 
-            <aside className="rounded-3xl border border-gray-200 shadow-xl p-6 bg-white h-fit">
-              <p className="text-sm text-gray-500 mb-2">{detailLabels.priceLabel}</p>
-              <p className="text-3xl font-bold text-[#FF6600] mb-4">{formatPrice(experience.priceFrom, locale)}</p>
-              <p className="text-sm text-gray-500 mb-6">
-                {detailLabels.perPersonLabel} {experience.rating}
-              </p>
-              <ExperienceCheckoutButton
-                slug={experience.slug}
-                label={detailLabels.reserveExperience}
-                className="w-full inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
-              />
-              <Link
-                href={getLocalizedPath(lang, "planTrip")}
-                className="mt-4 w-full inline-flex items-center justify-center rounded-xl border border-[#003366] px-6 py-3 text-[#003366] font-semibold hover:bg-[#003366] hover:text-white transition"
-              >
-                {detailLabels.talkToConsultant}
-              </Link>
+            <aside className="space-y-6">
+              <div className="tm-card p-6 sm:p-7">
+                <p className="tm-chip">{detailLabels.priceLabel}</p>
+                <p className="mt-5 text-4xl font-semibold text-[#E57A1F]">{formatPrice(experience.priceFrom, locale)}</p>
+                <p className="mt-3 text-sm text-slate-500">
+                  {detailLabels.perPersonLabel} {experience.rating}
+                </p>
+                <div className="mt-6 flex flex-col gap-3">
+                  <ExperienceCheckoutButton
+                    slug={experience.slug}
+                    label={detailLabels.reserveExperience}
+                    className="w-full inline-flex items-center justify-center rounded-full bg-[#E57A1F] px-6 py-3 font-semibold text-white transition hover:bg-[#c96815]"
+                  />
+                  <Link
+                    href={getLocalizedPath(lang, "planTrip")}
+                    className="w-full inline-flex items-center justify-center rounded-full border border-[#003366] px-6 py-3 font-semibold text-[#003366] transition hover:bg-[#003366] hover:text-white"
+                  >
+                    {detailLabels.talkToConsultant}
+                  </Link>
+                </div>
+              </div>
+
+              <div className="rounded-[2rem] bg-[linear-gradient(135deg,#0B1C2C,#10283d)] p-6 text-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
+                <p className="text-xs uppercase tracking-[0.28em] text-accent-light/70">
+                  {guideLabels.eyebrow}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/76">
+                  {guideContext?.body ?? guideLabels.fallbackBody}
+                </p>
+              </div>
             </aside>
           </div>
         </div>

@@ -18,98 +18,114 @@ export default function HomeTopExperiences() {
     setActiveFilter(topExperiences.filters[0] ?? "")
   }, [topExperiences.filters])
 
-  // Filtro simples para comparar experiencias com rapidez.
   const filtered = useMemo(() => {
     if (activeFilter === topExperiences.filters[0]) return topExperiences.items
     return topExperiences.items.filter((item) => item.category === activeFilter)
-  }, [activeFilter, topExperiences.items])
+  }, [activeFilter, topExperiences.filters, topExperiences.items])
 
   return (
-    <section id="experiencias" className="py-20 bg-white">
-      <div className="px-4 sm:px-6 lg:px-10 xl:px-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+    <section id="experiencias" className="tm-section bg-white">
+      <div className="tm-shell">
+        <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
+          <div className="space-y-6">
             <SectionHeader
               eyebrow={content.home.topExperiencesEyebrow}
               title={topExperiences.title}
               subtitle={topExperiences.subtitle}
             />
+
             <div className="flex flex-wrap gap-2">
               {topExperiences.filters.map((filter) => (
                 <button
                   key={filter}
                   type="button"
                   onClick={() => setActiveFilter(filter)}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition ${
+                  className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
                     activeFilter === filter
-                      ? "bg-primary text-white"
-                      : "border border-slate-200 text-slate-500 hover:border-primary/40"
+                      ? "bg-[#0B1C2C] text-white shadow-lg"
+                      : "border border-slate-200 text-slate-500 hover:border-primary/40 hover:text-primary"
                   }`}
                 >
                   {filter}
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((experience) => (
-              <article
-                key={experience.title}
-                className="group rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-xl transition"
-              >
-                <div className="relative h-52 rounded-2xl overflow-hidden">
-                  <Image
-                    src={experience.image}
-                    alt={experience.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition duration-500"
-                  />
-                  <span className="absolute top-4 left-4 bg-white/90 text-xs font-semibold px-3 py-1 rounded-full">
+            <div className="grid gap-4 sm:grid-cols-3">
+              {topExperiences.items.slice(0, 3).map((experience) => (
+                <div key={`${experience.title}-snapshot`} className="rounded-[1.6rem] border border-slate-200/70 bg-slate-50/80 px-4 py-5">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
                     {experience.category}
-                  </span>
+                  </p>
+                  <h3 className="mt-3 text-base font-semibold text-[#0B1C2C]">{experience.title}</h3>
+                  <p className="mt-2 text-sm text-slate-500">{experience.location}</p>
                 </div>
-                <div className="p-5 flex flex-col gap-3">
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span>{experience.location}</span>
-                    <span>{experience.duration}</span>
-                  </div>
-                  <h3 className="text-lg font-semibold text-[#0B1C2C]">
-                    {experience.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {experience.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-1 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-semibold text-primary">{experience.price}</span>
-                    <span className="text-slate-500">{experience.rating} / 5</span>
-                  </div>
-                  <Link
-                    href={experience.href}
-                    className="text-sm font-semibold text-primary inline-flex items-center gap-2"
-                  >
-                    {content.home.topExperiencesDetailsLabel}
-                  </Link>
-                </div>
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
 
-          <div className="mt-10 flex justify-center">
+          <div className="tm-card overflow-hidden bg-[linear-gradient(135deg,#fff8f1,#f8fafc)] p-6 sm:p-7">
+            <div className="tm-chip">{content.pages.experiences.eyebrow}</div>
+            <h3 className="mt-5 text-2xl font-display leading-tight text-[#0B1C2C]">
+              {content.pages.experiences.title}
+            </h3>
+            <p className="mt-3 text-sm leading-7 text-slate-600">
+              {content.pages.experiences.subtitle}
+            </p>
             <Link
               href={topExperiences.ctaHref}
-              className="border border-primary/30 text-primary px-6 py-3 rounded-full text-sm font-semibold transition hover:border-primary"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#10283d]"
             >
               {topExperiences.ctaLabel}
             </Link>
           </div>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((experience) => (
+            <article
+              key={experience.title}
+              className="tm-card group overflow-hidden bg-white transition hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
+            >
+              <div className="relative h-52 overflow-hidden rounded-t-[2rem]">
+                <Image
+                  src={experience.image}
+                  alt={experience.title}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1 text-xs font-semibold text-[#0B1C2C]">
+                  {experience.category}
+                </span>
+              </div>
+              <div className="flex flex-col gap-4 p-6">
+                <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-slate-400">
+                  <span>{experience.location}</span>
+                  <span>{experience.duration}</span>
+                </div>
+                <h3 className="text-xl font-display leading-snug text-[#0B1C2C]">{experience.title}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {experience.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-500"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-semibold text-primary">{experience.price}</span>
+                  <span className="rounded-full bg-[#fff4ea] px-3 py-1 text-xs font-semibold text-[#b25d18]">
+                    {experience.rating} / 5
+                  </span>
+                </div>
+                <Link href={experience.href} className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                  {content.home.topExperiencesDetailsLabel}
+                </Link>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

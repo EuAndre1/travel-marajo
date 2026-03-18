@@ -43,6 +43,28 @@
   }
 }
 
+@layer components {
+  .tm-shell {
+    @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 xl:px-10;
+  }
+
+  .tm-section {
+    @apply py-20 lg:py-24;
+  }
+
+  .tm-card {
+    @apply rounded-[2rem] border border-slate-200/70 bg-white/90 shadow-[0_22px_60px_rgba(15,23,42,0.08)];
+  }
+
+  .tm-card-dark {
+    @apply rounded-[2rem] border border-white/10 bg-[#0B1C2C] text-white shadow-[0_28px_70px_rgba(11,28,44,0.36)];
+  }
+
+  .tm-chip {
+    @apply inline-flex items-center rounded-full border border-slate-200/70 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500;
+  }
+}
+
 @keyframes float {
   0%,
   100% {
