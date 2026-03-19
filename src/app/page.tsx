@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import HomeHero from "@/components/home/HomeHero"
 import HomeTrustStrip from "@/components/home/HomeTrustStrip"
+import HomeProofLayer from "@/components/home/HomeProofLayer"
+import HomeHowItWorks from "@/components/home/HomeHowItWorks"
 import HomeWhyMarajo from "@/components/home/HomeWhyMarajo"
 import HomeFeatureExperience from "@/components/home/HomeFeatureExperience"
 import HomeTopExperiences from "@/components/home/HomeTopExperiences"
@@ -40,6 +42,8 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HomeHero />
       <HomeTrustStrip />
+      <HomeProofLayer />
+      <HomeHowItWorks />
       <HomeWhyMarajo />
       <HomeTopExperiences />
       <HomeFeatureExperience />

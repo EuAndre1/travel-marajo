@@ -44,6 +44,17 @@ export default function ExperiencesPage() {
               <p className="mt-5 text-sm leading-7 text-slate-600">
                 {content.pages.guides.internalExperiencesSubtitle}
               </p>
+              <div className="mt-6 grid gap-3">
+                {content.pages.experiences.trustHighlights.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-[1.35rem] border border-slate-200/80 bg-white/85 px-4 py-4 text-sm leading-6 text-slate-600"
+                  >
+                    <span className="mb-3 block h-1.5 w-10 rounded-full bg-accent" />
+                    {item}
+                  </div>
+                ))}
+              </div>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href={getLocalizedPath(lang, "planTrip")}
@@ -91,6 +102,14 @@ export default function ExperiencesPage() {
                     <span className="rounded-full bg-[#fff4ea] px-3 py-1 text-xs font-semibold text-[#b25d18]">
                       {experience.rating} / 5
                     </span>
+                  </div>
+                  <div className="rounded-[1.35rem] border border-slate-200/80 bg-slate-50/80 px-4 py-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+                      {content.pages.experiences.cardTrustLabel}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {content.pages.experiences.cardTrustBody}
+                    </p>
                   </div>
                   <Link
                     href={getLocalizedPath(lang, "experienceDetail", { slug: experience.slug })}

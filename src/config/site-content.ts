@@ -44,6 +44,37 @@ export const siteContent = {
       travelGuideReadTimeSuffix: "de leitura",
       travelGuideReadCta: "Ler guia",
       whyEyebrow: "Imaginação",
+      proofEyebrow: "Confiança para reservar",
+      proofTitle: "Por que viajantes escolhem a Travel Marajó para planejar e reservar a ilha",
+      proofSubtitle:
+        "Sinais reais de curadoria, suporte e operação local que ajudam a transformar inspiração em uma viagem segura e bem acompanhada.",
+      proofHighlights: [
+        "Experiências mapeadas com leitura clara do destino e capacidade real de entrega",
+        "Parceiros locais acompanhados para manter qualidade, contexto e suporte comercial",
+        "Reserva segura com apoio humano para quem precisa comparar antes de decidir",
+      ],
+      howItWorksEyebrow: "Como funciona",
+      howItWorksTitle: "Da descoberta à reserva, o caminho fica mais simples",
+      howItWorksSubtitle:
+        "Use a plataforma para entender o destino, comparar o que faz sentido para o seu perfil e avançar com mais confiança.",
+      howItWorksSteps: [
+        {
+          title: "Descubra experiências",
+          description: "Explore Marajó por paisagens, cultura, praias, gastronomia e estilo de viagem.",
+        },
+        {
+          title: "Compare as melhores opções",
+          description: "Veja experiências, pacotes e bases da ilha com mais clareza antes de reservar.",
+        },
+        {
+          title: "Planeje com suporte local",
+          description: "Quando a viagem exigir contexto, conte com ajuda humana para ajustar logística e roteiro.",
+        },
+        {
+          title: "Reserve com confiança",
+          description: "Avance para a reserva com parceiros curados, apoio comercial e acompanhamento da equipe.",
+        },
+      ],
     },
 
     pages: {
@@ -53,6 +84,14 @@ export const siteContent = {
         subtitle:
           "Explore atividades com leitura clara do destino, suporte local e confiança para reservar sem perder contexto.",
         detailsCta: "Conhecer experiência",
+        trustHighlights: [
+          "Curadas por especialistas locais",
+          "Operação confiável com parceiros selecionados",
+          "Suporte de reserva antes, durante e depois da viagem",
+        ],
+        cardTrustLabel: "Curadoria e suporte",
+        cardTrustBody:
+          "Experiência selecionada por qualidade de entrega, contexto local e apoio real na reserva.",
       },
       experienceDetail: {
         eyebrow: "Detalhes",
@@ -64,6 +103,16 @@ export const siteContent = {
         planWithConcierge: "Planejar com especialista",
         reserveExperience: "Reservar experiência",
         talkToConsultant: "Falar com especialista",
+        trustEyebrow: "Reserve com confiança",
+        trustTitle: "Por que reservar com a Travel Marajó",
+        trustSubtitle:
+          "Ajudamos você a transformar interesse em reserva com mais contexto, suporte local e clareza comercial.",
+        trustItems: [
+          "Experiências curadas com parceiros locais de confiança",
+          "Suporte antes, durante e depois da viagem",
+          "Checkout seguro e apoio humano quando o itinerário exige mais contexto",
+          "Leitura útil para quem visita Marajó pela primeira vez",
+        ],
       },
       packages: {
         eyebrow: "Pacotes",
@@ -399,6 +448,37 @@ export const siteContent = {
       travelGuideReadTimeSuffix: "read",
       travelGuideReadCta: "Read guide",
       whyEyebrow: "Imagination",
+      proofEyebrow: "Booking confidence",
+      proofTitle: "Why travelers choose Travel Marajó to plan and book the island",
+      proofSubtitle:
+        "Real signals of curation, support, and local delivery that help turn inspiration into a well-supported trip.",
+      proofHighlights: [
+        "Mapped experiences with clear destination context and real delivery capacity",
+        "Local partners monitored to protect quality, context, and commercial support",
+        "Secure booking guidance for travelers who want to compare before they commit",
+      ],
+      howItWorksEyebrow: "How it works",
+      howItWorksTitle: "From discovery to booking, the path stays simple",
+      howItWorksSubtitle:
+        "Use the platform to understand Marajó, compare the right options, and move forward with more confidence.",
+      howItWorksSteps: [
+        {
+          title: "Discover experiences",
+          description: "Explore Marajó through landscapes, culture, beaches, cuisine, and travel style.",
+        },
+        {
+          title: "Compare the best options",
+          description: "Review experiences, packages, and island bases with more clarity before you book.",
+        },
+        {
+          title: "Plan with local support",
+          description: "When the trip needs more context, get human help to refine timing, logistics, and itinerary.",
+        },
+        {
+          title: "Book with confidence",
+          description: "Move to booking with curated partners, commercial support, and follow-through from the team.",
+        },
+      ],
     },
 
     pages: {
@@ -408,6 +488,14 @@ export const siteContent = {
         subtitle:
           "Explore bookable experiences with destination context, local support, and more confidence from first look to checkout.",
         detailsCta: "See experience",
+        trustHighlights: [
+          "Curated by local specialists",
+          "Trusted delivery through selected partners",
+          "Booking support before, during, and after your trip",
+        ],
+        cardTrustLabel: "Curated and supported",
+        cardTrustBody:
+          "Selected for delivery quality, local context, and clearer booking support.",
       },
       experienceDetail: {
         eyebrow: "Details",
@@ -419,6 +507,16 @@ export const siteContent = {
         planWithConcierge: "Plan with a specialist",
         reserveExperience: "Book experience",
         talkToConsultant: "Talk to a specialist",
+        trustEyebrow: "Book with confidence",
+        trustTitle: "Why book through Travel Marajó",
+        trustSubtitle:
+          "We help travelers turn interest into a stronger booking decision with local context, trusted partners, and human support.",
+        trustItems: [
+          "Curated experiences with trusted local partners",
+          "Support before, during, and after your trip",
+          "Secure checkout and human guidance when the itinerary needs more context",
+          "Helpful orientation for first-time visitors to Marajó",
+        ],
       },
       packages: {
         eyebrow: "Packages",
@@ -754,6 +852,37 @@ export const siteContent = {
       travelGuideReadTimeSuffix: "de lecture",
       travelGuideReadCta: "Lire le guide",
       whyEyebrow: "Imagination",
+      proofEyebrow: "Confiance pour réserver",
+      proofTitle: "Pourquoi les voyageurs choisissent Travel Marajó pour planifier et réserver l'île",
+      proofSubtitle:
+        "Des signaux réels de curation, de support et d'exécution locale pour transformer l'inspiration en voyage mieux accompagné.",
+      proofHighlights: [
+        "Des expériences cartographiées avec vrai contexte destination et capacité réelle de livraison",
+        "Des partenaires locaux suivis pour protéger la qualité, le contexte et le support commercial",
+        "Une réservation sécurisée avec accompagnement humain pour comparer avant de décider",
+      ],
+      howItWorksEyebrow: "Comment ça marche",
+      howItWorksTitle: "De la découverte à la réservation, le parcours reste simple",
+      howItWorksSubtitle:
+        "Utilisez la plateforme pour comprendre Marajó, comparer les bonnes options et avancer avec plus de confiance.",
+      howItWorksSteps: [
+        {
+          title: "Découvrez les expériences",
+          description: "Explorez Marajó à travers paysages, culture, plages, cuisine et styles de voyage.",
+        },
+        {
+          title: "Comparez les meilleures options",
+          description: "Analysez expériences, forfaits et bases de séjour avec plus de clarté avant de réserver.",
+        },
+        {
+          title: "Planifiez avec un support local",
+          description: "Quand le voyage demande plus de contexte, obtenez une aide humaine sur logistique et itinéraire.",
+        },
+        {
+          title: "Réservez avec confiance",
+          description: "Avancez vers la réservation avec partenaires curés, support commercial et suivi de l'équipe.",
+        },
+      ],
     },
 
     pages: {
@@ -763,6 +892,14 @@ export const siteContent = {
         subtitle:
           "Explorez des expériences réservables avec contexte destination, support local et plus de confiance entre l'inspiration et la réservation.",
         detailsCta: "Voir l'expérience",
+        trustHighlights: [
+          "Curées par des spécialistes locaux",
+          "Exécution fiable avec des partenaires sélectionnés",
+          "Support de réservation avant, pendant et après le voyage",
+        ],
+        cardTrustLabel: "Curation et support",
+        cardTrustBody:
+          "Une expérience sélectionnée pour la qualité d'exécution, le contexte local et un accompagnement plus clair à la réservation.",
       },
       experienceDetail: {
         eyebrow: "Détails",
@@ -774,6 +911,16 @@ export const siteContent = {
         planWithConcierge: "Planifier avec un spécialiste",
         reserveExperience: "Réserver l'expérience",
         talkToConsultant: "Parler à un spécialiste",
+        trustEyebrow: "Réservez avec confiance",
+        trustTitle: "Pourquoi réserver avec Travel Marajó",
+        trustSubtitle:
+          "Nous aidons les voyageurs à transformer l'intérêt en réservation plus solide grâce au contexte local, à des partenaires fiables et à un support humain.",
+        trustItems: [
+          "Expériences curées avec des partenaires locaux de confiance",
+          "Support avant, pendant et après le voyage",
+          "Checkout sécurisé et accompagnement humain quand l'itinéraire demande plus de contexte",
+          "Orientation utile pour une première visite à Marajó",
+        ],
       },
       packages: {
         eyebrow: "Forfaits",
@@ -1109,6 +1256,37 @@ export const siteContent = {
       travelGuideReadTimeSuffix: "de lectura",
       travelGuideReadCta: "Leer guía",
       whyEyebrow: "Imaginación",
+      proofEyebrow: "Confianza para reservar",
+      proofTitle: "Por qué los viajeros eligen Travel Marajó para planificar y reservar la isla",
+      proofSubtitle:
+        "Señales reales de curaduría, soporte y operación local que convierten la inspiración en un viaje más seguro y bien acompañado.",
+      proofHighlights: [
+        "Experiencias mapeadas con contexto claro del destino y capacidad real de entrega",
+        "Socios locales acompañados para proteger calidad, contexto y soporte comercial",
+        "Reserva segura con ayuda humana para quienes comparan antes de decidir",
+      ],
+      howItWorksEyebrow: "Cómo funciona",
+      howItWorksTitle: "De la inspiración a la reserva, el camino es más simple",
+      howItWorksSubtitle:
+        "Usa la plataforma para entender Marajó, comparar las mejores opciones y avanzar con más confianza.",
+      howItWorksSteps: [
+        {
+          title: "Descubre experiencias",
+          description: "Explora Marajó a través de paisajes, cultura, playas, gastronomía y estilo de viaje.",
+        },
+        {
+          title: "Compara las mejores opciones",
+          description: "Revisa experiencias, paquetes y bases de viaje con más claridad antes de reservar.",
+        },
+        {
+          title: "Planifica con soporte local",
+          description: "Cuando el viaje exija más contexto, recibe ayuda humana para ajustar logística e itinerario.",
+        },
+        {
+          title: "Reserva con confianza",
+          description: "Avanza con socios curados, soporte comercial y seguimiento real del equipo.",
+        },
+      ],
     },
 
     pages: {
@@ -1118,6 +1296,14 @@ export const siteContent = {
         subtitle:
           "Explora experiencias reservables con contexto de destino, soporte local y más confianza desde la inspiración hasta la reserva.",
         detailsCta: "Ver experiencia",
+        trustHighlights: [
+          "Curadas por especialistas locales",
+          "Operación confiable con socios seleccionados",
+          "Soporte de reserva antes, durante y después del viaje",
+        ],
+        cardTrustLabel: "Curaduría y soporte",
+        cardTrustBody:
+          "Experiencia seleccionada por calidad de entrega, contexto local y apoyo real durante la reserva.",
       },
       experienceDetail: {
         eyebrow: "Detalles",
@@ -1129,6 +1315,16 @@ export const siteContent = {
         planWithConcierge: "Planificar con especialista",
         reserveExperience: "Reservar experiencia",
         talkToConsultant: "Hablar con especialista",
+        trustEyebrow: "Reserva con confianza",
+        trustTitle: "Por qué reservar con Travel Marajó",
+        trustSubtitle:
+          "Ayudamos a convertir el interés en una reserva más sólida con contexto local, socios confiables y soporte humano.",
+        trustItems: [
+          "Experiencias curadas con socios locales de confianza",
+          "Soporte antes, durante y después del viaje",
+          "Checkout seguro y ayuda humana cuando el itinerario necesita más contexto",
+          "Orientación útil para quienes visitan Marajó por primera vez",
+        ],
       },
       packages: {
         eyebrow: "Paquetes",

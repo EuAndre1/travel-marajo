@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import SectionHeader from "@/components/home/SectionHeader"
 import ExperienceCheckoutButton from "@/components/checkout/ExperienceCheckoutButton"
+import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedExperience, type ExperienceItem } from "@/data/experiencias"
 import { getGuideSlugsForExperience, getGuidesBySlugs } from "@/data/guides"
@@ -201,6 +202,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
   const { lang } = useSiteLanguage()
   const locale = localeMap[lang] ?? "pt-BR"
   const detailLabels = detailPageLabels[lang]
+  const experiencePageContent = siteContent[lang].pages.experienceDetail
   const localizedExperience = getLocalizedExperience(experience, lang)
   const guideLabels = guideSectionLabels[lang]
   const relatedGuides = getGuidesBySlugs(getGuideSlugsForExperience(experience.slug)).slice(0, 3)
@@ -350,6 +352,24 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                     {detailLabels.talkToConsultant}
                   </Link>
                 </div>
+              </div>
+
+              <div className="tm-card bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_100%)] p-6 sm:p-7">
+                <p className="tm-chip">{experiencePageContent.trustEyebrow}</p>
+                <h3 className="mt-5 text-2xl font-display text-[#0B1C2C]">
+                  {experiencePageContent.trustTitle}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">
+                  {experiencePageContent.trustSubtitle}
+                </p>
+                <ul className="mt-6 space-y-3 text-sm leading-7 text-slate-600">
+                  {experiencePageContent.trustItems.map((item) => (
+                    <li key={item} className="flex items-start gap-3">
+                      <span aria-hidden="true" className="mt-3 h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               <div className="rounded-[2rem] bg-[linear-gradient(135deg,#0B1C2C,#10283d)] p-6 text-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
