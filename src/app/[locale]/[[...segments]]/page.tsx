@@ -5,6 +5,7 @@ import HomePage from "@/app/page"
 import ExperiencesPage from "@/app/experiencias/page"
 import ExperienceDetailPage from "@/app/experiencias/[slug]/page"
 import PackagesPage from "@/app/pacotes/page"
+import PackageDetailPage from "@/app/pacotes/[slug]/page"
 import DestinationsPage from "@/app/destinos/page"
 import DestinationDetailPage from "@/app/destinos/[slug]/page"
 import GuidesIndexPage from "@/app/guides/page"
@@ -26,6 +27,7 @@ import CheckoutSuccessPage from "@/app/checkout/success/page"
 import CheckoutCancelPage from "@/app/checkout/cancel/page"
 import { getDestinationBySlug } from "@/data/destinos"
 import { getGuideBySlug } from "@/data/guides"
+import { getLocalizedPackage, getPackageBySlug } from "@/data/pacotes"
 import { DEFAULT_LOCALE, LOCALE_TO_BCP47, isAppLocale, type AppLocale } from "@/config/i18n"
 import { authOptions } from "@/lib/auth"
 import { buildAbsoluteUrl } from "@/lib/env"
@@ -97,6 +99,18 @@ function getMetadataForRoute(locale: AppLocale, key: AppRouteKey, slug?: string)
     }
   }
 
+  if (key === "packageDetail" && slug) {
+    const pkg = getPackageBySlug(slug)
+    if (pkg) {
+      const translated = getLocalizedPackage(pkg, locale)
+      return {
+        ...base,
+        title: translated.title,
+        description: translated.summary,
+      }
+    }
+  }
+
   if (key === "destinationDetail" && slug) {
     const destination = getDestinationBySlug(slug)
     if (destination) {
@@ -124,6 +138,7 @@ function getMetadataForRoute(locale: AppLocale, key: AppRouteKey, slug?: string)
     experiences: "Travel Maraj? Experiences",
     experienceDetail: "Travel Maraj? Experience",
     packages: "Travel Maraj? Packages",
+    packageDetail: "Travel Maraj? Package",
     destinations: "Marajo Destinations",
     destinationDetail: "Marajo Destination",
     guides: "Marajo Travel Guides",
@@ -206,6 +221,8 @@ export default async function LocalizedPage({ params }: PageProps) {
       return <ExperienceDetailPage params={{ slug: matched.params.slug }} />
     case "packages":
       return <PackagesPage />
+    case "packageDetail":
+      return <PackageDetailPage params={{ slug: matched.params.slug }} />
     case "destinations":
       return <DestinationsPage />
     case "destinationDetail":

@@ -124,6 +124,7 @@ export const siteContent = {
         itinerary: "Itinerário base",
         reserveCta: "Reservar pacote",
         consultCta: "Falar com especialista",
+        detailsCta: "Ver jornada completa",
       },
       planTrip: {
         eyebrow: "Concierge",
@@ -528,6 +529,7 @@ export const siteContent = {
         itinerary: "Base itinerary",
         reserveCta: "Book package",
         consultCta: "Talk to a specialist",
+        detailsCta: "See full journey",
       },
       planTrip: {
         eyebrow: "Concierge",
@@ -932,6 +934,7 @@ export const siteContent = {
         itinerary: "Itinéraire de base",
         reserveCta: "Réserver le forfait",
         consultCta: "Parler à un spécialiste",
+        detailsCta: "Voir le voyage complet",
       },
       planTrip: {
         eyebrow: "Concierge",
@@ -1336,6 +1339,7 @@ export const siteContent = {
         itinerary: "Itinerario base",
         reserveCta: "Reservar paquete",
         consultCta: "Hablar con especialista",
+        detailsCta: "Ver el viaje completo",
       },
       planTrip: {
         eyebrow: "Concierge",

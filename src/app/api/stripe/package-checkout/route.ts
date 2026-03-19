@@ -18,6 +18,7 @@ export async function POST(request: Request) {
     if (!packageItem) {
       return NextResponse.json({ error: "Package not found" }, { status: 404 })
     }
+    const packageDisplay = packageItem.translations.pt
 
     const requestLocale = resolveRequestLocale(locale ?? request.headers.get("referer") ?? request.url)
     const stripe = getStripe()
@@ -32,8 +33,8 @@ export async function POST(request: Request) {
             currency: "brl",
             unit_amount: Math.round(packageItem.startingPrice * 100),
             product_data: {
-              name: packageItem.title,
-              description: packageItem.summary,
+              name: packageDisplay.title,
+              description: packageDisplay.summary,
             },
           },
         },

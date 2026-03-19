@@ -22,7 +22,7 @@ export type StaticRouteKey =
   | "checkoutSuccess"
   | "checkoutCancel"
 
-export type DynamicRouteKey = "experienceDetail" | "destinationDetail" | "guideDetail"
+export type DynamicRouteKey = "experienceDetail" | "packageDetail" | "destinationDetail" | "guideDetail"
 
 export type AppRouteKey = StaticRouteKey | DynamicRouteKey
 
@@ -36,6 +36,7 @@ type RouteDefinition = {
 type RouteMatch =
   | { key: StaticRouteKey; params?: undefined }
   | { key: "experienceDetail"; params: { slug: string } }
+  | { key: "packageDetail"; params: { slug: string } }
   | { key: "destinationDetail"; params: { slug: string } }
   | { key: "guideDetail"; params: { slug: string } }
 
@@ -44,6 +45,7 @@ const ROUTES: Record<AppRouteKey, RouteDefinition> = {
   experiences: { pt: ["experiencias"], en: ["experiences"], es: ["experiencias"], fr: ["experiences"] },
   experienceDetail: { pt: ["experiencias"], en: ["experiences"], es: ["experiencias"], fr: ["experiences"] },
   packages: { pt: ["pacotes"], en: ["packages"], es: ["paquetes"], fr: ["forfaits"] },
+  packageDetail: { pt: ["pacotes"], en: ["packages"], es: ["paquetes"], fr: ["forfaits"] },
   destinations: { pt: ["destinos"], en: ["destinations"], es: ["destinos"], fr: ["destinations"] },
   destinationDetail: { pt: ["destinos"], en: ["destinations"], es: ["destinos"], fr: ["destinations"] },
   guides: { pt: ["guia"], en: ["guides"], es: ["guias"], fr: ["guides"] },
@@ -141,7 +143,10 @@ export function getLocalizedPath(
   const segments = [...ROUTES[key][locale]]
 
   if (
-    (key === "experienceDetail" || key === "destinationDetail" || key === "guideDetail") &&
+    (key === "experienceDetail" ||
+      key === "packageDetail" ||
+      key === "destinationDetail" ||
+      key === "guideDetail") &&
     params?.slug
   ) {
     segments.push(params.slug)
@@ -195,6 +200,11 @@ export function resolveCanonicalRoute(locale: AppLocale, segments: string[]): Ro
     return { key: "experienceDetail", params: { slug: segments.at(-1)! } }
   }
 
+  const packagesRoot = ROUTES.packageDetail[locale]
+  if (segments.length === packagesRoot.length + 1 && packagesRoot.every((segment, index) => segment === segments[index])) {
+    return { key: "packageDetail", params: { slug: segments.at(-1)! } }
+  }
+
   const destinationsRoot = ROUTES.destinationDetail[locale]
   if (segments.length === destinationsRoot.length + 1 && destinationsRoot.every((segment, index) => segment === segments[index])) {
     return { key: "destinationDetail", params: { slug: segments.at(-1)! } }
@@ -221,6 +231,10 @@ export function resolveLegacyRoute(pathname: string): { key: AppRouteKey; locale
   const dynamicPatterns = [
     { prefix: "/experiencias/", key: "experienceDetail" as const, locale: "pt" as const },
     { prefix: "/experiences/", key: "experienceDetail" as const, locale: "en" as const },
+    { prefix: "/pacotes/", key: "packageDetail" as const, locale: "pt" as const },
+    { prefix: "/packages/", key: "packageDetail" as const, locale: "en" as const },
+    { prefix: "/paquetes/", key: "packageDetail" as const, locale: "es" as const },
+    { prefix: "/forfaits/", key: "packageDetail" as const, locale: "fr" as const },
     { prefix: "/destinos/", key: "destinationDetail" as const, locale: "pt" as const },
     { prefix: "/destinations/", key: "destinationDetail" as const, locale: "en" as const },
     { prefix: "/guides/", key: "guideDetail" as const, locale: "en" as const },
