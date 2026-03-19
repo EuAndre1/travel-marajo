@@ -65,8 +65,8 @@ type HomeAuthorityContent = {
 
 export const siteChrome: Record<AppLocale, SiteChromeContent> = {
   pt: {
-    brandName: "Travel Marajo",
-    brandTagline: "Gateway global de Marajo",
+    brandName: "Travel Marajó",
+    brandTagline: "Gateway global de Marajó",
     authorityLabel: "Autoridade editorial, descoberta premium e reserva com suporte local",
     languageLabel: "Idioma",
     signInLabel: "Entrar",
@@ -75,37 +75,37 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
     planTripLabel: "Planejar viagem",
     bookDirectLabel: "Reservar direto",
     mainNav: [
-      { label: "Descobrir Marajo", route: "destinations" },
-      { label: "Experiencias", route: "experiences" },
+      { label: "Descobrir Marajó", route: "destinations" },
+      { label: "Experiências", route: "experiences" },
       { label: "Pacotes", route: "packages" },
       { label: "Planejar viagem", route: "planTrip" },
-      { label: "Diario de viagem", route: "guides" },
+      { label: "Diário de viagem", route: "guides" },
       { label: "Parceiros", route: "partners" },
     ],
-    footerHeadline: "Travel Marajo apresenta Marajo ao mundo com confianca editorial e prontidao para reserva.",
+    footerHeadline: "Travel Marajó apresenta Marajó ao mundo com confiança editorial e prontidão para reserva.",
     footerDescription:
-      "A plataforma que apresenta Marajo ao mundo com curadoria premium, contexto editorial e confianca para planejar, reservar ou pedir suporte humano.",
+      "A plataforma que apresenta Marajó ao mundo com curadoria premium, contexto editorial e confiança para planejar, reservar ou pedir suporte humano.",
     footerHighlights: [
       "Descoberta de destino com contexto real",
-      "Curadoria local com confianca internacional",
+      "Curadoria local com confiança internacional",
       "Planejamento, reserva e concierge no mesmo fluxo",
     ],
     footerColumns: [
       {
         title: "Descobrir",
         links: [
-          { label: "Marajo", route: "destinations" },
-          { label: "Experiencias", route: "experiences" },
+          { label: "Marajó", route: "destinations" },
+          { label: "Experiências", route: "experiences" },
           { label: "Pacotes", route: "packages" },
-          { label: "Diario de viagem", route: "guides" },
+          { label: "Diário de viagem", route: "guides" },
         ],
       },
       {
         title: "Planejamento",
         links: [
           { label: "Planejar viagem", route: "planTrip" },
-          { label: "Servicos", route: "services" },
-          { label: "Hoteis", route: "hotels" },
+          { label: "Serviços", route: "services" },
+          { label: "Hotéis", route: "hotels" },
           { label: "Voos", route: "flights" },
         ],
       },
@@ -123,7 +123,7 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
     footerLegalLabel: "Todos os direitos reservados.",
   },
   en: {
-    brandName: "Travel Marajo",
+    brandName: "Travel Marajó",
     brandTagline: "Global gateway to Marajo",
     authorityLabel: "Editorial authority, premium discovery, and booking confidence with local support",
     languageLabel: "Language",
@@ -140,7 +140,7 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
       { label: "Travel Journal", route: "guides" },
       { label: "Partners", route: "partners" },
     ],
-    footerHeadline: "Travel Marajo introduces Marajo to the world with editorial confidence and booking readiness.",
+    footerHeadline: "Travel Marajó introduces Marajo to the world with editorial confidence and booking readiness.",
     footerDescription:
       "The platform introducing Marajo to the world through premium curation, destination intelligence, and direct booking confidence.",
     footerHighlights: [
@@ -181,7 +181,7 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
     footerLegalLabel: "All rights reserved.",
   },
   es: {
-    brandName: "Travel Marajo",
+    brandName: "Travel Marajó",
     brandTagline: "Puerta global a Marajo",
     authorityLabel: "Autoridad editorial, descubrimiento premium y reserva con soporte local",
     languageLabel: "Idioma",
@@ -192,13 +192,13 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
     bookDirectLabel: "Reservar directo",
     mainNav: [
       { label: "Descubrir Marajo", route: "destinations" },
-      { label: "Experiencias", route: "experiences" },
+      { label: "Experiências", route: "experiences" },
       { label: "Paquetes", route: "packages" },
       { label: "Planificar viaje", route: "planTrip" },
       { label: "Diario de viaje", route: "guides" },
       { label: "Socios", route: "partners" },
     ],
-    footerHeadline: "Travel Marajo presenta Marajo al mundo con autoridad editorial y confianza para reservar.",
+    footerHeadline: "Travel Marajó presenta Marajo al mundo con autoridad editorial y confianza para reservar.",
     footerDescription:
       "La plataforma que presenta Marajo al mundo con curaduria premium, contexto editorial y confianza para planificar o reservar.",
     footerHighlights: [
@@ -211,7 +211,7 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
         title: "Descubrir",
         links: [
           { label: "Descubrir Marajo", route: "destinations" },
-          { label: "Experiencias", route: "experiences" },
+          { label: "Experiências", route: "experiences" },
           { label: "Paquetes", route: "packages" },
           { label: "Diario de viaje", route: "guides" },
         ],
@@ -239,7 +239,7 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
     footerLegalLabel: "Todos los derechos reservados.",
   },
   fr: {
-    brandName: "Travel Marajo",
+    brandName: "Travel Marajó",
     brandTagline: "Portail mondial vers Marajo",
     authorityLabel: "Autorite editoriale, decouverte premium et reservation avec support local",
     languageLabel: "Langue",
@@ -256,7 +256,7 @@ export const siteChrome: Record<AppLocale, SiteChromeContent> = {
       { label: "Journal de voyage", route: "guides" },
       { label: "Partenaires", route: "partners" },
     ],
-    footerHeadline: "Travel Marajo presente Marajo au monde avec autorite editoriale et confiance pour reserver.",
+    footerHeadline: "Travel Marajó presente Marajo au monde avec autorite editoriale et confiance pour reserver.",
     footerDescription:
       "La plateforme qui presente Marajo au monde grace a une curation premium, une vraie autorite destination et une reservation plus rassurante.",
     footerHighlights: [
@@ -302,7 +302,7 @@ export const footerContact = {
   items: [
     "contato@travelmarajo.com",
     "+55 91 99999-0000",
-    "Soure, Ilha de Marajo - PA",
+    "Soure, Ilha de Marajó - PA",
   ],
   legal: {
     cnpj: "00.000.000/0001-00",
@@ -312,44 +312,44 @@ export const footerContact = {
 
 export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
   pt: {
-    trustStripLabel: "Confianca para descobrir, planejar e reservar",
+    trustStripLabel: "Confiança para descobrir, planejar e reservar",
     heroPlannerEyebrow: "Planejamento premium",
-    heroPlannerTitle: "Seu gateway internacional para um Marajo mais claro, autentico e reservavel.",
+    heroPlannerTitle: "Seu gateway internacional para um Marajó mais claro, autêntico e reservável.",
     heroPlannerBody:
-      "Passe da inspiracao para um roteiro executavel com contexto editorial, curadoria local e suporte humano.",
+      "Passe da inspiração para um roteiro executável com contexto editorial, curadoria local e suporte humano.",
     heroPlannerHighlights: [
-      "Escolha entre experiencias, pacotes e planejamento assistido",
+      "Escolha entre experiências, pacotes e planejamento assistido",
       "Receba suporte local antes, durante e depois da viagem",
-      "Use o travel journal para decidir com mais confianca",
+      "Use o travel journal para decidir com mais confiança",
     ],
     planningEyebrow: "Planeje com contexto real",
     planningTitle: "Tudo o que um viajante internacional precisa para desenhar melhor a viagem",
     planningSubtitle:
-      "Superficiamos os guias e entradas praticas que ajudam a entender logistica, tempo ideal, base da viagem e ritmo do roteiro sem criar links mortos.",
+      "Superficiamos os guias e entradas práticas que ajudam a entender logística, tempo ideal, base da viagem e ritmo do roteiro sem criar links mortos.",
     planningCards: [
       {
         eyebrow: "Como chegar",
-        title: "Entenda a rota ate Marajo",
-        description: "Logistica a partir de Belem, escolha da base e sequencia de deslocamentos.",
+        title: "Entenda a rota até Marajó",
+        description: "Logística a partir de Belém, escolha da base e sequência de deslocamentos.",
         route: "guideDetail",
         slug: "how-to-visit-marajo-island",
       },
       {
-        eyebrow: "Melhor epoca",
+        eyebrow: "Melhor época",
         title: "Escolha a temporada certa",
-        description: "Compare clima, conforto, paisagem e timing das experiencias.",
+        description: "Compare clima, conforto, paisagem e timing das experiências.",
         route: "guideDetail",
         slug: "best-time-to-visit-marajo",
       },
       {
         eyebrow: "Hospedagem",
         title: "Descubra onde ficar",
-        description: "Use a pagina de hoteis para comparar estilo de estadia, base e apoio local.",
+        description: "Use a página de hotéis para comparar estilo de estadia, base e apoio local.",
         route: "hotels",
       },
       {
         eyebrow: "Roteiro",
-        title: "Monte um itinerario mais forte",
+        title: "Monte um itinerário mais forte",
         description: "Veja como combinar praia, cultura, natureza e ritmo da viagem.",
         route: "guideDetail",
         slug: "marajo-itinerary-guide",
@@ -360,18 +360,18 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
     conciergeEyebrow: "Concierge local",
     conciergeTitle: "Precisa de ajuda humana para transformar descoberta em reserva?",
     conciergeSubtitle:
-      "Quando a viagem envolve logistica, temporadas, hospedagem e experiencias curadas, nosso suporte local encurta o caminho para uma decisao segura.",
+      "Quando a viagem envolve logística, temporadas, hospedagem e experiências curadas, nosso suporte local encurta o caminho para uma decisão segura.",
     conciergeHighlights: [
-      "Orientacao antes, durante e depois da viagem",
-      "Suporte para experiencias, pacotes e desenho do roteiro",
+      "Orientação antes, durante e depois da viagem",
+      "Suporte para experiências, pacotes e desenho do roteiro",
       "Atendimento local com perspectiva internacional",
     ],
     conciergePrimaryLabel: "Falar com especialista local",
     conciergeSecondaryLabel: "Ir para planejamento da viagem",
-    finalEyebrow: "Pronto para avancar",
-    finalTitle: "Escolha seu proximo passo em Marajo com mais confianca",
+    finalEyebrow: "Pronto para avançar",
+    finalTitle: "Escolha seu próximo passo em Marajó com mais confiança",
     finalSubtitle:
-      "Reserve experiencias com clareza ou fale com um especialista local para desenhar uma viagem mais completa.",
+      "Reserve experiências com clareza ou fale com um especialista local para desenhar uma viagem mais completa.",
     finalPrimaryLabel: "Reservar direto",
     finalSecondaryLabel: "Falar com especialista local",
   },

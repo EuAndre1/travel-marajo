@@ -30,9 +30,9 @@ export const guides: GuideContentItem[] = [
   {
     slug: "things-to-do-in-marajo",
     title: "Things to do in Marajo",
-    seoTitle: "Things to Do in Marajo Island: Experiences, Culture and Nature Guide",
-    seoDescription: "Discover the best things to do in Marajo Island, from beaches and buffalo culture to wildlife, curated experiences, and practical trip planning.",
-    heroTitle: "Things to do in Marajo Island",
+    seoTitle: "Things to Do in Maraj? Island: Experiences, Culture and Nature Guide",
+    seoDescription: "Discover the best things to do in Maraj? Island, from beaches and buffalo culture to wildlife, curated experiences, and practical trip planning.",
+    heroTitle: "Things to do in Maraj? Island",
     heroSubtitle: "A premium discovery guide to Marajo's most iconic landscapes, cultural experiences, and booking-ready travel ideas.",
     intro: "Marajo combines beaches, buffalo culture, mangroves, food traditions, and a slower travel rhythm. The best trips balance scenery, culture, and realistic logistics.",
     sections: [
@@ -53,10 +53,10 @@ export const guides: GuideContentItem[] = [
   },
   {
     slug: "how-to-visit-marajo-island",
-    title: "How to visit Marajo Island",
-    seoTitle: "How to Visit Marajo Island: Routes, Logistics and Trip Planning",
-    seoDescription: "Learn how to visit Marajo Island with practical logistics, destination bases, seasonal guidance, and curated planning tips for international and Brazilian travelers.",
-    heroTitle: "How to visit Marajo Island",
+    title: "How to visit Maraj? Island",
+    seoTitle: "How to Visit Maraj? Island: Routes, Logistics and Trip Planning",
+    seoDescription: "Learn how to visit Maraj? Island with practical logistics, destination bases, seasonal guidance, and curated planning tips for international and Brazilian travelers.",
+    heroTitle: "How to visit Maraj? Island",
     heroSubtitle: "A practical guide to reaching Marajo, choosing the right base, and turning logistics into a smoother premium journey.",
     intro: "Marajo is easier when planned as a destination trip rather than a last-minute transfer. Define the gateway, choose a base, and pre-select the right experiences.",
     sections: [
@@ -66,7 +66,7 @@ export const guides: GuideContentItem[] = [
       { title: "Planning with culture", body: "Trips feel richer when visitors go beyond transport and include buffalo culture, food, and local storytelling." },
     ],
     faq: [
-      { question: "What is the easiest way to visit Marajo Island?", answer: "The easiest route is to use Belem as the main gateway, choose Soure or Salvaterra as your base, and book core experiences before arrival." },
+      { question: "What is the easiest way to visit Maraj? Island?", answer: "The easiest route is to use Belem as the main gateway, choose Soure or Salvaterra as your base, and book core experiences before arrival." },
       { question: "Should I book experiences in advance?", answer: "Yes. Pre-booking helps align timing, local support, and smoother on-island logistics." },
     ],
     relatedExperiences: ["pesqueiro", "manguezais-salvaterra"],
@@ -78,9 +78,9 @@ export const guides: GuideContentItem[] = [
   {
     slug: "best-time-to-visit-marajo",
     title: "Best time to visit Marajo",
-    seoTitle: "Best Time to Visit Marajo Island: Seasons, Weather and Travel Planning",
-    seoDescription: "Understand the best time to visit Marajo Island for beaches, wildlife, logistics, buffalo culture, and premium destination planning.",
-    heroTitle: "Best time to visit Marajo Island",
+    seoTitle: "Best Time to Visit Maraj? Island: Seasons, Weather and Travel Planning",
+    seoDescription: "Understand the best time to visit Maraj? Island for beaches, wildlife, logistics, buffalo culture, and premium destination planning.",
+    heroTitle: "Best time to visit Maraj? Island",
     heroSubtitle: "Seasonality shapes landscapes, logistics, atmosphere, and the overall rhythm of a Marajo trip.",
     intro: "There is no single perfect season for every traveler. Some prioritize simpler logistics, while others want greener scenery, stronger wildlife energy, or dramatic skies.",
     sections: [
@@ -125,10 +125,10 @@ export const guides: GuideContentItem[] = [
   },
   {
     slug: "marajo-island-travel-guide",
-    title: "Marajo Island travel guide",
-    seoTitle: "Marajo Island Travel Guide: Where to Go, What to Do and How to Plan",
-    seoDescription: "A complete Marajo Island travel guide covering destinations, experiences, seasonality, culture, logistics, and booking-ready travel planning.",
-    heroTitle: "Marajo Island travel guide",
+    title: "Maraj? Island travel guide",
+    seoTitle: "Maraj? Island Travel Guide: Where to Go, What to Do and How to Plan",
+    seoDescription: "A complete Maraj? Island travel guide covering destinations, experiences, seasonality, culture, logistics, and booking-ready travel planning.",
+    heroTitle: "Maraj? Island travel guide",
     heroSubtitle: "A strategic planning guide connecting destinations, experiences, timing, and next-step booking options.",
     intro: "Marajo rewards travelers who think in terms of destination design rather than isolated attractions. Landscapes, culture, and logistics work best when planned together.",
     sections: [
@@ -223,7 +223,7 @@ export const guides: GuideContentItem[] = [
     slug: "marajo-birdwatching-guide",
     title: "Marajo birdwatching guide",
     seoTitle: "Marajo Birdwatching Guide: Best Habitats, Seasons and Scenic Routes",
-    seoDescription: "Discover birdwatching in Marajo Island with the best habitats, seasonal timing, mangrove routes, and curated planning tips for nature-focused travelers.",
+    seoDescription: "Discover birdwatching in Maraj? Island with the best habitats, seasonal timing, mangrove routes, and curated planning tips for nature-focused travelers.",
     heroTitle: "Marajo birdwatching guide",
     heroSubtitle: "A premium nature guide for travelers who want wetlands, mangroves, and calm observation routes.",
     intro: "Marajo is one of those destinations where birdwatching fits naturally into a broader scenic trip. Travelers benefit most from knowing which habitats and times of day to prioritize.",
@@ -295,7 +295,7 @@ export const guides: GuideContentItem[] = [
     slug: "marajo-beaches-guide",
     title: "Marajo beaches guide",
     seoTitle: "Marajo Beaches Guide: Best Beaches, Scenic Stops and Travel Tips",
-    seoDescription: "Discover the best beaches in Marajo Island, from iconic scenery to relaxed coastal stops, with travel tips, seasonality, and trip-planning guidance.",
+    seoDescription: "Discover the best beaches in Maraj? Island, from iconic scenery to relaxed coastal stops, with travel tips, seasonality, and trip-planning guidance.",
     heroTitle: "Marajo beaches guide",
     heroSubtitle: "A premium beach-planning guide for travelers looking for scenery, atmosphere, and stronger destination understanding.",
     intro: "Marajo's beaches feel more atmospheric and more connected to local life than conventional resort-style coastlines. They work best as part of a broader island journey.",

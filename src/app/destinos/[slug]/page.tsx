@@ -77,8 +77,8 @@ export default function DestinationDetailPage({ params }: Props) {
           <div className="max-w-6xl mx-auto">
             <SectionHeader
               eyebrow="Destaques"
-              title="O que voce encontra aqui"
-              subtitle="Selecao de pontos fortes e experiencias conectadas a este destino."
+              title="O que você encontra aqui"
+              subtitle="Seleção de pontos fortes e experiências conectadas a este destino."
             />
 
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -91,7 +91,7 @@ export default function DestinationDetailPage({ params }: Props) {
 
             {related.length > 0 ? (
               <div className="mt-12">
-                <h3 className="text-2xl font-bold text-[#003366] mb-4">Experiencias relacionadas</h3>
+                <h3 className="text-2xl font-bold text-[#003366] mb-4">Experiências relacionadas</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {related.map((experience) => (
                     <article key={experience!.slug} className="rounded-2xl border border-slate-100 bg-white shadow-sm p-5">
@@ -101,7 +101,7 @@ export default function DestinationDetailPage({ params }: Props) {
                         href={getLocalizedPath(locale, "experienceDetail", { slug: experience!.slug })}
                         className="mt-3 inline-flex text-sm font-semibold text-primary"
                       >
-                        Ver experiencia
+                        Ver experiência
                       </Link>
                     </article>
                   ))}

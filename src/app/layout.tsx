@@ -16,20 +16,20 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-displa
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "Travel Marajo",
-    template: "%s | Travel Marajo",
+    default: "Travel Marajó",
+    template: "%s | Travel Marajó",
   },
-  description: "Premium destination platform for Marajo Island with multilingual discovery, planning, and checkout-ready routes.",
+  description: "Premium destination platform for Maraj? Island with multilingual discovery, planning, and checkout-ready routes.",
   keywords: ["marajo island travel", "amazon island experiences", "travel marajo"],
   alternates: {
     canonical: getLocalizedPath(DEFAULT_LOCALE, "home"),
     languages: getLocalizedAlternates("home"),
   },
   openGraph: {
-    title: "Travel Marajo",
-    description: "Discover Marajo Island through experiences, destinations, guides, and international-ready travel planning.",
+    title: "Travel Marajó",
+    description: "Discover Maraj? Island through experiences, destinations, guides, and international-ready travel planning.",
     url: getSiteUrl(),
-    siteName: "Travel Marajo",
+    siteName: "Travel Marajó",
     locale: LOCALE_TO_BCP47[DEFAULT_LOCALE].replace("-", "_"),
     type: "website",
   },

@@ -25,7 +25,7 @@ const guideSectionLabels = {
     eyebrow: "Guias de viagem",
     fallbackTitle: "Leia antes de reservar",
     fallbackBody:
-      "Esses guias adicionam contexto cultural, sazonal e logistico para ajudar voce a escolher a experiencia certa para o seu estilo de viagem.",
+      "Esses guias adicionam contexto cultural, sazonal e logístico para ajudar você a escolher a experiência certa para o seu estilo de viagem.",
     guideTitlePrefix: "Guia relacionado:",
   },
   en: {
@@ -39,7 +39,7 @@ const guideSectionLabels = {
     eyebrow: "Guias de viaje",
     fallbackTitle: "Lee antes de reservar",
     fallbackBody:
-      "Estas guias anaden contexto cultural, estacional y logistico para ayudarte a elegir la experiencia adecuada para tu estilo de viaje.",
+      "Estas guias anaden contexto cultural, estacional y logístico para ayudarte a elegir la experiência adecuada para tu estilo de viaje.",
     guideTitlePrefix: "Guia relacionada:",
   },
   fr: {
@@ -54,13 +54,13 @@ const guideSectionLabels = {
 const detailPageLabels = {
   pt: {
     eyebrow: "Detalhes",
-    title: "O que torna essa experiencia unica",
+    title: "O que torna essa experiência unica",
     includedTitle: "O que esta incluido",
     priceLabel: "Investimento a partir de",
-    perPersonLabel: "Por pessoa • avaliacao",
+    perPersonLabel: "Por pessoa • avaliação",
     reserveNow: "Reservar agora",
     planWithConcierge: "Planejar com concierge",
-    reserveExperience: "Reservar experiencia",
+    reserveExperience: "Reservar experiência",
     talkToConsultant: "Falar com consultor",
   },
   en: {
@@ -76,13 +76,13 @@ const detailPageLabels = {
   },
   es: {
     eyebrow: "Detalles",
-    title: "Que hace unica esta experiencia",
+    title: "Que hace unica esta experiência",
     includedTitle: "Que esta incluido",
     priceLabel: "Inversion desde",
     perPersonLabel: "Por persona • calificacion",
     reserveNow: "Reservar ahora",
     planWithConcierge: "Planear con concierge",
-    reserveExperience: "Reservar experiencia",
+    reserveExperience: "Reservar experiência",
     talkToConsultant: "Hablar con un consultor",
   },
   fr: {
@@ -101,9 +101,9 @@ const detailPageLabels = {
 const guideContextByExperience = {
   pesqueiro: {
     pt: {
-      title: "Planeje a experiencia de praia mais iconica com mais contexto",
+      title: "Planeje a experiência de praia mais icônica com mais contexto",
       body:
-        "Esses guias ajudam a entender quando ir, como o Pesqueiro se encaixa em um primeiro roteiro no Marajo e o que combinar com o por do sol mais emblematico da ilha.",
+        "Esses guias ajudam a entender quando ir, como o Pesqueiro se encaixa em um primeiro roteiro no Marajó e o que combinar com o pôr do sol mais emblemático da ilha.",
     },
     en: {
       title: "Plan the island's signature beach experience with more context",
@@ -111,7 +111,7 @@ const guideContextByExperience = {
         "These guides explain when to go, how Pesqueiro fits into a first Marajo itinerary, and what pairs well with the island's flagship sunset experience.",
     },
     es: {
-      title: "Planifica la experiencia de playa mas iconica con mas contexto",
+      title: "Planifica la experiência de playa mas iconica con mas contexto",
       body:
         "Estas guias explican cuando ir, como encaja Pesqueiro en un primer itinerario por Marajo y que combinar con el atardecer mas emblematico de la isla.",
     },
@@ -123,9 +123,9 @@ const guideContextByExperience = {
   },
   "bufalos-queijaria": {
     pt: {
-      title: "Entenda a dimensao cultural antes de reservar",
+      title: "Entenda a dimensão cultural antes de reservar",
       body:
-        "Experiencias com bufalos e queijo convertem melhor quando o viajante entende a identidade gastronomica da ilha, a cultura das fazendas e por que esse tema e central no Marajo.",
+        "Experiências com búfalos e queijo convertem melhor quando o viajante entende a identidade gastronômica da ilha, a cultura das fazendas e por que esse tema é central no Marajó.",
     },
     en: {
       title: "Understand the cultural side before you book",
@@ -135,7 +135,7 @@ const guideContextByExperience = {
     es: {
       title: "Comprende el lado cultural antes de reservar",
       body:
-        "Las experiencias con bufalos y queso funcionan mejor cuando el viajero entiende la identidad gastronomica de la isla, la cultura de las haciendas y por que este tema es central en Marajo.",
+        "Las experiências con bufalos y queso funcionan mejor cuando el viajero entiende la identidad gastronomica de la isla, la cultura de las haciendas y por que este tema es central en Marajo.",
     },
     fr: {
       title: "Comprenez la dimension culturelle avant de reserver",
@@ -147,7 +147,7 @@ const guideContextByExperience = {
     pt: {
       title: "Adicione contexto de vida selvagem e rios a este passeio",
       body:
-        "Esses guias ajudam a conectar manguezais, aves, sazonalidade e planejamento mais amplo do destino antes de escolher uma experiencia guiada pela natureza.",
+        "Esses guias ajudam a conectar manguezais, aves, sazonalidade e planejamento mais amplo do destino antes de escolher uma experiência guiada pela natureza.",
     },
     en: {
       title: "Add wildlife and river context to this outing",
@@ -157,7 +157,7 @@ const guideContextByExperience = {
     es: {
       title: "Anade contexto de fauna y rios a esta salida",
       body:
-        "Estas guias conectan manglares, aves, estacionalidad y planificacion mas amplia del destino antes de elegir una experiencia centrada en la naturaleza.",
+        "Estas guias conectan manglares, aves, estacionalidad y planificacion mas amplia del destino antes de elegir una experiência centrada en la naturaleza.",
     },
     fr: {
       title: "Ajoutez un contexte faune et rivieres a cette sortie",
@@ -169,7 +169,7 @@ const guideContextByExperience = {
     pt: {
       title: "Veja como a cavalgada se encaixa no destino",
       body:
-        "As experiencias a cavalo ganham mais forca quando o viajante entende o melhor momento de praia, a cultura dos bufalos e a paisagem ampla que da sentido ao percurso.",
+        "As experiências a cavalo ganham mais força quando o viajante entende o melhor momento de praia, a cultura dos búfalos e a paisagem ampla que dá sentido ao percurso.",
     },
     en: {
       title: "See how horseback riding fits the destination",

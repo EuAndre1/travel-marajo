@@ -1,9 +1,9 @@
 const destinos = [
   { nome: 'Praia do Pesqueiro', tipo: 'Praia', preco: 'R$ 299', imagem: '/destino-pesqueiro.jpg', descricao: 'Uma das praias mais bonitas da ilha' },
-  { nome: 'Salvaterra', tipo: 'Cultura', preco: 'R$ 199', imagem: '/destino-salvaterra.jpg', descricao: 'Centro historico com arquitetura colonial' },
+  { nome: 'Salvaterra', tipo: 'Cultura', preco: 'R$ 199', imagem: '/destino-salvaterra.jpg', descricao: 'Centro histórico com arquitetura colonial' },
   { nome: 'Soure', tipo: 'Natureza', preco: 'R$ 249', imagem: '/destino-soure.jpg', descricao: 'Vida selvagem e paisagens naturais' },
-  { nome: 'Praia de Barra Velha', tipo: 'Praia', preco: 'R$ 279', imagem: '/destino-barra-velha.jpg', descricao: 'Por do sol inesquecivel' },
-  { nome: 'Manguezais', tipo: 'Aventura', preco: 'R$ 189', imagem: '/destino-manguezais.jpg', descricao: 'Ecossistema unico da Amazonia' },
+  { nome: 'Praia de Barra Velha', tipo: 'Praia', preco: 'R$ 279', imagem: '/destino-barra-velha.jpg', descricao: 'Pôr do sol inesquecível' },
+  { nome: 'Manguezais', tipo: 'Aventura', preco: 'R$ 189', imagem: '/destino-manguezais.jpg', descricao: 'Ecossistema único da Amazônia' },
 ]
 
 export default function DestinosLanding() {
@@ -11,8 +11,8 @@ export default function DestinosLanding() {
     <section id="destinos" className="py-16 md:py-24 bg-[#F5F5F5]">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">Destinos Populares em <span className="text-[#FF6600]">Marajo</span></h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">Explore os lugares mais incriveis da ilha e viva experiencias inesqueciveis</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">Destinos Populares em <span className="text-[#FF6600]">Marajó</span></h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">Explore os lugares mais incríveis da ilha e viva experiências inesquecíveis</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {destinos.map((destino) => (

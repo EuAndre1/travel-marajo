@@ -1,9 +1,9 @@
 import PlanTripPageClient from "./PlanTripPageClient"
 import { buildServiceMetadata, buildServiceStructuredData, type JsonLdNode } from "@/lib/metadata-schema"
 
-const title = "Planejar Viagem para Marajo: Concierge, Pacotes e Experiencias"
+const title = "Planejar Viagem para Marajó: Concierge, Pacotes e Experiências"
 const description =
-  "Compare concierge planning, travel packages, and curated experiences for Marajo Island. A premium decision page for first-time and international visitors."
+  "Compare concierge planning, travel packages, and curated experiences for Maraj? Island. A premium decision page for first-time and international visitors."
 
 export const metadata = buildServiceMetadata({
   title,
@@ -19,7 +19,7 @@ export const metadata = buildServiceMetadata({
 
 export default function PlanTripPage() {
   const jsonLd = buildServiceStructuredData({
-    title: "Travel Marajo Concierge Planning",
+    title: "Travel Maraj? Concierge Planning",
     description,
     path: "/planejar-viagem",
     serviceType: "Travel planning concierge",

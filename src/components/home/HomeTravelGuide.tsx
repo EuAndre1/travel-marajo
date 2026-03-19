@@ -14,10 +14,10 @@ export default function HomeTravelGuide() {
   const content = siteContent[lang]
   const chrome = siteChrome[lang]
   const journalTitles = {
-    pt: "Diario de viagem para decidir com confianca",
-    en: "Travel journal for better Marajo decisions",
-    es: "Diario de viaje para decidir mejor en Marajo",
-    fr: "Journal de voyage pour mieux decider votre Marajo",
+    pt: "Diário de viagem para decidir com confiança",
+    en: "Travel journal for better Marajó decisions",
+    es: "Diario de viaje para decidir mejor en Marajó",
+    fr: "Journal de voyage pour mieux decider votre Marajó",
   } as const
 
   return (

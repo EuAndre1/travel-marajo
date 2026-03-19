@@ -37,7 +37,7 @@ export default function HotelSearchModule() {
 
   useEffect(() => {
     if (!destination) {
-      setError('Informe um destino para buscar hoteis.')
+      setError('Informe um destino para buscar hotéis.')
       setHotels([])
       return
     }
@@ -67,7 +67,7 @@ export default function HotelSearchModule() {
         const data = (await response.json()) as HotelSearchResponse | { error: string }
 
         if (!response.ok) {
-          const apiError = 'error' in data ? data.error : 'Erro ao buscar hoteis'
+          const apiError = 'error' in data ? data.error : 'Erro ao buscar hotéis'
           setError(apiError)
           setHotels([])
           return
@@ -79,7 +79,7 @@ export default function HotelSearchModule() {
         setCurrency(payload.currency)
       } catch (err) {
         if ((err as Error).name !== 'AbortError') {
-          setError('Falha de conexao ao buscar hoteis.')
+          setError('Falha de conexão ao buscar hotéis.')
         }
       } finally {
         setIsLoading(false)
@@ -112,7 +112,7 @@ export default function HotelSearchModule() {
             <p className="text-sm text-neutral-500">
               {hotel.city}, {hotel.country}
             </p>
-            <p className="text-sm text-neutral-600 mt-2">Rating: {hotel.rating.toFixed(1)}</p>
+            <p className="text-sm text-neutral-600 mt-2">Avaliação: {hotel.rating.toFixed(1)}</p>
             <p className="text-xl font-bold text-primary mt-2">
               {formatPrice(hotel.pricePerNight, currency, 'pt')}
             </p>
@@ -143,7 +143,7 @@ export default function HotelSearchModule() {
             Anterior
           </button>
           <span className="text-sm text-neutral-600">
-            Pagina {page} de {totalPages}
+            Página {page} de {totalPages}
           </span>
           <button
             type="button"
@@ -151,7 +151,7 @@ export default function HotelSearchModule() {
             onClick={() => setPage((prev) => prev + 1)}
             className="px-4 py-2 border border-gray-200 rounded-lg disabled:opacity-50"
           >
-            Proxima
+            Próxima
           </button>
         </div>
       )}

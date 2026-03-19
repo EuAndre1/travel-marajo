@@ -55,7 +55,7 @@ export default function ActivitiesPage() {
                 {activity.images[0] ? (
                   <img src={activity.images[0]} alt={activity.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#003366]">Travel Marajo</div>
+                  <div className="w-full h-full flex items-center justify-center text-[#003366]">Travel Marajó</div>
                 )}
               </div>
               <div className="p-5">
@@ -64,7 +64,7 @@ export default function ActivitiesPage() {
                   {activity.shortDescription ?? activity.description}
                 </p>
                 <p className="text-sm text-neutral-500 mb-4">
-                  {activity.durationMinutes ? `${activity.durationMinutes} minutos` : 'Duracao a confirmar'}
+                  {activity.durationMinutes ? `${activity.durationMinutes} minutos` : 'Duração a confirmar'}
                 </p>
                 <p className="text-2xl font-bold text-[#003366] mb-4">
                   {formatPrice(activity.price, activity.currency, 'pt')}

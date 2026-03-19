@@ -12,7 +12,7 @@ export default function NewsletterLanding() {
 
     if (!email.trim()) {
       setStatus('error')
-      setMessage('Informe um e-mail valido.')
+      setMessage('Informe um e-mail válido.')
       return
     }
 
@@ -58,7 +58,7 @@ export default function NewsletterLanding() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Receba as Melhores <span className="text-[#FF6600]">Ofertas</span></h2>
-              <p className="text-white/80 text-lg mb-6">Cadastre-se e receba promocoes exclusivas para sua viagem a Marajo.</p>
+              <p className="text-white/80 text-lg mb-6">Cadastre-se e receba promoções exclusivas para sua viagem a Marajó.</p>
               <form className="mb-6" onSubmit={onSubmit}>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <input
@@ -79,7 +79,7 @@ export default function NewsletterLanding() {
               ) : null}
               <div className="flex flex-wrap gap-4 text-white/80 text-sm">
                 <span>+50.000 viajantes</span>
-                <span>Promocoes toda semana</span>
+                <span>Promoções toda semana</span>
                 <span>Cancele quando quiser</span>
               </div>
             </div>

@@ -46,7 +46,7 @@ export default function StripeCheckoutButton({
       const data = (await response.json()) as { checkoutUrl?: string; error?: string }
 
       if (!response.ok || !data.checkoutUrl) {
-        throw new Error(data.error ?? 'Nao foi possivel iniciar o checkout')
+        throw new Error(data.error ?? 'Não foi possível iniciar o checkout')
       }
 
       window.location.href = data.checkoutUrl

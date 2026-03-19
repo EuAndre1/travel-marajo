@@ -27,7 +27,7 @@ export const services: ServiceItem[] = [
     ],
     faq: [
       {
-        question: "Does Travel Marajo issue visas directly?",
+        question: "Does Travel Maraj? issue visas directly?",
         answer:
           "No. The service is consultative and helps travelers understand requirements, process timing, and preparation before using the official visa path.",
       },

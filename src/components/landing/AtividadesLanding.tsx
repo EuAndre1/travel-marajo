@@ -1,11 +1,11 @@
 const atividades = [
-  { titulo: 'Observacao de Botos', duracao: '3 horas', preco: 120, imagem: '/atividade-boto.jpg', avaliacao: 4.9, categoria: 'Natureza' },
-  { titulo: 'Trilha Ecologica', duracao: '4 horas', preco: 89, imagem: '/atividade-trilha.jpg', avaliacao: 4.8, categoria: 'Aventura' },
+  { titulo: 'Observação de Botos', duracao: '3 horas', preco: 120, imagem: '/atividade-boto.jpg', avaliacao: 4.9, categoria: 'Natureza' },
+  { titulo: 'Trilha Ecológica', duracao: '4 horas', preco: 89, imagem: '/atividade-trilha.jpg', avaliacao: 4.8, categoria: 'Aventura' },
   { titulo: 'Passeio de Canoa', duracao: '2 horas', preco: 75, imagem: '/atividade-canoa.jpg', avaliacao: 4.7, categoria: 'Tradicional' },
   { titulo: 'Visita a Comunidades', duracao: '6 horas', preco: 150, imagem: '/atividade-comunidade.jpg', avaliacao: 4.9, categoria: 'Cultural' },
   { titulo: 'Pesca Esportiva', duracao: '8 horas', preco: 280, imagem: '/atividade-pesca.jpg', avaliacao: 5.0, categoria: 'Aventura' },
-  { titulo: 'Cavalgada na Praia', duracao: '2 horas', preco: 95, imagem: '/atividade-cavalgada.jpg', avaliacao: 4.8, categoria: 'Romantico' },
-  { titulo: 'Culinaria Local', duracao: '3 horas', preco: 110, imagem: '/atividade-culinaria.jpg', avaliacao: 4.9, categoria: 'Gastronomia' },
+  { titulo: 'Cavalgada na Praia', duracao: '2 horas', preco: 95, imagem: '/atividade-cavalgada.jpg', avaliacao: 4.8, categoria: 'Romântico' },
+  { titulo: 'Culinária Local', duracao: '3 horas', preco: 110, imagem: '/atividade-culinaria.jpg', avaliacao: 4.9, categoria: 'Gastronomia' },
   { titulo: 'Artesanato Marajoara', duracao: '2 horas', preco: 65, imagem: '/atividade-artesanato.jpg', avaliacao: 4.7, categoria: 'Cultural' },
 ]
 
@@ -14,8 +14,8 @@ export default function AtividadesLanding() {
     <section id="atividades" className="py-16 md:py-24 bg-[#F5F5F5]">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">Atividades e <span className="text-[#FF6600]">Experiencias</span></h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">Viva Marajo de todas as formas.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">Atividades e <span className="text-[#FF6600]">Experiências</span></h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">Viva Marajó de todas as formas.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {atividades.map((atividade) => (

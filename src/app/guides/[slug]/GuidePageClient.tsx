@@ -16,14 +16,14 @@ interface GuidePageClientProps {
 
 const guideLabels = {
   pt: {
-    intro: "Introducao",
-    recommendations: "Experiencias recomendadas",
+    intro: "Introdução",
+    recommendations: "Experiências recomendadas",
     packages: "Pacotes relacionados",
     faq: "Perguntas frequentes",
     keyTakeaways: "Principais destaques",
     planTrip: "Planejar viagem",
-    faqTitle: "Perguntas uteis para planejar a viagem",
-    faqSubtitle: "Respostas rapidas que apoiam descoberta internacional, pesquisa de roteiro e prontidao para conversao.",
+    faqTitle: "Perguntas úteis para planejar a viagem",
+    faqSubtitle: "Respostas rápidas que apoiam descoberta internacional, pesquisa de roteiro e prontidão para conversão.",
   },
   en: {
     intro: "Introduction",
@@ -37,7 +37,7 @@ const guideLabels = {
   },
   es: {
     intro: "Introduccion",
-    recommendations: "Experiencias recomendadas",
+    recommendations: "Experiências recomendadas",
     packages: "Paquetes relacionados",
     faq: "Preguntas frecuentes",
     keyTakeaways: "Puntos clave",

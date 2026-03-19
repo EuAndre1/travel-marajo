@@ -1,7 +1,7 @@
 const ofertas = [
-  { titulo: 'Pacote Completo Marajo', desconto: 40, preco: 899, original: 1499, imagem: '/oferta-pacote.jpg', tag: 'Mais Popular' },
-  { titulo: 'Hotel Pousada dos Guaras', desconto: 30, preco: 199, original: 285, imagem: '/oferta-hotel.jpg', tag: 'Oferta do Dia' },
-  { titulo: 'Passeio de Barco pelos Rios', desconto: 25, preco: 149, original: 199, imagem: '/oferta-passeio.jpg', tag: 'Experiencia Unica' },
+  { titulo: 'Pacote Completo Marajó', desconto: 40, preco: 899, original: 1499, imagem: '/oferta-pacote.jpg', tag: 'Mais Popular' },
+  { titulo: 'Hotel Pousada dos Guarás', desconto: 30, preco: 199, original: 285, imagem: '/oferta-hotel.jpg', tag: 'Oferta do Dia' },
+  { titulo: 'Passeio de Barco pelos Rios', desconto: 25, preco: 149, original: 199, imagem: '/oferta-passeio.jpg', tag: 'Experiência Única' },
 ]
 
 export default function OfertasLanding() {
@@ -9,8 +9,8 @@ export default function OfertasLanding() {
     <section id="ofertas" className="py-16 md:py-24 bg-white">
       <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">Ofertas <span className="text-[#FF6600]">Imperdiveis</span></h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">Promocoes selecionadas para sua viagem ao Marajo</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#003366] mb-4">Ofertas <span className="text-[#FF6600]">Imperdíveis</span></h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">Promoções selecionadas para sua viagem ao Marajó</p>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {ofertas.map((oferta) => (

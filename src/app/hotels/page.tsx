@@ -13,7 +13,7 @@ export default function HotelsPage() {
     <div className="min-h-screen bg-neutral-50">
       <div className="bg-primary py-8">
         <div className="container mx-auto px-4 space-y-4">
-          <h1 className="text-3xl font-display font-bold text-white">Buscar Hoteis</h1>
+          <h1 className="text-3xl font-display font-bold text-white">Buscar Hotéis</h1>
           <Suspense fallback={<div className="h-16 bg-white/80 rounded-xl" />}>
             <HotelSearchForm />
           </Suspense>
@@ -21,7 +21,7 @@ export default function HotelsPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <Suspense fallback={<div className="py-12 text-center text-neutral-500">Carregando hoteis...</div>}>
+        <Suspense fallback={<div className="py-12 text-center text-neutral-500">Carregando hotéis...</div>}>
           <HotelSearchModule />
         </Suspense>
       </div>
