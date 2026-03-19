@@ -23,30 +23,30 @@ const localeMap: Record<"pt" | "en" | "es" | "fr", string> = {
 const guideSectionLabels = {
   pt: {
     eyebrow: "Guias de viagem",
-    fallbackTitle: "Leia antes de reservar",
+    fallbackTitle: "Leitura essencial antes de reservar",
     fallbackBody:
-      "Esses guias adicionam contexto cultural, sazonal e logístico para ajudar você a escolher a experiência certa para o seu estilo de viagem.",
+      "Estes guias ajudam você a entender contexto cultural, sazonalidade e encaixe logístico para reservar com mais segurança.",
     guideTitlePrefix: "Guia relacionado:",
   },
   en: {
     eyebrow: "Travel guides",
-    fallbackTitle: "Read before you book",
+    fallbackTitle: "Essential reading before you book",
     fallbackBody:
-      "These guides add cultural, seasonal, and planning context to help you choose the right experience for your travel style.",
+      "These guides add cultural, seasonal, and planning context so you can book with more clarity and confidence.",
     guideTitlePrefix: "Related guide:",
   },
   es: {
     eyebrow: "Guias de viaje",
-    fallbackTitle: "Lee antes de reservar",
+    fallbackTitle: "Lectura clave antes de reservar",
     fallbackBody:
-      "Estas guias anaden contexto cultural, estacional y logístico para ayudarte a elegir la experiência adecuada para tu estilo de viaje.",
+      "Estas guias aportan contexto cultural, estacional y logistico para ayudarte a reservar con mas claridad y confianza.",
     guideTitlePrefix: "Guia relacionada:",
   },
   fr: {
     eyebrow: "Guides de voyage",
-    fallbackTitle: "A lire avant de reserver",
+    fallbackTitle: "Lecture essentielle avant de reserver",
     fallbackBody:
-      "Ces guides ajoutent un contexte culturel, saisonnier et logistique pour vous aider a choisir l'experience la plus adaptee a votre style de voyage.",
+      "Ces guides ajoutent un contexte culturel, saisonnier et logistique pour vous aider a reserver avec plus de clarte et de confiance.",
     guideTitlePrefix: "Guide associe :",
   },
 } as const
@@ -54,78 +54,78 @@ const guideSectionLabels = {
 const detailPageLabels = {
   pt: {
     eyebrow: "Detalhes",
-    title: "O que torna essa experiência unica",
-    includedTitle: "O que esta incluido",
-    priceLabel: "Investimento a partir de",
-    perPersonLabel: "Por pessoa • avaliação",
+    title: "Por que esta experiência merece entrar no seu roteiro",
+    includedTitle: "O que acompanha a experiência",
+    priceLabel: "Investimento inicial",
+    perPersonLabel: "Por pessoa • avaliação real",
     reserveNow: "Reservar agora",
-    planWithConcierge: "Planejar com concierge",
+    planWithConcierge: "Planejar com especialista",
     reserveExperience: "Reservar experiência",
-    talkToConsultant: "Falar com consultor",
+    talkToConsultant: "Falar com especialista",
   },
   en: {
     eyebrow: "Details",
-    title: "What makes this experience unique",
-    includedTitle: "What's included",
-    priceLabel: "Investment from",
-    perPersonLabel: "Per person • rating",
+    title: "Why this experience deserves a place in your itinerary",
+    includedTitle: "What's included in your booking",
+    priceLabel: "Starting investment",
+    perPersonLabel: "Per person • verified rating",
     reserveNow: "Book now",
-    planWithConcierge: "Plan with concierge",
+    planWithConcierge: "Plan with a specialist",
     reserveExperience: "Book experience",
-    talkToConsultant: "Talk to a consultant",
+    talkToConsultant: "Talk to a specialist",
   },
   es: {
     eyebrow: "Detalles",
-    title: "Que hace unica esta experiência",
-    includedTitle: "Que esta incluido",
-    priceLabel: "Inversion desde",
-    perPersonLabel: "Por persona • calificacion",
+    title: "Por que esta experiencia merece entrar en tu itinerario",
+    includedTitle: "Que incluye tu reserva",
+    priceLabel: "Inversion inicial",
+    perPersonLabel: "Por persona • valoracion real",
     reserveNow: "Reservar ahora",
-    planWithConcierge: "Planear con concierge",
-    reserveExperience: "Reservar experiência",
-    talkToConsultant: "Hablar con un consultor",
+    planWithConcierge: "Planificar con especialista",
+    reserveExperience: "Reservar experiencia",
+    talkToConsultant: "Hablar con especialista",
   },
   fr: {
     eyebrow: "Details",
-    title: "Ce qui rend cette experience unique",
-    includedTitle: "Ce qui est inclus",
-    priceLabel: "Investissement a partir de",
-    perPersonLabel: "Par personne • note",
+    title: "Pourquoi cette experience merite sa place dans votre itineraire",
+    includedTitle: "Ce que comprend votre reservation",
+    priceLabel: "Investissement initial",
+    perPersonLabel: "Par personne • note verifiee",
     reserveNow: "Reserver maintenant",
-    planWithConcierge: "Planifier avec le concierge",
+    planWithConcierge: "Planifier avec un specialiste",
     reserveExperience: "Reserver l'experience",
-    talkToConsultant: "Parler a un conseiller",
+    talkToConsultant: "Parler a un specialiste",
   },
 } as const
 
 const guideContextByExperience = {
   pesqueiro: {
     pt: {
-      title: "Planeje a experiência de praia mais icônica com mais contexto",
+      title: "Entenda por que o Pesqueiro costuma ser a primeira escolha de quem quer sentir Marajó",
       body:
-        "Esses guias ajudam a entender quando ir, como o Pesqueiro se encaixa em um primeiro roteiro no Marajó e o que combinar com o pôr do sol mais emblemático da ilha.",
+        "Esses guias ajudam a entender quando ir, como o Pesqueiro entra em um primeiro roteiro bem desenhado e o que combinar com o pôr do sol mais emblemático da ilha.",
     },
     en: {
-      title: "Plan the island's signature beach experience with more context",
+      title: "Understand why Pesqueiro is often the first choice for travelers who want to feel Marajo",
       body:
-        "These guides explain when to go, how Pesqueiro fits into a first Marajo itinerary, and what pairs well with the island's flagship sunset experience.",
+        "These guides explain when to go, how Pesqueiro fits a well-built first itinerary, and what pairs best with the island's flagship sunset experience.",
     },
     es: {
-      title: "Planifica la experiência de playa mas iconica con mas contexto",
+      title: "Entiende por que Pesqueiro suele ser la primera eleccion para sentir Marajo",
       body:
-        "Estas guias explican cuando ir, como encaja Pesqueiro en un primer itinerario por Marajo y que combinar con el atardecer mas emblematico de la isla.",
+        "Estas guias explican cuando ir, como encaja Pesqueiro en un primer itinerario bien resuelto y que combinar con el atardecer mas emblematico de la isla.",
     },
     fr: {
-      title: "Preparez l'experience de plage la plus emblematique avec plus de contexte",
+      title: "Comprenez pourquoi Pesqueiro est souvent le premier choix pour ressentir Marajo",
       body:
-        "Ces guides expliquent quand partir, comment Pesqueiro s'integre a un premier itineraire sur Marajo et quoi associer au coucher du soleil le plus emblematique de l'ile.",
+        "Ces guides expliquent quand partir, comment Pesqueiro s'integre a un premier itineraire bien construit et quoi associer au coucher de soleil le plus emblematique de l'ile.",
     },
   },
   "bufalos-queijaria": {
     pt: {
-      title: "Entenda a dimensão cultural antes de reservar",
+      title: "Veja por que búfalos e queijo ajudam a revelar a identidade de Marajó",
       body:
-        "Experiências com búfalos e queijo convertem melhor quando o viajante entende a identidade gastronômica da ilha, a cultura das fazendas e por que esse tema é central no Marajó.",
+        "Experiências com búfalos e queijo ficam mais valiosas quando o viajante entende a identidade gastronômica da ilha, a cultura das fazendas e o peso desse tema na leitura do destino.",
     },
     en: {
       title: "Understand the cultural side before you book",
@@ -145,9 +145,9 @@ const guideContextByExperience = {
   },
   "manguezais-salvaterra": {
     pt: {
-      title: "Adicione contexto de vida selvagem e rios a este passeio",
+      title: "Entenda como manguezais, rios e fauna entram no lado mais natural da ilha",
       body:
-        "Esses guias ajudam a conectar manguezais, aves, sazonalidade e planejamento mais amplo do destino antes de escolher uma experiência guiada pela natureza.",
+        "Esses guias conectam manguezais, aves, sazonalidade e planejamento mais amplo do destino antes de escolher uma experiência guiada pela natureza.",
     },
     en: {
       title: "Add wildlife and river context to this outing",
@@ -167,7 +167,7 @@ const guideContextByExperience = {
   },
   "cavalgada-praia": {
     pt: {
-      title: "Veja como a cavalgada se encaixa no destino",
+      title: "Entenda por que a cavalgada combina paisagem, ritmo e leitura cultural da ilha",
       body:
         "As experiências a cavalo ganham mais força quando o viajante entende o melhor momento de praia, a cultura dos búfalos e a paisagem ampla que dá sentido ao percurso.",
     },

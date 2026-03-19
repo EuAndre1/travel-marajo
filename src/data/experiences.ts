@@ -19,7 +19,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_pesqueiro_sunset",
     slug: "pesqueiro",
     title: "Praia do Pesqueiro ao pôr do sol",
-    shortDescription: "A experiência de praia mais icônica do Marajó com pôr do sol, paisagem aberta e curadoria local.",
+    shortDescription: "A leitura mais clássica e desejada de Marajó, com pôr do sol forte, paisagem aberta e curadoria local.",
     category: "beach",
     destinationSlug: "pesqueiro",
     locationLabel: "Soure - Ilha de Marajó",
@@ -32,7 +32,8 @@ export const experienceCatalog: Experience[] = [
     featured: true,
     active: true,
     seoTitle: "Praia do Pesqueiro no Marajó: experiência de praia e pôr do sol",
-    seoDescription: "Descubra a Praia do Pesqueiro com curadoria local, paisagem marajoara, suporte humano e uma das experiências mais reservadas da ilha.",
+    seoDescription:
+      "Descubra a Praia do Pesqueiro com curadoria local, suporte humano e uma das experiências mais desejadas para uma primeira viagem a Marajó.",
     guideSlugs: ["things-to-do-in-marajo", "marajo-island-travel-guide", "best-time-to-visit-marajo"],
     itinerarySlugs: ["3-day-marajo-classic", "5-day-marajo-nature"],
     relatedExperienceSlugs: ["cavalgada-praia", "bufalos-queijaria"],
@@ -50,12 +51,12 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Praia do Pesqueiro ao pôr do sol",
-        shortDescription: "A experiência de praia mais icônica do Marajó com pôr do sol, paisagem aberta e curadoria local.",
+        shortDescription: "A leitura mais clássica e desejada de Marajó, com pôr do sol forte, paisagem aberta e curadoria local.",
         fullDescription:
-          "Uma experiência clássica para quem quer sentir o lado mais fotográfico do Marajó. Praia ampla, apoio local e uma leitura mais premium do destino.",
+          "Uma experiência assinatura para quem quer entender o apelo visual de Marajó logo na primeira viagem. Praia ampla, apoio local e uma reserva fácil de encaixar no roteiro.",
         locationLabel: "Soure - Ilha de Marajó",
         durationLabel: "4 horas",
-        highlights: ["Pôr do sol emblemático", "Paisagem aberta", "Leitura fácil para primeira viagem", "Suporte humano"],
+        highlights: ["Pôr do sol emblemático", "Paisagem aberta", "Fácil de encaixar na primeira viagem", "Suporte humano da equipe"],
         included: ["Curadoria da experiência", "Orientação local", "Suporte pré-viagem"],
       },
       en: {
@@ -95,7 +96,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_buffalo_farm",
     slug: "bufalos-queijaria",
     title: "Circuito dos búfalos e queijaria",
-    shortDescription: "Vivência rural com fazenda, queijo marajoara e forte leitura cultural do destino.",
+    shortDescription: "Vivência rural com fazenda, queijo marajoara e uma leitura mais profunda da identidade da ilha.",
     category: "culture",
     destinationSlug: "soure",
     locationLabel: "Soure",
@@ -108,7 +109,8 @@ export const experienceCatalog: Experience[] = [
     featured: true,
     active: true,
     seoTitle: "Circuito de búfalos e queijo no Marajó: fazenda, cultura e sabor",
-    seoDescription: "Conheça uma experiência rural no Marajó com queijo marajoara, cultura búfala e apoio local para viajantes que buscam identidade e autenticidade.",
+    seoDescription:
+      "Conheça uma experiência rural em Marajó com queijo marajoara, cultura búfala e apoio local para viajantes que buscam identidade, sabor e contexto.",
     guideSlugs: ["marajo-buffalo-culture", "things-to-do-in-marajo", "marajo-island-travel-guide"],
     itinerarySlugs: ["3-day-marajo-classic"],
     relatedExperienceSlugs: ["pesqueiro", "cavalgada-praia"],
@@ -126,12 +128,12 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Circuito dos búfalos e queijaria",
-        shortDescription: "Vivência rural com fazenda, queijo marajoara e forte leitura cultural do destino.",
+        shortDescription: "Vivência rural com fazenda, queijo marajoara e uma leitura mais profunda da identidade da ilha.",
         fullDescription:
-          "Uma experiência desenhada para conectar fazenda, queijo e identidade local em um formato fácil de encaixar em roteiros de primeira viagem.",
+          "Uma experiência desenhada para conectar fazenda, queijo e identidade local em um formato que combina bem com roteiros de primeira viagem e viagens guiadas por cultura.",
         locationLabel: "Soure",
         durationLabel: "5 horas",
-        highlights: ["Fazenda local", "Queijo marajoara", "Leitura cultural", "Boa combinação com praia"],
+        highlights: ["Fazenda local", "Queijo marajoara", "Leitura cultural forte", "Boa combinação com praia"],
         included: ["Guia local", "Degustação", "Transfer interno"],
       },
       en: {
@@ -171,7 +173,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_salvaterra_mangroves",
     slug: "manguezais-salvaterra",
     title: "Manguezais de Salvaterra",
-    shortDescription: "Saída de barco em ritmo calmo com leitura de aves, rios e ecossistema preservado.",
+    shortDescription: "Saída de barco em ritmo calmo para ler rios, aves e o lado mais preservado de Marajó.",
     category: "wildlife",
     destinationSlug: "salvaterra",
     locationLabel: "Salvaterra",
@@ -184,7 +186,8 @@ export const experienceCatalog: Experience[] = [
     featured: true,
     active: true,
     seoTitle: "Manguezais de Salvaterra: natureza, aves e passeio de barco no Marajó",
-    seoDescription: "Explore os manguezais de Salvaterra com observação de aves, paisagem preservada e uma experiência lenta pensada para natureza e descoberta.",
+    seoDescription:
+      "Explore os manguezais de Salvaterra com observação de aves, paisagem preservada e uma experiência desenhada para natureza, silêncio e descoberta.",
     guideSlugs: ["marajo-wildlife-and-nature", "best-time-to-visit-marajo", "things-to-do-in-marajo"],
     itinerarySlugs: ["5-day-marajo-nature", "marajo-wildlife-itinerary"],
     relatedExperienceSlugs: ["birdwatching-marajo-fields", "boat-tour-igarapes"],
@@ -202,9 +205,9 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Manguezais de Salvaterra",
-        shortDescription: "Saída de barco em ritmo calmo com leitura de aves, rios e ecossistema preservado.",
+        shortDescription: "Saída de barco em ritmo calmo para ler rios, aves e o lado mais preservado de Marajó.",
         fullDescription:
-          "Uma experiência pensada para observação e contemplação, ideal para viajantes que querem ver o lado mais natural do Marajó sem pressa.",
+          "Uma experiência pensada para observação e contemplação, ideal para viajantes que querem ver o lado mais natural da ilha sem pressa e com bom contexto local.",
         locationLabel: "Salvaterra",
         durationLabel: "3 horas",
         highlights: ["Passeio de barco", "Observação de aves", "Natureza preservada", "Ritmo tranquilo"],
@@ -247,7 +250,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_horseback_beach",
     slug: "cavalgada-praia",
     title: "Cavalgada na praia ao entardecer",
-    shortDescription: "Uma experiência clássica do Marajó com cavalo, praia aberta e forte apelo fotográfico.",
+    shortDescription: "Uma experiência clássica de Marajó que combina cavalo, praia aberta e um dos cenários mais fotogênicos da ilha.",
     category: "horseback",
     destinationSlug: "soure",
     locationLabel: "Soure",
@@ -260,7 +263,8 @@ export const experienceCatalog: Experience[] = [
     featured: true,
     active: true,
     seoTitle: "Cavalgada na praia no Marajó: experiência a cavalo e paisagem aberta",
-    seoDescription: "Planeje uma cavalgada na praia no Marajó com paisagem aberta, leitura cultural do destino e uma experiência fotogênica de baixa dificuldade.",
+    seoDescription:
+      "Planeje uma cavalgada na praia em Marajó com paisagem aberta, leitura cultural do destino e uma experiência fotogênica de baixa dificuldade.",
     guideSlugs: ["marajo-horseback-experience", "best-time-to-visit-marajo", "things-to-do-in-marajo"],
     itinerarySlugs: ["3-day-marajo-classic"],
     relatedExperienceSlugs: ["pesqueiro", "bufalos-queijaria"],
@@ -278,12 +282,12 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Cavalgada na praia ao entardecer",
-        shortDescription: "Uma experiência clássica do Marajó com cavalo, praia aberta e forte apelo fotográfico.",
+        shortDescription: "Uma experiência clássica de Marajó que combina cavalo, praia aberta e um dos cenários mais fotogênicos da ilha.",
         fullDescription:
-          "Uma saída guiada pensada para quem quer paisagem ampla e movimento leve, com leitura autêntica da cultura de campo e praia da ilha.",
+          "Uma saída guiada para quem quer paisagem ampla, movimento leve e uma leitura autêntica da relação entre campo, praia e cultura marajoara.",
         locationLabel: "Soure",
         durationLabel: "2h30",
-        highlights: ["Praia aberta", "Apelo fotográfico", "Ritmo acessível", "Leitura do territorio"],
+        highlights: ["Praia aberta", "Apelo fotográfico", "Ritmo acessível", "Leitura do território"],
         included: ["Cavalo preparado", "Equipamento básico", "Seguro"],
       },
       en: {
@@ -323,7 +327,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_birdwatching_fields",
     slug: "birdwatching-marajo-fields",
     title: "Expedição de observação de aves",
-    shortDescription: "Saída de campo focada em aves, paisagem aberta e fotografia de natureza no Marajó.",
+    shortDescription: "Saída de campo focada em aves, paisagem aberta e fotografia para quem quer o lado mais selvagem da ilha.",
     category: "wildlife",
     destinationSlug: "salvaterra",
     locationLabel: "Salvaterra e campos alagados",
@@ -336,7 +340,8 @@ export const experienceCatalog: Experience[] = [
     featured: false,
     active: true,
     seoTitle: "Birdwatching no Marajó: expedição de observação de aves e natureza",
-    seoDescription: "Planeje uma expedição de birdwatching no Marajó com foco em habitats abertos, fotografia e leitura de natureza com apoio local.",
+    seoDescription:
+      "Planeje uma expedição de birdwatching em Marajó com foco em habitats abertos, fotografia e leitura de natureza com apoio local.",
     guideSlugs: ["marajo-wildlife-and-nature", "best-time-to-visit-marajo"],
     itinerarySlugs: ["marajo-wildlife-itinerary", "5-day-marajo-nature"],
     relatedExperienceSlugs: ["manguezais-salvaterra", "boat-tour-igarapes"],
@@ -350,9 +355,9 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Expedição de observação de aves",
-        shortDescription: "Saída de campo focada em aves, paisagem aberta e fotografia de natureza no Marajó.",
+        shortDescription: "Saída de campo focada em aves, paisagem aberta e fotografia para quem quer o lado mais selvagem da ilha.",
         fullDescription:
-          "Uma experiência para viajantes que priorizam natureza, observação e tempo de leitura de habitat antes de transformar a viagem em um roteiro mais amplo.",
+          "Uma experiência para viajantes que priorizam natureza, observação e tempo de leitura de habitat antes de transformar a viagem em um roteiro mais amplo e bem desenhado.",
         locationLabel: "Salvaterra e campos alagados",
         durationLabel: "4h30",
         highlights: ["Habitats abertos", "Leitura de fauna", "Boa para fotografia", "Saída curada"],
@@ -395,7 +400,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_boat_igarapes",
     slug: "boat-tour-igarapes",
     title: "Passeio de barco por igarapés",
-    shortDescription: "Uma saída leve de barco para ler rios, canais e o ritmo mais contemplativo do Marajó.",
+    shortDescription: "Uma saída leve de barco para entender rios, canais e o ritmo mais contemplativo de Marajó.",
     category: "boat",
     destinationSlug: "salvaterra",
     locationLabel: "Salvaterra",
@@ -408,7 +413,8 @@ export const experienceCatalog: Experience[] = [
     featured: false,
     active: true,
     seoTitle: "Passeio de barco nos igarapés do Marajó: rios, paisagem e descoberta lenta",
-    seoDescription: "Descubra um passeio de barco pelos igarapés do Marajó com foco em paisagem, ritmo calmo e combinação com roteiros de natureza.",
+    seoDescription:
+      "Descubra um passeio de barco pelos igarapés de Marajó com foco em paisagem, ritmo calmo e combinação inteligente com roteiros de natureza.",
     guideSlugs: ["how-to-visit-marajo-island", "marajo-wildlife-and-nature"],
     itinerarySlugs: ["5-day-marajo-nature", "marajo-fishing-itinerary"],
     relatedExperienceSlugs: ["manguezais-salvaterra", "birdwatching-marajo-fields"],
@@ -422,12 +428,12 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Passeio de barco por igarapés",
-        shortDescription: "Uma saída leve de barco para ler rios, canais e o ritmo mais contemplativo do Marajó.",
+        shortDescription: "Uma saída leve de barco para entender rios, canais e o ritmo mais contemplativo de Marajó.",
         fullDescription:
-          "Uma experiência pensada para quem quer navegar sem pressa, entender o território de água e combinar a saída com outros roteiros de natureza.",
+          "Uma experiência pensada para quem quer navegar sem pressa, entender o território de água e combinar a saída com outros momentos fortes de natureza.",
         locationLabel: "Salvaterra",
         durationLabel: "3h30",
-        highlights: ["Ritmo contemplativo", "Boa combinação com natureza", "Leitura de rios", "Saida acessivel"],
+        highlights: ["Ritmo contemplativo", "Boa combinação com natureza", "Leitura de rios", "Saída acessível"],
         included: ["Barco local", "Guia", "Orientações gerais"],
       },
       en: {
@@ -467,7 +473,7 @@ export const experienceCatalog: Experience[] = [
     id: "exp_fishing_marajo",
     slug: "pesca-esportiva-marajo",
     title: "Experiência de pesca esportiva",
-    shortDescription: "Saída orientada para pesca e leitura de água com apoio local e posicionamento premium.",
+    shortDescription: "Saída orientada para pesca e leitura de água com apoio local para viajantes que buscam atividade com contexto.",
     category: "fishing",
     destinationSlug: "soure",
     locationLabel: "Soure e arredores",
@@ -480,7 +486,8 @@ export const experienceCatalog: Experience[] = [
     featured: false,
     active: true,
     seoTitle: "Pesca esportiva no Marajó: experiência de água e curadoria local",
-    seoDescription: "Planeje uma experiência de pesca esportiva no Marajó com apoio local, leitura de água, ritmo ajustado e integração com roteiros premium.",
+    seoDescription:
+      "Planeje uma experiência de pesca esportiva em Marajó com apoio local, leitura de água, ritmo ajustado e integração com roteiros premium.",
     guideSlugs: ["things-to-do-in-marajo", "how-to-visit-marajo-island"],
     itinerarySlugs: ["marajo-fishing-itinerary"],
     relatedExperienceSlugs: ["boat-tour-igarapes", "pesqueiro"],
@@ -494,12 +501,12 @@ export const experienceCatalog: Experience[] = [
     translations: {
       pt: {
         title: "Experiência de pesca esportiva",
-        shortDescription: "Saída orientada para pesca e leitura de água com apoio local e posicionamento premium.",
+        shortDescription: "Saída orientada para pesca e leitura de água com apoio local para viajantes que buscam atividade com contexto.",
         fullDescription:
-          "Uma experiência comercialmente forte para perfis que querem atividade, água e acompanhamento local sem transformar a viagem em operação complexa.",
+          "Uma experiência forte para perfis que querem atividade, água e acompanhamento local sem transformar a viagem em uma operação complexa.",
         locationLabel: "Soure e arredores",
         durationLabel: "6 horas",
-        highlights: ["Saida focada", "Leitura de água", "Apoio local", "Boa para perfis ativos"],
+        highlights: ["Saída focada", "Leitura de água", "Apoio local", "Boa para perfis ativos"],
         included: ["Guia local", "Apoio operacional básico", "Orientações de saída"],
       },
       en: {

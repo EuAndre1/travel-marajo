@@ -312,20 +312,20 @@ export const footerContact = {
 
 export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
   pt: {
-    trustStripLabel: "Confiança para descobrir, planejar e reservar",
+    trustStripLabel: "Curadoria local, reserva segura e suporte humano",
     heroPlannerEyebrow: "Planejamento premium",
-    heroPlannerTitle: "Seu gateway internacional para um Marajó mais claro, autêntico e reservável.",
+    heroPlannerTitle: "Travel Marajó é a forma mais clara de descobrir, planejar e reservar o melhor da ilha.",
     heroPlannerBody:
-      "Passe da inspiração para um roteiro executável com contexto editorial, curadoria local e suporte humano.",
+      "Saia da curiosidade e entre em um roteiro viável com contexto editorial, parceiros verificados e assistência local em cada etapa.",
     heroPlannerHighlights: [
-      "Escolha entre experiências, pacotes e planejamento assistido",
+      "Compare experiências, pacotes e planejamento assistido com mais clareza",
       "Receba suporte local antes, durante e depois da viagem",
       "Use o travel journal para decidir com mais confiança",
     ],
     planningEyebrow: "Planeje com contexto real",
-    planningTitle: "Tudo o que um viajante internacional precisa para desenhar melhor a viagem",
+    planningTitle: "Planeje Marajó com a mesma clareza de um especialista local",
     planningSubtitle:
-      "Superficiamos os guias e entradas práticas que ajudam a entender logística, tempo ideal, base da viagem e ritmo do roteiro sem criar links mortos.",
+      "Superfícies editoriais e práticas pensadas para quem precisa entender acesso, melhor época, base da viagem e desenho de roteiro antes de reservar.",
     planningCards: [
       {
         eyebrow: "Como chegar",
@@ -355,12 +355,12 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
         slug: "marajo-itinerary-guide",
       },
     ],
-    planningPrimaryLabel: "Planejar viagem com concierge",
-    planningSecondaryLabel: "Explorar todos os guias",
+    planningPrimaryLabel: "Planejar com especialista local",
+    planningSecondaryLabel: "Explorar o travel journal",
     conciergeEyebrow: "Concierge local",
-    conciergeTitle: "Precisa de ajuda humana para transformar descoberta em reserva?",
+    conciergeTitle: "Quando a viagem exige mais contexto, nosso concierge encurta o caminho até a reserva",
     conciergeSubtitle:
-      "Quando a viagem envolve logística, temporadas, hospedagem e experiências curadas, nosso suporte local encurta o caminho para uma decisão segura.",
+      "Para combinar logística, temporada, hospedagem e experiências sem ruído, o suporte humano ajuda você a decidir com segurança e rapidez.",
     conciergeHighlights: [
       "Orientação antes, durante e depois da viagem",
       "Suporte para experiências, pacotes e desenho do roteiro",
@@ -369,27 +369,27 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
     conciergePrimaryLabel: "Falar com especialista local",
     conciergeSecondaryLabel: "Ir para planejamento da viagem",
     finalEyebrow: "Pronto para avançar",
-    finalTitle: "Escolha seu próximo passo em Marajó com mais confiança",
+    finalTitle: "Descubra Marajó com mais clareza. Reserve com mais confiança.",
     finalSubtitle:
-      "Reserve experiências com clareza ou fale com um especialista local para desenhar uma viagem mais completa.",
+      "Escolha entre reservar experiências agora ou falar com um especialista local para montar a viagem completa.",
     finalPrimaryLabel: "Reservar direto",
     finalSecondaryLabel: "Falar com especialista local",
   },
   en: {
-    trustStripLabel: "Confidence to discover, plan, and book",
+    trustStripLabel: "Local curation, secure booking, and human support",
     heroPlannerEyebrow: "Premium planning",
-    heroPlannerTitle: "Your international gateway to a clearer, more authentic, and bookable Marajo.",
+    heroPlannerTitle: "Travel Marajo is the clearest way to discover, plan, and book the best of the island.",
     heroPlannerBody:
-      "Move from inspiration into an executable trip with destination intelligence, local curation, and human support.",
+      "Move from curiosity into a workable itinerary with destination intelligence, verified partners, and local assistance at every step.",
     heroPlannerHighlights: [
-      "Choose between experiences, packages, and assisted planning",
+      "Compare experiences, packages, and assisted planning with more clarity",
       "Access local support before, during, and after the trip",
       "Use the travel journal to decide with more confidence",
     ],
     planningEyebrow: "Plan with real context",
-    planningTitle: "What international travelers need to shape a stronger Marajo trip",
+    planningTitle: "Plan Marajo with the clarity of a trusted local specialist",
     planningSubtitle:
-      "We surface the planning guides and practical entry points that help visitors understand logistics, trip timing, base selection, and itinerary rhythm without dead-end links.",
+      "Editorial and practical surfaces designed for travelers who need to understand access, seasonality, base selection, and itinerary design before they book.",
     planningCards: [
       {
         eyebrow: "How to get there",
@@ -419,12 +419,12 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
         slug: "marajo-itinerary-guide",
       },
     ],
-    planningPrimaryLabel: "Plan your trip with concierge",
+    planningPrimaryLabel: "Plan with a local specialist",
     planningSecondaryLabel: "Explore the travel journal",
     conciergeEyebrow: "Local concierge",
-    conciergeTitle: "Need human guidance to turn discovery into booking?",
+    conciergeTitle: "When the trip requires more context, our concierge shortens the path to booking",
     conciergeSubtitle:
-      "When the trip involves logistics, seasonality, stays, and curated experiences, local support is the fastest way to move toward a confident decision.",
+      "When logistics, timing, stays, and curated experiences need to work together, human guidance helps travelers decide with more speed and confidence.",
     conciergeHighlights: [
       "Guidance before, during, and after the journey",
       "Support for experiences, packages, and trip design",
@@ -433,27 +433,27 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
     conciergePrimaryLabel: "Talk to a local travel specialist",
     conciergeSecondaryLabel: "Go to trip planning",
     finalEyebrow: "Ready to move",
-    finalTitle: "Choose your next Marajo step with more confidence",
+    finalTitle: "Discover Marajo with more clarity. Book with more confidence.",
     finalSubtitle:
-      "Book experiences directly or talk to a local specialist to shape a fuller itinerary.",
+      "Choose between booking experiences now or talking to a local specialist to shape the fuller journey.",
     finalPrimaryLabel: "Book direct",
     finalSecondaryLabel: "Talk to a local specialist",
   },
   es: {
-    trustStripLabel: "Confianza para descubrir, planificar y reservar",
+    trustStripLabel: "Curaduria local, reserva segura y soporte humano",
     heroPlannerEyebrow: "Planificacion premium",
-    heroPlannerTitle: "Tu puerta internacional a un Marajo mas claro, autentico y listo para reservar.",
+    heroPlannerTitle: "Travel Marajo es la forma mas clara de descubrir, planificar y reservar lo mejor de la isla.",
     heroPlannerBody:
-      "Pasa de la inspiracion a un viaje ejecutable con inteligencia de destino, curaduria local y soporte humano.",
+      "Pasa de la curiosidad a un itinerario viable con inteligencia de destino, socios verificados y asistencia local en cada etapa.",
     heroPlannerHighlights: [
-      "Elige entre experiencias, paquetes y planificacion asistida",
+      "Compara experiencias, paquetes y planificacion asistida con mas claridad",
       "Accede a soporte local antes, durante y despues del viaje",
       "Usa el travel journal para decidir con mas confianza",
     ],
     planningEyebrow: "Planifica con contexto real",
-    planningTitle: "Lo que un viajero internacional necesita para construir un mejor viaje a Marajo",
+    planningTitle: "Planifica Marajo con la claridad de un especialista local confiable",
     planningSubtitle:
-      "Mostramos los guias y entradas practicas que ayudan a entender logistica, temporada, base del viaje y ritmo del itinerario sin crear enlaces muertos.",
+      "Superficies editoriales y practicas pensadas para quienes necesitan entender acceso, temporada, base del viaje y diseno del itinerario antes de reservar.",
     planningCards: [
       {
         eyebrow: "Como llegar",
@@ -483,12 +483,12 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
         slug: "marajo-itinerary-guide",
       },
     ],
-    planningPrimaryLabel: "Planificar viaje con concierge",
+    planningPrimaryLabel: "Planificar con especialista local",
     planningSecondaryLabel: "Explorar el travel journal",
     conciergeEyebrow: "Concierge local",
-    conciergeTitle: "Necesitas ayuda humana para convertir descubrimiento en reserva?",
+    conciergeTitle: "Cuando el viaje exige mas contexto, nuestro concierge acorta el camino hasta la reserva",
     conciergeSubtitle:
-      "Cuando el viaje involucra logistica, temporada, hospedaje y experiencias curadas, el soporte local acelera una decision segura.",
+      "Cuando logistica, temporada, hospedaje y experiencias curadas deben encajar bien, la ayuda humana permite decidir con mas velocidad y confianza.",
     conciergeHighlights: [
       "Orientacion antes, durante y despues del viaje",
       "Apoyo para experiencias, paquetes y diseno del itinerario",
@@ -497,27 +497,27 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
     conciergePrimaryLabel: "Hablar con un especialista local",
     conciergeSecondaryLabel: "Ir a planificar viaje",
     finalEyebrow: "Listo para avanzar",
-    finalTitle: "Elige el siguiente paso en Marajo con mas confianza",
+    finalTitle: "Descubre Marajo con mas claridad. Reserva con mas confianza.",
     finalSubtitle:
-      "Reserva experiencias directamente o habla con un especialista local para construir un itinerario mas completo.",
+      "Elige entre reservar experiencias ahora o hablar con un especialista local para construir el viaje completo.",
     finalPrimaryLabel: "Reservar directo",
     finalSecondaryLabel: "Hablar con especialista local",
   },
   fr: {
-    trustStripLabel: "Confiance pour decouvrir, planifier et reserver",
+    trustStripLabel: "Curation locale, reservation sure et support humain",
     heroPlannerEyebrow: "Planification premium",
-    heroPlannerTitle: "Votre portail international vers un Marajo plus clair, plus authentique et plus reservable.",
+    heroPlannerTitle: "Travel Marajo est la facon la plus claire de decouvrir, planifier et reserver le meilleur de l'ile.",
     heroPlannerBody:
-      "Passez de l'inspiration a un voyage executable avec intelligence destination, curation locale et support humain.",
+      "Passez de la curiosite a un itineraire realisable avec intelligence destination, partenaires verifies et assistance locale a chaque etape.",
     heroPlannerHighlights: [
-      "Choisissez entre experiences, forfaits et planification assistee",
+      "Comparez experiences, forfaits et planification assistee avec plus de clarte",
       "Accedez a un support local avant, pendant et apres le voyage",
       "Utilisez le travel journal pour decider avec plus de confiance",
     ],
     planningEyebrow: "Planifiez avec un vrai contexte",
-    planningTitle: "Ce dont un voyageur international a besoin pour construire un meilleur voyage a Marajo",
+    planningTitle: "Planifiez Marajo avec la clarte d'un specialiste local de confiance",
     planningSubtitle:
-      "Nous faisons remonter les guides et points d'entree utiles pour comprendre logistique, saison, base du voyage et rythme d'itineraire sans liens morts.",
+      "Des surfaces editoriales et pratiques pensees pour ceux qui doivent comprendre acces, saison, base du voyage et dessin d'itineraire avant de reserver.",
     planningCards: [
       {
         eyebrow: "Comment y aller",
@@ -547,12 +547,12 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
         slug: "marajo-itinerary-guide",
       },
     ],
-    planningPrimaryLabel: "Planifier avec le concierge",
+    planningPrimaryLabel: "Planifier avec un specialiste local",
     planningSecondaryLabel: "Explorer le travel journal",
     conciergeEyebrow: "Concierge local",
-    conciergeTitle: "Besoin d'une aide humaine pour transformer la decouverte en reservation ?",
+    conciergeTitle: "Quand le voyage demande plus de contexte, notre concierge raccourcit le chemin vers la reservation",
     conciergeSubtitle:
-      "Quand le voyage implique logistique, saison, hebergement et experiences choisies, le support local raccourcit le chemin vers une decision sure.",
+      "Quand logistique, saison, hebergement et experiences choisies doivent bien s'assembler, l'accompagnement humain permet de decider plus vite et avec davantage de confiance.",
     conciergeHighlights: [
       "Orientation avant, pendant et apres le voyage",
       "Support pour experiences, forfaits et dessin d'itineraire",
@@ -561,9 +561,9 @@ export const homeAuthorityContent: Record<AppLocale, HomeAuthorityContent> = {
     conciergePrimaryLabel: "Parler a un specialiste local",
     conciergeSecondaryLabel: "Aller a la planification du voyage",
     finalEyebrow: "Pret a avancer",
-    finalTitle: "Choisissez la prochaine etape a Marajo avec plus de confiance",
+    finalTitle: "Decouvrez Marajo avec plus de clarte. Reservez avec plus de confiance.",
     finalSubtitle:
-      "Reservez des experiences directement ou parlez a un specialiste local pour construire un itineraire plus complet.",
+      "Choisissez entre reserver des experiences maintenant ou parler a un specialiste local pour dessiner le voyage complet.",
     finalPrimaryLabel: "Reserver en direct",
     finalSecondaryLabel: "Parler a un specialiste local",
   },
