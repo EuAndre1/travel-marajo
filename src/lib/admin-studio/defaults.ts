@@ -1,6 +1,9 @@
 import { SUPPORTED_LOCALES, type AppLocale } from "@/config/i18n"
 import { siteContent } from "@/config/site-content"
+import { experienceCatalog } from "@/data/experiences"
 import { homeContentByLocale } from "@/data/homepage"
+import { FLAGSHIP_PACKAGE_SLUG, premiumPackageLandingContent } from "@/data/package-landing"
+import { packages } from "@/data/pacotes"
 import { homeAuthorityContent, siteChrome } from "@/data/site"
 
 export const adminStudioLocales = SUPPORTED_LOCALES
@@ -57,6 +60,68 @@ export interface AdminContentLocaleDraft {
 
 export interface AdminContentDraft {
   locales: Record<AppLocale, AdminContentLocaleDraft>
+}
+
+export interface AdminExperienceLocaleDraft {
+  title: string
+  shortDescription: string
+  fullDescription: string
+  locationLabel: string
+  durationLabel: string
+  highlightsText: string
+  includedText: string
+}
+
+export interface AdminExperienceDraftItem {
+  slug: string
+  categoryKey: string
+  featured: boolean
+  active: boolean
+  locales: Record<AppLocale, AdminExperienceLocaleDraft>
+}
+
+export interface AdminExperiencesDraft {
+  items: AdminExperienceDraftItem[]
+}
+
+export interface AdminPackageLocaleDraft {
+  title: string
+  summary: string
+  duration: string
+  includedText: string
+  itineraryText: string
+  premiumHeroTitle: string
+  premiumHeroBody: string
+  premiumWhyTitle: string
+  premiumWhyBody: string
+  premiumWhyBookTitle: string
+  premiumWhyBookSubtitle: string
+  premiumFinalTitle: string
+  premiumFinalSubtitle: string
+  premiumListingTitle: string
+  premiumListingBody: string
+  premiumTrustNotes: string
+}
+
+export interface AdminPackageDraftItem {
+  slug: string
+  startingPrice: number
+  isFlagship: boolean
+  locales: Record<AppLocale, AdminPackageLocaleDraft>
+}
+
+export interface AdminPackagesDraft {
+  items: AdminPackageDraftItem[]
+}
+
+function createLocaleRecord<T>(builder: (locale: AppLocale) => T) {
+  return adminStudioLocales.reduce(
+    (accumulator, locale) => {
+      accumulator[locale] = builder(locale)
+      return accumulator
+    },
+    {} as Record<AppLocale, T>,
+  )
 }
 
 export const adminHomepageInitialDraft: AdminHomepageDraft = {
@@ -199,4 +264,61 @@ export const adminContentInitialDraft: AdminContentDraft = {
       bookDirectLabel: siteChrome.fr.bookDirectLabel,
     },
   },
+}
+
+export const adminExperiencesInitialDraft: AdminExperiencesDraft = {
+  items: experienceCatalog.map((experience) => ({
+    slug: experience.slug,
+    categoryKey: experience.category,
+    featured: experience.featured,
+    active: experience.active,
+    locales: createLocaleRecord((locale) => {
+      const translation = experience.translations[locale] ?? experience.translations.pt
+
+      return {
+        title: translation.title,
+        shortDescription: translation.shortDescription,
+        fullDescription: translation.fullDescription,
+        locationLabel: translation.locationLabel,
+        durationLabel: translation.durationLabel,
+        highlightsText: joinLines(translation.highlights),
+        includedText: joinLines(translation.included),
+      }
+    }),
+  })),
+}
+
+export const adminPackagesInitialDraft: AdminPackagesDraft = {
+  items: packages.map((pkg) => {
+    const isFlagship = pkg.slug === FLAGSHIP_PACKAGE_SLUG
+
+    return {
+      slug: pkg.slug,
+      startingPrice: pkg.startingPrice,
+      isFlagship,
+      locales: createLocaleRecord((locale) => {
+        const translation = pkg.translations[locale] ?? pkg.translations.pt
+        const landingCopy = premiumPackageLandingContent[locale]
+
+        return {
+          title: translation.title,
+          summary: translation.summary,
+          duration: translation.duration,
+          includedText: joinLines(translation.included),
+          itineraryText: joinLines(translation.itinerary),
+          premiumHeroTitle: isFlagship ? landingCopy.heroTitle : "",
+          premiumHeroBody: isFlagship ? landingCopy.heroBody : "",
+          premiumWhyTitle: isFlagship ? landingCopy.whyTitle : "",
+          premiumWhyBody: isFlagship ? landingCopy.whyBody : "",
+          premiumWhyBookTitle: isFlagship ? landingCopy.whyBookTitle : "",
+          premiumWhyBookSubtitle: isFlagship ? landingCopy.whyBookSubtitle : "",
+          premiumFinalTitle: isFlagship ? landingCopy.finalTitle : "",
+          premiumFinalSubtitle: isFlagship ? landingCopy.finalSubtitle : "",
+          premiumListingTitle: isFlagship ? landingCopy.listingFeatureTitle : "",
+          premiumListingBody: isFlagship ? landingCopy.listingFeatureBody : "",
+          premiumTrustNotes: isFlagship ? joinLines(landingCopy.heroTrustNotes) : "",
+        }
+      }),
+    }
+  }),
 }

@@ -1,12 +1,5 @@
-import AdminSectionPlaceholder from "@/components/admin/AdminSectionPlaceholder"
+import ExperiencesStudioEditor from "@/components/admin/ExperiencesStudioEditor"
 
 export default function AdminExperiencesPage() {
-  return (
-    <AdminSectionPlaceholder
-      eyebrow="Experiências"
-      title="Camada administrativa das experiências"
-      description="Rota protegida para o futuro editor de experiências, mantendo slugs, páginas públicas e checkout intactos."
-      routeLabel="/admin/experiences"
-    />
-  )
+  return <ExperiencesStudioEditor />
 }
