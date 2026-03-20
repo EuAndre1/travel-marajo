@@ -18,6 +18,8 @@
     "@prisma/client": "^5.10.2",
     "@stripe/stripe-js": "^3.0.7",
     "@tailwindcss/forms": "^0.5.7",
+    "@vercel/blob": "^2.3.1",
+    "clsx": "^2.1.0",
     "i18next": "^23.10.0",
     "i18next-browser-languagedetector": "^7.2.0",
     "next": "^14.1.0",
@@ -28,8 +30,7 @@
     "react-select": "^5.8.0",
     "stripe": "^14.20.0",
     "tailwind-merge": "^2.2.1",
-    "zod": "^3.22.4",
-    "clsx": "^2.1.0"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
