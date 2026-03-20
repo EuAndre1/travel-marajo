@@ -17,6 +17,28 @@ export default function HomeHero() {
   const chrome = useResolvedSiteChrome()
   const authority = useResolvedHomeAuthorityContent()
   const content = useResolvedSiteContent()
+  const plannerQuickLinks = [
+    {
+      label: content.tabs[0] ?? "Voos",
+      hint: content.heroFieldDestination,
+      href: getLocalizedPath(lang, "flights"),
+    },
+    {
+      label: content.tabs[1] ?? "Hotéis",
+      hint: content.heroFieldDates,
+      href: getLocalizedPath(lang, "hotels"),
+    },
+    {
+      label: chrome.mainNav[1]?.label ?? hero.tabs[0]?.label ?? "Experiências",
+      hint: hero.tabs[0]?.fields[0]?.label ?? content.heroFieldOrigin,
+      href: getLocalizedPath(lang, "experiences"),
+    },
+    {
+      label: chrome.mainNav[2]?.label ?? hero.tabs[2]?.label ?? "Pacotes",
+      hint: hero.tabs[2]?.fields[0]?.label ?? content.heroFieldPassengers,
+      href: getLocalizedPath(lang, "packages"),
+    },
+  ]
 
   return (
     <section id="hero" className="relative min-h-[78vh] overflow-hidden bg-[#04101b] sm:min-h-[84vh] lg:min-h-[90vh]">
@@ -31,15 +53,15 @@ export default function HomeHero() {
           <div className="grid gap-6 lg:gap-8 xl:grid-cols-[minmax(0,540px)_minmax(320px,400px)] xl:items-center xl:justify-between">
             <div className="max-w-[540px] space-y-6 text-white">
               <div className="space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/78 sm:text-[11px] sm:tracking-[0.3em]">
-                {content.home.heroKicker}
-              </div>
-              <h1 className="text-[2.45rem] font-display leading-[0.98] sm:text-[3.35rem] lg:text-[4rem] xl:text-[4.35rem]">
-                {hero.title}
-              </h1>
-              <p className="max-w-[520px] text-[15px] leading-7 text-white/80 sm:text-lg sm:leading-8">
-                {hero.subtitle}
-              </p>
+                <div className="inline-flex items-center rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/78 sm:text-[11px] sm:tracking-[0.3em]">
+                  {content.home.heroKicker}
+                </div>
+                <h1 className="text-[2.45rem] font-display leading-[0.98] sm:text-[3.35rem] lg:text-[4rem] xl:text-[4.35rem]">
+                  {hero.title}
+                </h1>
+                <p className="max-w-[520px] text-[15px] leading-7 text-white/80 sm:text-lg sm:leading-8">
+                  {hero.subtitle}
+                </p>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -106,22 +128,29 @@ export default function HomeHero() {
                 ))}
               </div>
 
-              <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-                {hero.tabs.slice(0, 4).map((tab) => (
-                  <Link
-                    key={tab.label}
-                    href={tab.ctaHref}
-                    className="flex items-center justify-between rounded-[1.25rem] border border-white/10 bg-white/6 px-4 py-3.5 text-sm text-white/84 transition hover:bg-white/10"
-                  >
-                    <div>
-                      <span className="block font-semibold text-white">{tab.label}</span>
-                      <span className="block text-xs uppercase tracking-[0.16em] text-white/52">
-                        {tab.fields[0]?.label}
+              <div className="mt-5 space-y-3">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/58 sm:text-[11px]">
+                  {content.home.heroSearchAria}
+                </div>
+                <div className="grid gap-2.5 sm:grid-cols-2">
+                  {plannerQuickLinks.map((tab) => (
+                    <Link
+                      key={tab.label}
+                      href={tab.href}
+                      className="flex items-center justify-between rounded-[1.25rem] border border-white/10 bg-white/6 px-4 py-3.5 text-sm text-white/84 transition hover:bg-white/10"
+                    >
+                      <div>
+                        <span className="block font-semibold text-white">{tab.label}</span>
+                        <span className="block text-xs uppercase tracking-[0.16em] text-white/52">
+                          {tab.hint}
+                        </span>
+                      </div>
+                      <span aria-hidden="true" className="text-white/60">
+                        &gt;
                       </span>
-                    </div>
-                    <span className="text-white/60">{tab.ctaLabel}</span>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

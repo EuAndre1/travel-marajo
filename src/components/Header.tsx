@@ -9,7 +9,7 @@ import { useResolvedSiteChrome } from "@/components/content/ContentOverridesProv
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { detectLocaleFromPathname, getLocalizedPath, stripLocalePrefix } from "@/i18n/routing"
 
-const HEADER_HEIGHT_CLASS = "h-[72px] lg:h-[80px]"
+const HEADER_HEIGHT_CLASS = "h-[72px] lg:h-[78px]"
 
 function isLocalizedHomeRoute(pathname: string | null) {
   if (!pathname || pathname === "/") {
@@ -64,15 +64,18 @@ export default function Header() {
   const utilityGhostClass = usesOverlayHeader
     ? "text-white/82 hover:bg-white/10 hover:text-white"
     : "text-slate-600 hover:bg-slate-100 hover:text-primary"
+  const accountFirstName = session?.user?.name?.trim().split(/\s+/)[0]
 
   return (
     <>
       <header className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${headerSurfaceClass}`}>
         <div className="tm-shell">
-          <div className={`flex ${HEADER_HEIGHT_CLASS} items-center justify-between gap-3 sm:gap-4 lg:gap-5`}>
+          <div
+            className={`grid ${HEADER_HEIGHT_CLASS} grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:gap-4 xl:grid-cols-[minmax(228px,272px)_minmax(0,1fr)_auto] xl:gap-6`}
+          >
             <Link
               href={getLocalizedPath(lang, "home")}
-              className="flex min-w-0 flex-1 items-center gap-2.5 pr-3 sm:gap-3 sm:pr-5 xl:max-w-fit xl:flex-none"
+              className="flex min-w-0 items-center gap-3 pr-2 sm:pr-4 xl:max-w-[272px] xl:pr-3"
             >
               <div
                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[16px] sm:h-10 sm:w-10 sm:rounded-[18px] ${
@@ -88,8 +91,10 @@ export default function Header() {
                   />
                 </svg>
               </div>
-              <div className="min-w-0 leading-tight">
-                <span className={`block truncate text-[0.98rem] font-display leading-none sm:text-[1.05rem] ${brandTextClass}`}>
+              <div className="min-w-0 max-w-[190px] leading-tight sm:max-w-[220px]">
+                <span
+                  className={`block truncate text-[0.98rem] font-display leading-none sm:text-[1.05rem] ${brandTextClass}`}
+                >
                   {chrome.brandName}
                 </span>
                 <span
@@ -100,28 +105,33 @@ export default function Header() {
               </div>
             </Link>
 
-            <nav className="hidden min-w-0 flex-1 items-center justify-center gap-1 xl:flex" aria-label="Primary navigation">
+            <nav
+              className="hidden min-w-0 items-center justify-center gap-0.5 2xl:flex 2xl:justify-self-center"
+              aria-label="Primary navigation"
+            >
               {chrome.mainNav.map((item) => (
                 <Link
                   key={item.label}
                   href={getLocalizedPath(lang, item.route)}
-                  className={`rounded-full px-3.5 py-2 text-[13px] font-medium whitespace-nowrap transition-all duration-200 ${navLinkClass}`}
+                  className={`rounded-full px-3 py-2 text-[12.5px] font-medium whitespace-nowrap transition-all duration-200 2xl:px-3.5 2xl:text-[13px] ${navLinkClass}`}
                 >
                   {item.label}
                 </Link>
               ))}
             </nav>
 
-            <div className="hidden shrink-0 items-center justify-end gap-2 whitespace-nowrap xl:flex">
-              <div className={`flex h-10 shrink-0 items-center gap-2 rounded-full px-3 ${utilitySurfaceClass}`}>
-                <span className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${utilityMutedClass}`}>
+            <div className="hidden shrink-0 items-center justify-end gap-1.5 whitespace-nowrap xl:flex 2xl:gap-2">
+              <div className={`flex h-9 shrink-0 items-center gap-2 rounded-full px-3 ${utilitySurfaceClass}`}>
+                <span
+                  className={`hidden text-[10px] font-semibold uppercase tracking-[0.18em] 2xl:inline ${utilityMutedClass}`}
+                >
                   {chrome.languageLabel}
                 </span>
-                <div className="relative min-w-[62px]">
+                <div className="relative min-w-[50px]">
                   <select
                     value={lang}
                     onChange={(e) => setLang(e.target.value as "pt" | "en" | "es" | "fr")}
-                    className={`w-full appearance-none bg-transparent pr-5 text-xs font-semibold outline-none ${utilityTextClass}`}
+                    className={`w-full appearance-none border-0 bg-transparent px-0 py-0 pr-5 text-[13px] font-semibold leading-none outline-none ring-0 focus:outline-none focus:ring-0 ${utilityTextClass}`}
                     aria-label={chrome.languageLabel}
                   >
                     <option value="pt">PT</option>
@@ -137,43 +147,44 @@ export default function Header() {
 
               {status === "loading" ? (
                 <span
-                    className={`inline-flex h-10 min-w-[118px] items-center justify-center rounded-full px-4 text-sm font-semibold opacity-70 ${secondaryButtonClass}`}
-                  >
-                    ...
-                  </span>
-                ) : session ? (
-                  <>
-                    <Link
-                      href={getLocalizedPath(lang, "profile")}
-                      className={`inline-flex h-10 min-w-[158px] items-center justify-center rounded-full px-4 text-sm font-semibold transition ${secondaryButtonClass}`}
-                    >
-                      {chrome.profileLabel}
-                    </Link>
-                    <button
-                      onClick={() => signOut({ callbackUrl: getLocalizedPath(lang, "home") })}
-                      className={`inline-flex h-10 min-w-[92px] items-center justify-center rounded-full px-4 text-sm font-semibold transition ${utilityGhostClass}`}
-                    >
-                      {chrome.signOutLabel}
-                    </button>
-                  </>
-                ) : (
+                  className={`inline-flex h-9 min-w-[84px] items-center justify-center rounded-full px-3.5 text-sm font-semibold opacity-70 ${secondaryButtonClass}`}
+                >
+                  ...
+                </span>
+              ) : session ? (
+                <>
                   <Link
-                    href={getLocalizedPath(lang, "login")}
-                    className={`inline-flex h-10 min-w-[112px] items-center justify-center rounded-full px-4 text-sm font-semibold transition ${secondaryButtonClass}`}
+                    href={getLocalizedPath(lang, "profile")}
+                    className={`inline-flex h-9 min-w-0 max-w-[156px] items-center justify-center rounded-full px-3.5 text-sm font-semibold transition ${secondaryButtonClass}`}
                   >
-                    {chrome.signInLabel}
+                    <span className="truncate 2xl:hidden">{accountFirstName ?? chrome.profileLabel}</span>
+                    <span className="hidden truncate 2xl:inline">{chrome.profileLabel}</span>
                   </Link>
-                )}
+                  <button
+                    onClick={() => signOut({ callbackUrl: getLocalizedPath(lang, "home") })}
+                    className={`hidden h-9 min-w-[76px] items-center justify-center rounded-full px-3.5 text-sm font-semibold transition 2xl:inline-flex ${utilityGhostClass}`}
+                  >
+                    {chrome.signOutLabel}
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href={getLocalizedPath(lang, "login")}
+                  className={`inline-flex h-9 min-w-[88px] items-center justify-center rounded-full px-3.5 text-sm font-semibold transition ${secondaryButtonClass}`}
+                >
+                  {chrome.signInLabel}
+                </Link>
+              )}
 
               <Link
                 href={getLocalizedPath(lang, "planTrip")}
-                className="inline-flex h-10 min-w-[136px] items-center justify-center rounded-full bg-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-dark"
+                className="inline-flex h-9 min-w-[118px] items-center justify-center rounded-full bg-accent px-4 text-sm font-semibold text-white transition-colors hover:bg-accent-dark 2xl:min-w-[132px]"
               >
                 {chrome.planTripLabel}
               </Link>
             </div>
 
-            <div className="ml-2 shrink-0 xl:hidden">
+            <div className="ml-1 shrink-0 2xl:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen((prev) => !prev)}
                 className={`rounded-full p-2 transition ${
