@@ -6,12 +6,18 @@ import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
+import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
   adminContentInitialDraft,
+  type AdminContentDraft,
   type AdminContentLocaleDraft,
 } from "@/lib/admin-studio/defaults"
 
 const STORAGE_KEY = "travel-marajo-admin-content-draft"
+
+function cloneDraft<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
 
 function EditorField({
   label,
@@ -61,28 +67,41 @@ function Snapshot({
   return (
     <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
       <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
-      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Ao vivo no projeto</p>
+      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Ao vivo no site</p>
       <p className="mt-1 text-sm leading-6 text-[#0B1C2C]">{liveValue}</p>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Rascunho local</p>
+      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Rascunho atual</p>
       <p className={`mt-1 text-sm leading-6 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>{draftValue}</p>
       <span
         className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
           changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
         }`}
       >
-        {changed ? "Rascunho diferente do live" : "Sem mudança local"}
+        {changed ? "Rascunho diferente do live" : "Sem diferenca local"}
       </span>
     </div>
   )
 }
 
-export default function ContentStudioEditor() {
+export default function ContentStudioEditor({
+  initialDraft = adminContentInitialDraft,
+}: {
+  initialDraft?: AdminContentDraft
+}) {
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
-  const { draft, setDraft, saveDraft, resetDraft, exportDraft, savedAtLabel, statusMessage } =
-    useAdminDraft(STORAGE_KEY, adminContentInitialDraft)
+  const [liveDraft, setLiveDraft] = useState(initialDraft)
+  const {
+    draft,
+    setDraft,
+    saveDraft,
+    markPersisted,
+    resetDraft,
+    exportDraft,
+    savedAtLabel,
+    statusMessage,
+  } = useAdminDraft(STORAGE_KEY, initialDraft)
 
   const localeDraft = draft.locales[activeLocale]
-  const liveLocale = adminContentInitialDraft.locales[activeLocale]
+  const liveLocale = liveDraft.locales[activeLocale]
 
   const updateField = (field: keyof AdminContentLocaleDraft, value: string) => {
     setDraft((current) => ({
@@ -97,20 +116,31 @@ export default function ContentStudioEditor() {
     }))
   }
 
+  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+    surface: "content",
+    draft,
+    saveDraft,
+    markPersisted: (value, message) => {
+      markPersisted(value, message)
+      setLiveDraft(cloneDraft(value))
+    },
+  })
+
   return (
     <div className="space-y-6">
       <AdminPageIntro
-        eyebrow="Conteúdo global"
-        title="Editor do conteúdo estrutural do site"
-        description="Organize a voz principal da marca, sinais de confiança, CTA globais e a linguagem de concierge em um único lugar. Nesta fase, os saves são rascunhos locais neste navegador."
+        eyebrow="Conteudo global"
+        title="Editor do conteudo estrutural do site"
+        description="Edite a voz da marca, rodape, sinais de confianca, linguagem de concierge e rotulos globais sem tocar manualmente nos arquivos."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
       <AdminDraftToolbar
+        saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
-        statusMessage={statusMessage}
-        scopeNote="Este editor não publica nada ao vivo ainda. Ele cria rascunhos locais usando a estrutura real de copy global do projeto, para a operação revisar texto sem tocar manualmente nos arquivos."
-        onSave={saveDraft}
+        statusMessage={persistMessage || statusMessage}
+        scopeNote="Salvar cria ou atualiza um override persistido no banco. O site publico usa esse texto quando existir. Resetar afeta apenas o rascunho local deste navegador."
+        onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-content-${activeLocale}.json`)}
         onReset={resetDraft}
       />
@@ -135,22 +165,22 @@ export default function ContentStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Rodapé e suporte</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Rodape e suporte</p>
             <div className="mt-5 space-y-5">
               <EditorField
-                label="Headline do rodapé"
+                label="Headline do rodape"
                 value={localeDraft.footerHeadline}
                 onChange={(value) => updateField("footerHeadline", value)}
                 multiline
               />
               <EditorField
-                label="Texto de suporte do rodapé"
+                label="Texto de suporte do rodape"
                 value={localeDraft.footerSupportCopy}
                 onChange={(value) => updateField("footerSupportCopy", value)}
                 multiline
               />
               <EditorField
-                label="Destaques do rodapé (1 por linha)"
+                label="Destaques do rodape (1 por linha)"
                 value={localeDraft.footerHighlights}
                 onChange={(value) => updateField("footerHighlights", value)}
                 multiline
@@ -159,22 +189,22 @@ export default function ContentStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Confiança e conversão</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Confianca e conversao</p>
             <div className="mt-5 space-y-5">
               <EditorField
-                label="Título da camada de confiança"
+                label="Titulo da camada de confianca"
                 value={localeDraft.trustHeadline}
                 onChange={(value) => updateField("trustHeadline", value)}
                 multiline
               />
               <EditorField
-                label="Texto da camada de confiança"
+                label="Texto da camada de confianca"
                 value={localeDraft.trustBody}
                 onChange={(value) => updateField("trustBody", value)}
                 multiline
               />
               <EditorField
-                label="Destaques de confiança (1 por linha)"
+                label="Destaques de confianca (1 por linha)"
                 value={localeDraft.trustHighlights}
                 onChange={(value) => updateField("trustHighlights", value)}
                 multiline
@@ -183,10 +213,10 @@ export default function ContentStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Concierge e CTA globais</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Concierge e rotulos globais</p>
             <div className="mt-5 space-y-5">
               <EditorField
-                label="Título de concierge"
+                label="Titulo de concierge"
                 value={localeDraft.conciergeTitle}
                 onChange={(value) => updateField("conciergeTitle", value)}
                 multiline
@@ -198,18 +228,18 @@ export default function ContentStudioEditor() {
                 multiline
               />
               <EditorField
-                label="Tempo / resposta de suporte"
+                label="Tempo de resposta"
                 value={localeDraft.conciergeResponseText}
                 onChange={(value) => updateField("conciergeResponseText", value)}
               />
               <div className="grid gap-5 md:grid-cols-2">
                 <EditorField
-                  label="Rótulo de entrar"
+                  label="Rotulo de entrar"
                   value={localeDraft.signInLabel}
                   onChange={(value) => updateField("signInLabel", value)}
                 />
                 <EditorField
-                  label="Rótulo de perfil"
+                  label="Rotulo de perfil"
                   value={localeDraft.profileLabel}
                   onChange={(value) => updateField("profileLabel", value)}
                 />
@@ -233,11 +263,11 @@ export default function ContentStudioEditor() {
             <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Leitura operacional</p>
             <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">O que este editor cobre</h2>
             <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
-              <li>Posicionamento principal da marca</li>
-              <li>Copy de rodapé e apoio institucional</li>
-              <li>Linguagem de confiança e prova</li>
+              <li>Tagline e autoridade principal da marca</li>
+              <li>Copy de rodape e apoio institucional</li>
+              <li>Camada de prova e confianca</li>
               <li>Mensagem de concierge</li>
-              <li>Rótulos centrais de CTA e navegação</li>
+              <li>Rotulos centrais de navegacao e CTA</li>
             </ul>
           </section>
 
@@ -247,7 +277,7 @@ export default function ContentStudioEditor() {
             draftValue={localeDraft.authorityStatement}
           />
           <Snapshot
-            title="Rodapé"
+            title="Rodape"
             liveValue={liveLocale.footerSupportCopy}
             draftValue={localeDraft.footerSupportCopy}
           />

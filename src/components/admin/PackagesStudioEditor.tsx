@@ -6,13 +6,19 @@ import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
+import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
   adminPackagesInitialDraft,
   type AdminPackageDraftItem,
+  type AdminPackagesDraft,
   type AdminPackageLocaleDraft,
 } from "@/lib/admin-studio/defaults"
 
 const STORAGE_KEY = "travel-marajo-admin-packages-draft"
+
+function cloneDraft<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("pt-BR", {
@@ -71,11 +77,11 @@ function SnapshotCard({
     <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
       <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
       <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Ao vivo no projeto
+        Ao vivo no site
       </p>
       <p className="mt-1 text-sm leading-6 text-[#0B1C2C]">{liveValue}</p>
       <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Rascunho local
+        Rascunho atual
       </p>
       <p className={`mt-1 text-sm leading-6 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>
         {draftValue}
@@ -85,7 +91,7 @@ function SnapshotCard({
           changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
         }`}
       >
-        {changed ? "Rascunho diferente do live" : "Sem mudanca local"}
+        {changed ? "Rascunho diferente do live" : "Sem diferenca local"}
       </span>
     </div>
   )
@@ -157,22 +163,43 @@ function updatePackageField(
   )
 }
 
-export default function PackagesStudioEditor() {
+export default function PackagesStudioEditor({
+  initialDraft = adminPackagesInitialDraft,
+}: {
+  initialDraft?: AdminPackagesDraft
+}) {
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
-  const [selectedSlug, setSelectedSlug] = useState(adminPackagesInitialDraft.items[0]?.slug ?? "")
-  const { draft, setDraft, saveDraft, resetDraft, exportDraft, savedAtLabel, statusMessage } =
-    useAdminDraft(STORAGE_KEY, adminPackagesInitialDraft)
+  const [selectedSlug, setSelectedSlug] = useState(initialDraft.items[0]?.slug ?? "")
+  const [liveDraft, setLiveDraft] = useState(initialDraft)
+  const {
+    draft,
+    setDraft,
+    saveDraft,
+    markPersisted,
+    resetDraft,
+    exportDraft,
+    savedAtLabel,
+    statusMessage,
+  } = useAdminDraft(STORAGE_KEY, initialDraft)
 
   const selectedDraft = useMemo(
     () => draft.items.find((item) => item.slug === selectedSlug) ?? draft.items[0],
     [draft.items, selectedSlug],
   )
   const selectedLive = useMemo(
-    () =>
-      adminPackagesInitialDraft.items.find((item) => item.slug === selectedDraft?.slug) ??
-      adminPackagesInitialDraft.items[0],
-    [selectedDraft],
+    () => liveDraft.items.find((item) => item.slug === selectedDraft?.slug) ?? liveDraft.items[0],
+    [liveDraft.items, selectedDraft],
   )
+
+  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+    surface: "packages",
+    draft,
+    saveDraft,
+    markPersisted: (value, message) => {
+      markPersisted(value, message)
+      setLiveDraft(cloneDraft(value))
+    },
+  })
 
   if (!selectedDraft || !selectedLive) {
     return null
@@ -193,15 +220,16 @@ export default function PackagesStudioEditor() {
       <AdminPageIntro
         eyebrow="Pacotes"
         title="Editor dos pacotes e jornadas"
-        description="Edite o texto visivel de cada pacote sem tocar nos slugs, no checkout ou na estrutura publica. O fluxo abaixo trabalha apenas com rascunhos locais por enquanto."
+        description="Edite o texto visivel de cada pacote sem alterar slugs, checkout ou a estrutura publica. Salvar cria uma camada persistida sobre o conteudo original."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
       <AdminDraftToolbar
+        saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
-        statusMessage={statusMessage}
-        scopeNote="Este editor salva rascunhos locais neste navegador. Nenhuma alteracao daqui e publicada ao vivo nesta fase, e o checkout dos pacotes continua igual."
-        onSave={saveDraft}
+        statusMessage={persistMessage || statusMessage}
+        scopeNote="Salvar cria ou atualiza um override persistido no banco para os pacotes. Resetar afeta apenas o rascunho local deste navegador."
+        onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-packages-${activeLocale}.json`)}
         onReset={resetDraft}
       />
@@ -212,8 +240,7 @@ export default function PackagesStudioEditor() {
             <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Selecao</p>
             <h2 className="mt-3 text-xl font-display text-[#0B1C2C]">Pacotes atuais</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Escolha um pacote para revisar titulo, resumo, inclusoes, itinerario e, quando
-              existir, a copy premium da landing dedicada.
+              Escolha um pacote para revisar titulo, resumo, inclusoes, itinerario e, quando existir, a copy premium da landing dedicada.
             </p>
           </section>
 
@@ -254,9 +281,7 @@ export default function PackagesStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-              Inclusoes e fluxo da jornada
-            </p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Inclusoes e fluxo da jornada</p>
             <div className="mt-5 space-y-5">
               <EditorField
                 label="Inclusoes visiveis (1 por linha)"
@@ -275,9 +300,7 @@ export default function PackagesStudioEditor() {
 
           {selectedDraft.isFlagship ? (
             <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-                Camada premium da landing
-              </p>
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Camada premium da landing</p>
               <div className="mt-5 space-y-5">
                 <EditorField
                   label="Headline comercial da landing"
@@ -346,24 +369,17 @@ export default function PackagesStudioEditor() {
             </section>
           ) : (
             <section className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6">
-              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-                Camada premium dedicada
-              </p>
+              <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Camada premium dedicada</p>
               <p className="mt-3 text-sm leading-7 text-slate-600">
-                Este pacote ainda nao tem uma landing premium propria mapeada no projeto. Nesta
-                fase, o editor cobre apenas o texto base exibido nas listagens e na pagina do
-                pacote.
+                Este pacote ainda nao tem uma landing premium propria mapeada. Nesta fase, o editor cobre apenas o texto base exibido nas listagens e na pagina do pacote.
               </p>
             </section>
           )}
 
           <section className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-              O que fica fora deste editor
-            </p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">O que fica fora deste editor</p>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              Os rotulos globais de reservar, consultar e outros textos de navegacao continuam
-              centralizados no editor de conteudo. Aqui voce revisa o texto proprio de cada pacote.
+              Rotulos globais de reservar, consultar e outros textos de navegacao continuam centralizados no editor de conteudo. Aqui voce revisa o texto proprio de cada pacote.
             </p>
           </section>
         </div>
@@ -384,11 +400,7 @@ export default function PackagesStudioEditor() {
             </ul>
           </section>
 
-          <SnapshotCard
-            title="Titulo"
-            liveValue={liveLocale.title}
-            draftValue={localeDraft.title}
-          />
+          <SnapshotCard title="Titulo" liveValue={liveLocale.title} draftValue={localeDraft.title} />
           <SnapshotCard
             title="Resumo"
             liveValue={liveLocale.summary}

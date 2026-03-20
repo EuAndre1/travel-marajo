@@ -2,15 +2,15 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useResolvedSiteContent } from "@/components/content/ContentOverridesProvider"
 import { getHomeContent } from "@/data/homepage"
-import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeOffers() {
   const { lang } = useSiteLanguage()
   const { offers } = getHomeContent(lang)
-  const content = siteContent[lang]
+  const content = useResolvedSiteContent()
   const featuredOffer = offers.items[0]
   const secondaryOffers = offers.items.slice(1)
 

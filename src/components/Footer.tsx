@@ -1,13 +1,14 @@
 "use client"
 
 import Link from "next/link"
-import { footerContact, siteChrome } from "@/data/site"
+import { useResolvedSiteChrome } from "@/components/content/ContentOverridesProvider"
+import { footerContact } from "@/data/site"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 
 export default function Footer() {
   const { lang } = useSiteLanguage()
-  const chrome = siteChrome[lang]
+  const chrome = useResolvedSiteChrome()
 
   return (
     <footer className="bg-[#06111d] text-white">

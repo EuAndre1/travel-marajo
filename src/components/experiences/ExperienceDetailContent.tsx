@@ -2,9 +2,12 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import {
+  useResolvedExperienceBySlug,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import SectionHeader from "@/components/home/SectionHeader"
 import ExperienceCheckoutButton from "@/components/checkout/ExperienceCheckoutButton"
-import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedExperience, type ExperienceItem } from "@/data/experiencias"
 import { getGuideSlugsForExperience, getGuidesBySlugs } from "@/data/guides"
@@ -201,19 +204,22 @@ function formatPrice(value: number, locale: string) {
 export default function ExperienceDetailContent({ experience }: ExperienceDetailContentProps) {
   const { lang } = useSiteLanguage()
   const locale = localeMap[lang] ?? "pt-BR"
+  const resolvedExperience = useResolvedExperienceBySlug(experience.slug) ?? experience
   const detailLabels = detailPageLabels[lang]
-  const experiencePageContent = siteContent[lang].pages.experienceDetail
-  const localizedExperience = getLocalizedExperience(experience, lang)
+  const content = useResolvedSiteContent()
+  const experiencePageContent = content.pages.experienceDetail
+  const localizedExperience = getLocalizedExperience(resolvedExperience, lang)
   const guideLabels = guideSectionLabels[lang]
-  const relatedGuides = getGuidesBySlugs(getGuideSlugsForExperience(experience.slug)).slice(0, 3)
-  const guideContext = guideContextByExperience[experience.slug as keyof typeof guideContextByExperience]?.[lang]
+  const relatedGuides = getGuidesBySlugs(getGuideSlugsForExperience(resolvedExperience.slug)).slice(0, 3)
+  const guideContext =
+    guideContextByExperience[resolvedExperience.slug as keyof typeof guideContextByExperience]?.[lang]
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f7f7f8_0%,#ffffff_100%)]">
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <Image
-            src={experience.heroImage}
+            src={resolvedExperience.heroImage}
             alt={localizedExperience.title}
             fill
             priority
@@ -238,7 +244,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 <span className="rounded-full border border-white/14 bg-white/10 px-4 py-2">{localizedExperience.location}</span>
                 <span className="rounded-full border border-white/14 bg-white/10 px-4 py-2">{localizedExperience.duration}</span>
                 <span className="rounded-full bg-[#E57A1F] px-4 py-2 text-white">
-                  {formatPrice(experience.priceFrom, locale)}
+                  {formatPrice(resolvedExperience.priceFrom, locale)}
                 </span>
               </div>
             </div>
@@ -255,7 +261,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
                 <ExperienceCheckoutButton
-                  slug={experience.slug}
+                  slug={resolvedExperience.slug}
                   label={detailLabels.reserveNow}
                   className="inline-flex items-center justify-center rounded-full bg-[#E57A1F] px-5 py-3 font-semibold text-white transition hover:bg-[#c96815]"
                 />
@@ -335,13 +341,15 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
             <aside className="space-y-6">
               <div className="tm-card p-6 sm:p-7">
                 <p className="tm-chip">{detailLabels.priceLabel}</p>
-                <p className="mt-5 text-4xl font-semibold text-[#E57A1F]">{formatPrice(experience.priceFrom, locale)}</p>
+                <p className="mt-5 text-4xl font-semibold text-[#E57A1F]">
+                  {formatPrice(resolvedExperience.priceFrom, locale)}
+                </p>
                 <p className="mt-3 text-sm text-slate-500">
-                  {detailLabels.perPersonLabel} {experience.rating}
+                  {detailLabels.perPersonLabel} {resolvedExperience.rating}
                 </p>
                 <div className="mt-6 flex flex-col gap-3">
                   <ExperienceCheckoutButton
-                    slug={experience.slug}
+                    slug={resolvedExperience.slug}
                     label={detailLabels.reserveExperience}
                     className="w-full inline-flex items-center justify-center rounded-full bg-[#E57A1F] px-6 py-3 font-semibold text-white transition hover:bg-[#c96815]"
                   />

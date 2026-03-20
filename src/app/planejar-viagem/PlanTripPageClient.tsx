@@ -1,11 +1,16 @@
 "use client"
 
 import Link from "next/link"
+import {
+  useResolvedExperiences,
+  useResolvedPackages,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import SectionHeader from "@/components/home/SectionHeader"
-import { planTripEditorialContent, siteContent } from "@/config/site-content"
-import { experiences } from "@/data/experiencias"
+import { planTripEditorialContent } from "@/config/site-content"
+import { experiences as baseExperiences, getLocalizedExperience } from "@/data/experiencias"
 import { getGuidesBySlugs } from "@/data/guides"
-import { packages } from "@/data/pacotes"
+import { getLocalizedPackage, packages as basePackages } from "@/data/pacotes"
 import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { buildWhatsAppUrl } from "@/lib/whatsapp-message"
@@ -18,7 +23,9 @@ function buildWhatsappLink(message: string) {
 
 export default function PlanTripPageClient() {
   const { lang } = useSiteLanguage()
-  const content = siteContent[lang]
+  const content = useResolvedSiteContent()
+  const experiences = useResolvedExperiences()
+  const packages = useResolvedPackages()
   const copy = planTripEditorialContent[lang]
   const planTripContent = content.pages.planTrip
   const whatsappLink = buildWhatsappLink(content.pages.planTrip.whatsappMessage)
@@ -27,10 +34,10 @@ export default function PlanTripPageClient() {
     "how-to-visit-marajo-island",
     "marajo-itinerary-guide",
   ])
-  const recommendedExperiences = experiences.filter((item) =>
+  const recommendedExperiences = (experiences.length > 0 ? experiences : baseExperiences).filter((item) =>
     ["pesqueiro", "bufalos-queijaria", "manguezais-salvaterra"].includes(item.slug),
   )
-  const recommendedPackages = packages.filter((item) =>
+  const recommendedPackages = (packages.length > 0 ? packages : basePackages).filter((item) =>
     ["marajo-essencial", "marajo-slow"].includes(item.slug),
   )
 
@@ -163,15 +170,31 @@ export default function PlanTripPageClient() {
               <p className="mt-3 text-sm leading-6 text-slate-600">{copy.experiencesBody}</p>
               <div className="mt-6 grid gap-4">
                 {recommendedExperiences.map((experience) => (
-                  <Link key={experience.slug} href={getLocalizedPath(lang, "experienceDetail", { slug: experience.slug })} className="rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-[#003366] hover:bg-white">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#0B1C2C]">{experience.title}</h3>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">{experience.shortDescription}</p>
-                      </div>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#003366]">{copy.experienceLabel}</span>
-                    </div>
-                  </Link>
+                  (() => {
+                    const localizedExperience = getLocalizedExperience(experience, lang)
+
+                    return (
+                      <Link
+                        key={experience.slug}
+                        href={getLocalizedPath(lang, "experienceDetail", { slug: experience.slug })}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-[#003366] hover:bg-white"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className="text-lg font-semibold text-[#0B1C2C]">
+                              {localizedExperience.title}
+                            </h3>
+                            <p className="mt-2 text-sm leading-6 text-slate-600">
+                              {localizedExperience.shortDescription}
+                            </p>
+                          </div>
+                          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#003366]">
+                            {copy.experienceLabel}
+                          </span>
+                        </div>
+                      </Link>
+                    )
+                  })()
                 ))}
               </div>
               <Link href={getLocalizedPath(lang, "experiences")} className="mt-5 inline-flex text-sm font-semibold text-[#003366]">{copy.finalSecondary}</Link>
@@ -182,16 +205,34 @@ export default function PlanTripPageClient() {
               <p className="mt-3 text-sm leading-6 text-slate-600">{copy.packagesBody}</p>
               <div className="mt-6 grid gap-4">
                 {recommendedPackages.map((item) => (
-                  <Link key={item.slug} href={getLocalizedPath(lang, "packages")} className="rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-[#003366] hover:bg-white">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="text-lg font-semibold text-[#0B1C2C]">{item.title}</h3>
-                        <p className="mt-2 text-sm leading-6 text-slate-600">{item.summary}</p>
-                        <p className="mt-3 text-sm font-medium text-[#003366]">{item.duration}</p>
-                      </div>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#003366]">{copy.packageLabel}</span>
-                    </div>
-                  </Link>
+                  (() => {
+                    const localizedPackage = getLocalizedPackage(item, lang)
+
+                    return (
+                      <Link
+                        key={item.slug}
+                        href={getLocalizedPath(lang, "packages")}
+                        className="rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-[#003366] hover:bg-white"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className="text-lg font-semibold text-[#0B1C2C]">
+                              {localizedPackage.title}
+                            </h3>
+                            <p className="mt-2 text-sm leading-6 text-slate-600">
+                              {localizedPackage.summary}
+                            </p>
+                            <p className="mt-3 text-sm font-medium text-[#003366]">
+                              {localizedPackage.duration}
+                            </p>
+                          </div>
+                          <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-[#003366]">
+                            {copy.packageLabel}
+                          </span>
+                        </div>
+                      </Link>
+                    )
+                  })()
                 ))}
               </div>
               <Link href={getLocalizedPath(lang, "packages")} className="mt-5 inline-flex text-sm font-semibold text-[#003366]">{copy.heroSecondary}</Link>

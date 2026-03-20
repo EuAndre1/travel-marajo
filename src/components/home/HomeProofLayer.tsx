@@ -1,14 +1,14 @@
 "use client"
 
-import { getHomeContent } from "@/data/homepage"
-import { siteContent } from "@/config/site-content"
-import { useSiteLanguage } from "@/lib/use-site-language"
+import {
+  useResolvedHomeContent,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeProofLayer() {
-  const { lang } = useSiteLanguage()
-  const { hero } = getHomeContent(lang)
-  const content = siteContent[lang]
+  const { hero } = useResolvedHomeContent()
+  const content = useResolvedSiteContent()
 
   return (
     <section className="tm-section bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_100%)] py-12 sm:py-14">

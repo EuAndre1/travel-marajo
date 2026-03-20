@@ -1,13 +1,17 @@
 "use client"
 
 import Link from "next/link"
+import {
+  useResolvedPackages,
+  useResolvedPremiumPackageLandingCopy,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import SectionHeader from "@/components/home/SectionHeader"
-import { FLAGSHIP_PACKAGE_SLUG, premiumPackageLandingContent } from "@/data/package-landing"
-import { getLocalizedPackage, packages } from "@/data/pacotes"
+import { FLAGSHIP_PACKAGE_SLUG } from "@/data/package-landing"
+import { getLocalizedPackage } from "@/data/pacotes"
 import PackageCheckoutButton from "@/components/checkout/PackageCheckoutButton"
-import { useSiteLanguage } from "@/lib/use-site-language"
-import { siteContent } from "@/config/site-content"
 import { getLocalizedPath } from "@/i18n/routing"
+import { useSiteLanguage } from "@/lib/use-site-language"
 
 const localeMap: Record<"pt" | "en" | "es" | "fr", string> = {
   pt: "pt-BR",
@@ -26,11 +30,12 @@ function formatPrice(value: number, locale: string) {
 
 export default function PackagesPage() {
   const { lang } = useSiteLanguage()
-  const content = siteContent[lang]
+  const content = useResolvedSiteContent()
+  const packages = useResolvedPackages()
   const locale = localeMap[lang] ?? "pt-BR"
   const flagshipPackage = packages.find((item) => item.slug === FLAGSHIP_PACKAGE_SLUG) ?? packages[0]
   const localizedFlagship = flagshipPackage ? getLocalizedPackage(flagshipPackage, lang) : null
-  const landingCopy = premiumPackageLandingContent[lang]
+  const landingCopy = useResolvedPremiumPackageLandingCopy()
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#ffffff_0%,#f7f7f8_100%)]">

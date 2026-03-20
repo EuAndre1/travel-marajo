@@ -8,6 +8,7 @@ import Footer from "@/components/Footer"
 import TravelAssistantWidget from "@/components/assistant/TravelAssistantWidget"
 import { DEFAULT_LOCALE, LOCALE_TO_BCP47 } from "@/config/i18n"
 import { getSiteUrl } from "@/lib/env"
+import { loadPersistedContentStudioState } from "@/lib/content-studio/persistence"
 import { getLocalizedAlternates, getLocalizedPath } from "@/i18n/routing"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
@@ -35,14 +36,15 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = headers()
   const locale = headersList.get("x-site-locale") ?? DEFAULT_LOCALE
+  const initialContentState = await loadPersistedContentStudioState()
 
   return (
     <html lang={locale}>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
-        <Providers>
+        <Providers initialContentState={initialContentState}>
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-grow">{children}</main>

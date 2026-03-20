@@ -2,18 +2,21 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { getHomeContent } from "@/data/homepage"
-import { homeAuthorityContent, siteChrome } from "@/data/site"
-import { siteContent } from "@/config/site-content"
+import {
+  useResolvedHomeAuthorityContent,
+  useResolvedHomeContent,
+  useResolvedSiteChrome,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 
 export default function HomeHero() {
   const { lang } = useSiteLanguage()
-  const { hero } = getHomeContent(lang)
-  const chrome = siteChrome[lang]
-  const authority = homeAuthorityContent[lang]
-  const content = siteContent[lang]
+  const { hero } = useResolvedHomeContent()
+  const chrome = useResolvedSiteChrome()
+  const authority = useResolvedHomeAuthorityContent()
+  const content = useResolvedSiteContent()
 
   return (
     <section id="hero" className="relative min-h-[85vh] overflow-hidden bg-[#04101b] lg:min-h-[92vh]">

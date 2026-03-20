@@ -6,12 +6,18 @@ import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
+import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
   adminHomepageInitialDraft,
+  type AdminHomepageDraft,
   type AdminHomepageLocaleDraft,
 } from "@/lib/admin-studio/defaults"
 
 const STORAGE_KEY = "travel-marajo-admin-homepage-draft"
+
+function cloneDraft<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
 
 function EditorField({
   label,
@@ -63,11 +69,11 @@ function LiveSnapshot({
       <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
       <div className="mt-3 space-y-3 text-sm leading-6">
         <div>
-          <p className="font-semibold text-slate-500">Ao vivo no projeto</p>
+          <p className="font-semibold text-slate-500">Ao vivo no site</p>
           <p className="mt-1 text-[#0B1C2C]">{liveValue}</p>
         </div>
         <div>
-          <p className="font-semibold text-slate-500">Rascunho do editor</p>
+          <p className="font-semibold text-slate-500">Rascunho atual</p>
           <p className={`mt-1 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>{draftValue}</p>
         </div>
       </div>
@@ -76,19 +82,32 @@ function LiveSnapshot({
           changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
         }`}
       >
-        {changed ? "Alterado no rascunho" : "Sem mudança local"}
+        {changed ? "Alterado no rascunho" : "Sem diferenca local"}
       </span>
     </div>
   )
 }
 
-export default function HomepageStudioEditor() {
+export default function HomepageStudioEditor({
+  initialDraft = adminHomepageInitialDraft,
+}: {
+  initialDraft?: AdminHomepageDraft
+}) {
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
-  const { draft, setDraft, saveDraft, resetDraft, exportDraft, savedAtLabel, statusMessage } =
-    useAdminDraft(STORAGE_KEY, adminHomepageInitialDraft)
+  const [liveDraft, setLiveDraft] = useState(initialDraft)
+  const {
+    draft,
+    setDraft,
+    saveDraft,
+    markPersisted,
+    resetDraft,
+    exportDraft,
+    savedAtLabel,
+    statusMessage,
+  } = useAdminDraft(STORAGE_KEY, initialDraft)
 
   const localeDraft = draft.locales[activeLocale]
-  const liveLocale = adminHomepageInitialDraft.locales[activeLocale]
+  const liveLocale = liveDraft.locales[activeLocale]
 
   const updateField = (field: keyof AdminHomepageLocaleDraft, value: string) => {
     setDraft((current) => ({
@@ -103,20 +122,31 @@ export default function HomepageStudioEditor() {
     }))
   }
 
+  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+    surface: "homepage",
+    draft,
+    saveDraft,
+    markPersisted: (value, message) => {
+      markPersisted(value, message)
+      setLiveDraft(cloneDraft(value))
+    },
+  })
+
   return (
     <div className="space-y-6">
       <AdminPageIntro
         eyebrow="Homepage"
         title="Editor da homepage"
-        description="Edite a primeira dobra, a camada de confiança e a mensagem final da home sem depender de alteração manual em código. Nesta fase, tudo é salvo como rascunho local neste navegador."
+        description="Edite a primeira dobra, a camada de confianca e a mensagem final da home com uma camada persistida sobre o conteudo original em arquivo."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
       <AdminDraftToolbar
+        saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
-        statusMessage={statusMessage}
-        scopeNote="Os campos abaixo refletem a fonte real de conteúdo da homepage. O botão de salvar armazena apenas um rascunho local neste navegador; nenhuma mudança vai ao ar automaticamente."
-        onSave={saveDraft}
+        statusMessage={persistMessage || statusMessage}
+        scopeNote="Salvar cria ou atualiza um override persistido no banco. O site publico usa esse override quando existir. Resetar remove apenas o rascunho local deste navegador."
+        onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-homepage-${activeLocale}.json`)}
         onReset={resetDraft}
       />
@@ -140,23 +170,23 @@ export default function HomepageStudioEditor() {
               />
               <div className="grid gap-5 md:grid-cols-2">
                 <EditorField
-                  label="CTA primário"
+                  label="CTA primario"
                   value={localeDraft.primaryCtaLabel}
                   onChange={(value) => updateField("primaryCtaLabel", value)}
                 />
                 <EditorField
-                  label="CTA secundário"
+                  label="CTA secundario"
                   value={localeDraft.secondaryCtaLabel}
                   onChange={(value) => updateField("secondaryCtaLabel", value)}
                 />
               </div>
               <EditorField
-                label="Texto da trust strip"
+                label="Linha de confianca abaixo do hero"
                 value={localeDraft.trustStripLabel}
                 onChange={(value) => updateField("trustStripLabel", value)}
               />
               <EditorField
-                label="Sinais de confiança do hero (1 por linha)"
+                label="Sinais de confianca do hero (1 por linha)"
                 value={localeDraft.trustItems}
                 onChange={(value) => updateField("trustItems", value)}
                 multiline
@@ -168,13 +198,13 @@ export default function HomepageStudioEditor() {
             <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Narrativa editorial</p>
             <div className="mt-5 space-y-5">
               <EditorField
-                label="Título introdutório de Why Marajó"
+                label="Titulo introdutorio de Why Marajo"
                 value={localeDraft.whyMarajoTitle}
                 onChange={(value) => updateField("whyMarajoTitle", value)}
                 multiline
               />
               <EditorField
-                label="Texto introdutório de Why Marajó"
+                label="Texto introdutorio de Why Marajo"
                 value={localeDraft.whyMarajoIntro}
                 onChange={(value) => updateField("whyMarajoIntro", value)}
                 multiline
@@ -186,7 +216,7 @@ export default function HomepageStudioEditor() {
             <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Concierge e CTA final</p>
             <div className="mt-5 space-y-5">
               <EditorField
-                label="Título do bloco de concierge"
+                label="Titulo do bloco de concierge"
                 value={localeDraft.conciergeTitle}
                 onChange={(value) => updateField("conciergeTitle", value)}
                 multiline
@@ -198,7 +228,7 @@ export default function HomepageStudioEditor() {
                 multiline
               />
               <EditorField
-                label="Título do CTA final"
+                label="Titulo do CTA final"
                 value={localeDraft.finalCtaTitle}
                 onChange={(value) => updateField("finalCtaTitle", value)}
                 multiline
@@ -211,12 +241,12 @@ export default function HomepageStudioEditor() {
               />
               <div className="grid gap-5 md:grid-cols-2">
                 <EditorField
-                  label="CTA final primário"
+                  label="CTA final primario"
                   value={localeDraft.finalPrimaryLabel}
                   onChange={(value) => updateField("finalPrimaryLabel", value)}
                 />
                 <EditorField
-                  label="CTA final secundário"
+                  label="CTA final secundario"
                   value={localeDraft.finalSecondaryLabel}
                   onChange={(value) => updateField("finalSecondaryLabel", value)}
                 />
@@ -231,11 +261,11 @@ export default function HomepageStudioEditor() {
             <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">O que este editor controla</h2>
             <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
               <li>Headline e subheadline do hero</li>
-              <li>Rótulos principais de CTA</li>
-              <li>Texto da trust strip</li>
-              <li>Introdução do bloco Why Marajó</li>
+              <li>Rotulos principais de CTA</li>
+              <li>Trust strip e sinais de confianca do hero</li>
+              <li>Introducao do bloco Why Marajo</li>
               <li>Mensagem de concierge</li>
-              <li>Bloco final de conversão</li>
+              <li>Bloco final de conversao</li>
             </ul>
           </section>
 
@@ -245,7 +275,7 @@ export default function HomepageStudioEditor() {
             draftValue={localeDraft.heroHeadline}
           />
           <LiveSnapshot
-            title="Why Marajó"
+            title="Why Marajo"
             liveValue={liveLocale.whyMarajoIntro}
             draftValue={localeDraft.whyMarajoIntro}
           />

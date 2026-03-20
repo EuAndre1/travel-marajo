@@ -3,12 +3,15 @@
 import Image from "next/image"
 import Link from "next/link"
 import PackageCheckoutButton from "@/components/checkout/PackageCheckoutButton"
+import {
+  useResolvedHomeContent,
+  useResolvedPackageBySlug,
+  useResolvedPremiumPackageLandingCopy,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import SectionHeader from "@/components/home/SectionHeader"
-import { premiumPackageLandingContent } from "@/data/package-landing"
-import { getHomeContent } from "@/data/homepage"
 import type { PackageItem } from "@/data/pacotes"
 import { getLocalizedPackage } from "@/data/pacotes"
-import { siteContent } from "@/config/site-content"
 import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
@@ -34,16 +37,23 @@ function formatPrice(value: number, locale: string) {
 export default function PremiumPackageLanding({ pkg }: PremiumPackageLandingProps) {
   const { lang } = useSiteLanguage()
   const locale = localeMap[lang] ?? "pt-BR"
-  const localizedPackage = getLocalizedPackage(pkg, lang)
-  const pageCopy = premiumPackageLandingContent[lang]
-  const content = siteContent[lang]
-  const { hero, socialProof } = getHomeContent(lang)
+  const resolvedPackage = useResolvedPackageBySlug(pkg.slug) ?? pkg
+  const localizedPackage = getLocalizedPackage(resolvedPackage, lang)
+  const pageCopy = useResolvedPremiumPackageLandingCopy()
+  const content = useResolvedSiteContent()
+  const { hero, socialProof } = useResolvedHomeContent()
 
   return (
     <main className="bg-[linear-gradient(180deg,#f7f3ee_0%,#ffffff_100%)]">
       <section className="relative overflow-hidden bg-[#071521] text-white">
         <div className="absolute inset-0">
-          <Image src={pkg.heroImage} alt={localizedPackage.title} fill priority className="object-cover" />
+          <Image
+            src={resolvedPackage.heroImage}
+            alt={localizedPackage.title}
+            fill
+            priority
+            className="object-cover"
+          />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,21,33,0.38)_0%,rgba(7,21,33,0.62)_26%,rgba(7,21,33,0.94)_100%)]" />
         </div>
 
@@ -71,7 +81,7 @@ export default function PremiumPackageLanding({ pkg }: PremiumPackageLandingProp
                   {pageCopy.audienceItems[0]}
                 </span>
                 <span className="rounded-full border border-white/14 bg-white/8 px-4 py-2">
-                  {formatPrice(pkg.startingPrice, locale)}
+                  {formatPrice(resolvedPackage.startingPrice, locale)}
                 </span>
               </div>
             </div>
@@ -86,7 +96,7 @@ export default function PremiumPackageLanding({ pkg }: PremiumPackageLandingProp
                     {content.pages.packages.priceFrom}
                   </p>
                   <p className="mt-2 text-4xl font-semibold text-[#E57A1F]">
-                    {formatPrice(pkg.startingPrice, locale)}
+                    {formatPrice(resolvedPackage.startingPrice, locale)}
                   </p>
                 </div>
                 <div className="rounded-[1.4rem] border border-white/10 bg-white/8 px-4 py-3 text-right">
@@ -99,7 +109,7 @@ export default function PremiumPackageLanding({ pkg }: PremiumPackageLandingProp
 
               <div className="mt-6 flex flex-wrap gap-3">
                 <PackageCheckoutButton
-                  slug={pkg.slug}
+                  slug={resolvedPackage.slug}
                   label={content.pages.packages.reserveCta}
                   className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#E57A1F] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c96815]"
                 />
@@ -153,7 +163,9 @@ export default function PremiumPackageLanding({ pkg }: PremiumPackageLandingProp
               <h2 className="mt-5 text-2xl font-display text-[#0B1C2C]">{localizedPackage.title}</h2>
               <p className="mt-3 text-sm leading-7 text-slate-600">{localizedPackage.summary}</p>
               <div className="mt-6 rounded-[1.5rem] border border-slate-200/80 bg-slate-50/75 px-5 py-5">
-                <div className="text-2xl font-semibold text-primary">{formatPrice(pkg.startingPrice, locale)}</div>
+                <div className="text-2xl font-semibold text-primary">
+                  {formatPrice(resolvedPackage.startingPrice, locale)}
+                </div>
                 <div className="mt-2 text-sm text-slate-500">{localizedPackage.duration}</div>
               </div>
             </article>
@@ -306,7 +318,7 @@ export default function PremiumPackageLanding({ pkg }: PremiumPackageLandingProp
 
               <div className="flex flex-wrap gap-3 xl:justify-end">
                 <PackageCheckoutButton
-                  slug={pkg.slug}
+                  slug={resolvedPackage.slug}
                   label={content.pages.packages.reserveCta}
                   className="inline-flex min-h-11 items-center justify-center rounded-full bg-[#E57A1F] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c96815]"
                 />

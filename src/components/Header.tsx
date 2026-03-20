@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import { useSession, signOut } from "next-auth/react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
-import { siteChrome } from "@/data/site"
+import { useResolvedSiteChrome } from "@/components/content/ContentOverridesProvider"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { detectLocaleFromPathname, getLocalizedPath, stripLocalePrefix } from "@/i18n/routing"
 
@@ -30,7 +30,7 @@ export default function Header() {
   const { lang, setLang } = useSiteLanguage()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const chrome = siteChrome[lang]
+  const chrome = useResolvedSiteChrome()
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 80)

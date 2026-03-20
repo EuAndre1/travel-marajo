@@ -2,8 +2,12 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import {
+  useResolvedExperienceBySlug,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import { experiences } from "@/data/experiences"
-import { siteContent } from "@/config/site-content"
+import { getLocalizedExperience } from "@/data/experiencias"
 import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
 
@@ -11,18 +15,42 @@ type Props = {
   slug: keyof typeof experiences
 }
 
+function formatResolvedPrice(value: number, currency: string) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
 export default function ExperienceClient({ slug }: Props) {
   const { lang } = useSiteLanguage()
-  const content = siteContent[lang]
-  const experience = experiences[slug]
+  const content = useResolvedSiteContent()
+  const legacyExperience = experiences[slug]
+  const resolvedExperience = useResolvedExperienceBySlug(slug) ?? null
+  const localizedExperience = resolvedExperience ? getLocalizedExperience(resolvedExperience, lang) : null
+  const galleryImages = resolvedExperience
+    ? [resolvedExperience.heroImage, ...resolvedExperience.media.galleryImages]
+    : legacyExperience.images
+  const title = localizedExperience?.title ?? legacyExperience.title
+  const description =
+    localizedExperience?.fullDescription ??
+    localizedExperience?.shortDescription ??
+    legacyExperience.description
+  const location = localizedExperience?.location ?? legacyExperience.location
+  const price = resolvedExperience
+    ? formatResolvedPrice(resolvedExperience.priceFrom, resolvedExperience.currency)
+    : legacyExperience.price
+  const highlights = localizedExperience?.highlights ?? legacyExperience.highlights
+  const included = localizedExperience?.included ?? legacyExperience.included
 
   return (
     <main className="bg-white min-h-screen">
       <section className="relative min-h-[70vh] flex items-center">
         <div className="absolute inset-0">
           <Image
-            src={experience.heroImage}
-            alt={experience.title}
+            src={resolvedExperience?.heroImage ?? legacyExperience.heroImage}
+            alt={title}
             fill
             priority
             className="object-cover"
@@ -36,22 +64,18 @@ export default function ExperienceClient({ slug }: Props) {
               {content.experienceBadge}
             </span>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              {experience.title}
-            </h1>
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">{title}</h1>
 
-            <p className="text-lg md:text-xl text-white/90 max-w-3xl mb-6">
-              {experience.description}
-            </p>
+            <p className="text-lg md:text-xl text-white/90 max-w-3xl mb-6">{description}</p>
 
             <div className="flex flex-wrap items-center gap-4 text-white/90 mb-8">
-              <span className="rounded-full bg-white/10 px-4 py-2">{experience.location}</span>
-              <span className="rounded-full bg-[#FF6600] px-4 py-2 text-white">{experience.price}</span>
+              <span className="rounded-full bg-white/10 px-4 py-2">{location}</span>
+              <span className="rounded-full bg-[#FF6600] px-4 py-2 text-white">{price}</span>
             </div>
 
             <div className="flex flex-wrap gap-4">
               <Link
-                href={`${getLocalizedPath(lang, "checkout")}?experience=${experience.slug}`}
+                href={`${getLocalizedPath(lang, "checkout")}?experience=${legacyExperience.slug}`}
                 className="inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
               >
                 {content.bookNow}
@@ -77,13 +101,14 @@ export default function ExperienceClient({ slug }: Props) {
                   {content.experienceSectionTitle}
                 </h2>
 
-                <p className="text-gray-600 text-lg leading-8 mb-8">
-                  {experience.description}
-                </p>
+                <p className="text-gray-600 text-lg leading-8 mb-8">{description}</p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
-                  {experience.highlights.map((item) => (
-                    <div key={item} className="rounded-2xl border border-gray-200 px-5 py-4 text-[#003366] font-medium">
+                  {highlights.map((item) => (
+                    <div
+                      key={item}
+                      className="rounded-2xl border border-gray-200 px-5 py-4 text-[#003366] font-medium"
+                    >
                       {item}
                     </div>
                   ))}
@@ -94,14 +119,9 @@ export default function ExperienceClient({ slug }: Props) {
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {experience.images.map((img, index) => (
-                    <div key={img} className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-md">
-                      <Image
-                        src={img}
-                        alt={`${experience.title} ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
+                  {galleryImages.map((img, index) => (
+                    <div key={`${img}-${index}`} className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-md">
+                      <Image src={img} alt={`${title} ${index + 1}`} fill className="object-cover" />
                     </div>
                   ))}
                 </div>
@@ -110,27 +130,27 @@ export default function ExperienceClient({ slug }: Props) {
               <aside className="lg:col-span-1">
                 <div className="sticky top-24 rounded-3xl border border-gray-200 shadow-xl p-6 bg-white">
                   <p className="text-sm text-gray-500 mb-2">{content.experienceBadge}</p>
-                  <h3 className="text-2xl font-bold text-[#003366] mb-2">
-                    {experience.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4">{experience.location}</p>
+                  <h3 className="text-2xl font-bold text-[#003366] mb-2">{title}</h3>
+                  <p className="text-gray-600 mb-4">{location}</p>
 
                   <div className="rounded-2xl bg-[#FFF1E8] p-4 mb-6">
                     <p className="text-sm text-gray-500 mb-1">{content.investmentLabel}</p>
-                    <p className="text-xl font-bold text-[#FF6600]">{experience.price}</p>
+                    <p className="text-xl font-bold text-[#FF6600]">{price}</p>
                   </div>
 
                   <div className="mb-6">
                     <p className="text-sm font-semibold text-[#003366] mb-3">{content.includedLabel}</p>
                     <ul className="space-y-2">
-                      {experience.included.map((item) => (
-                        <li key={item} className="text-gray-600">• {item}</li>
+                      {included.map((item) => (
+                        <li key={item} className="text-gray-600">
+                          • {item}
+                        </li>
                       ))}
                     </ul>
                   </div>
 
                   <Link
-                    href={`${getLocalizedPath(lang, "checkout")}?experience=${experience.slug}`}
+                    href={`${getLocalizedPath(lang, "checkout")}?experience=${legacyExperience.slug}`}
                     className="w-full inline-flex items-center justify-center rounded-xl bg-[#FF6600] px-6 py-3 text-white font-semibold hover:bg-[#e55a00] transition"
                   >
                     {content.continueBooking}

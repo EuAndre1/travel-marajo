@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { homeAuthorityContent } from "@/data/site"
-import { siteContent } from "@/config/site-content"
+import {
+  useResolvedHomeAuthorityContent,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 import SectionHeader from "./SectionHeader"
@@ -21,8 +23,8 @@ function resolvePlanningHref(
 
 export default function HomePlanningSupport() {
   const { lang } = useSiteLanguage()
-  const authority = homeAuthorityContent[lang]
-  const content = siteContent[lang]
+  const authority = useResolvedHomeAuthorityContent()
+  const content = useResolvedSiteContent()
 
   return (
     <section id="planejar-viagem" className="tm-section bg-[linear-gradient(180deg,#f2efe8_0%,#ffffff_100%)]">

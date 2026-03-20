@@ -2,8 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useResolvedSiteContent } from "@/components/content/ContentOverridesProvider"
 import { getHomeContent } from "@/data/homepage"
-import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 import SectionHeader from "./SectionHeader"
@@ -11,7 +11,7 @@ import SectionHeader from "./SectionHeader"
 export default function HomeRoutesPackages() {
   const { lang } = useSiteLanguage()
   const { routes } = getHomeContent(lang)
-  const content = siteContent[lang]
+  const content = useResolvedSiteContent()
 
   return (
     <section id="roteiros" className="tm-section bg-white">

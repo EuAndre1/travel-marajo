@@ -6,13 +6,19 @@ import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
+import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
   adminExperiencesInitialDraft,
   type AdminExperienceDraftItem,
+  type AdminExperiencesDraft,
   type AdminExperienceLocaleDraft,
 } from "@/lib/admin-studio/defaults"
 
 const STORAGE_KEY = "travel-marajo-admin-experiences-draft"
+
+function cloneDraft<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
 
 function EditorField({
   label,
@@ -63,11 +69,11 @@ function SnapshotCard({
     <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
       <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
       <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Ao vivo no projeto
+        Ao vivo no site
       </p>
       <p className="mt-1 text-sm leading-6 text-[#0B1C2C]">{liveValue}</p>
       <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Rascunho local
+        Rascunho atual
       </p>
       <p className={`mt-1 text-sm leading-6 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>
         {draftValue}
@@ -77,7 +83,7 @@ function SnapshotCard({
           changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
         }`}
       >
-        {changed ? "Rascunho diferente do live" : "Sem mudanca local"}
+        {changed ? "Rascunho diferente do live" : "Sem diferenca local"}
       </span>
     </div>
   )
@@ -149,22 +155,43 @@ function updateExperienceField(
   )
 }
 
-export default function ExperiencesStudioEditor() {
+export default function ExperiencesStudioEditor({
+  initialDraft = adminExperiencesInitialDraft,
+}: {
+  initialDraft?: AdminExperiencesDraft
+}) {
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
-  const [selectedSlug, setSelectedSlug] = useState(adminExperiencesInitialDraft.items[0]?.slug ?? "")
-  const { draft, setDraft, saveDraft, resetDraft, exportDraft, savedAtLabel, statusMessage } =
-    useAdminDraft(STORAGE_KEY, adminExperiencesInitialDraft)
+  const [selectedSlug, setSelectedSlug] = useState(initialDraft.items[0]?.slug ?? "")
+  const [liveDraft, setLiveDraft] = useState(initialDraft)
+  const {
+    draft,
+    setDraft,
+    saveDraft,
+    markPersisted,
+    resetDraft,
+    exportDraft,
+    savedAtLabel,
+    statusMessage,
+  } = useAdminDraft(STORAGE_KEY, initialDraft)
 
   const selectedDraft = useMemo(
     () => draft.items.find((item) => item.slug === selectedSlug) ?? draft.items[0],
     [draft.items, selectedSlug],
   )
   const selectedLive = useMemo(
-    () =>
-      adminExperiencesInitialDraft.items.find((item) => item.slug === selectedDraft?.slug) ??
-      adminExperiencesInitialDraft.items[0],
-    [selectedDraft],
+    () => liveDraft.items.find((item) => item.slug === selectedDraft?.slug) ?? liveDraft.items[0],
+    [liveDraft.items, selectedDraft],
   )
+
+  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+    surface: "experiences",
+    draft,
+    saveDraft,
+    markPersisted: (value, message) => {
+      markPersisted(value, message)
+      setLiveDraft(cloneDraft(value))
+    },
+  })
 
   if (!selectedDraft || !selectedLive) {
     return null
@@ -185,15 +212,16 @@ export default function ExperiencesStudioEditor() {
       <AdminPageIntro
         eyebrow="Experiencias"
         title="Editor das experiencias"
-        description="Selecione uma experiencia, revise o texto visivel por idioma e monte um rascunho local antes de qualquer futura camada de publicacao. Slugs, rotas e checkout permanecem intactos."
+        description="Revise o texto visivel por idioma e publique overrides persistidos sem alterar slugs, rotas ou o checkout das experiencias."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
       <AdminDraftToolbar
+        saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
-        statusMessage={statusMessage}
-        scopeNote="Este editor salva apenas rascunhos locais neste navegador. Nada daqui altera as paginas publicas ou publica mudancas ao vivo nesta fase."
-        onSave={saveDraft}
+        statusMessage={persistMessage || statusMessage}
+        scopeNote="Salvar cria ou atualiza um override persistido no banco para o catalogo de experiencias. Resetar afeta apenas o rascunho local deste navegador."
+        onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-experiences-${activeLocale}.json`)}
         onReset={resetDraft}
       />
@@ -204,8 +232,7 @@ export default function ExperiencesStudioEditor() {
             <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Selecao</p>
             <h2 className="mt-3 text-xl font-display text-[#0B1C2C]">Experiencias do catalogo</h2>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Escolha a experiencia para revisar texto, descricao longa, highlights e inclusoes no
-              idioma ativo.
+              Escolha uma experiencia para revisar titulo, descricoes, highlights e itens incluidos no idioma ativo.
             </p>
           </section>
 
@@ -247,9 +274,7 @@ export default function ExperiencesStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-              Dados visiveis da ficha
-            </p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Dados de exibicao</p>
             <div className="mt-5 grid gap-5 md:grid-cols-2">
               <EditorField
                 label="Local exibido"
@@ -265,9 +290,7 @@ export default function ExperiencesStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-              Highlights e inclusoes
-            </p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Highlights e inclusoes</p>
             <div className="mt-5 space-y-5">
               <EditorField
                 label="Highlights visiveis (1 por linha)"
@@ -285,13 +308,9 @@ export default function ExperiencesStudioEditor() {
           </section>
 
           <section className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
-              O que fica fora deste editor
-            </p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">O que fica fora deste editor</p>
             <p className="mt-3 text-sm leading-7 text-slate-600">
-              Os textos genericos de reserva, checkout seguro e suporte comercial continuam
-              centralizados no editor de conteudo global. Aqui voce edita apenas o texto proprio de
-              cada experiencia.
+              Textos globais de reserva, checkout seguro e navegacao continuam centralizados no editor de conteudo global. Aqui voce ajusta apenas o texto proprio de cada experiencia.
             </p>
           </section>
         </div>
@@ -308,11 +327,7 @@ export default function ExperiencesStudioEditor() {
             </ul>
           </section>
 
-          <SnapshotCard
-            title="Titulo"
-            liveValue={liveLocale.title}
-            draftValue={localeDraft.title}
-          />
+          <SnapshotCard title="Titulo" liveValue={liveLocale.title} draftValue={localeDraft.title} />
           <SnapshotCard
             title="Descricao curta"
             liveValue={liveLocale.shortDescription}

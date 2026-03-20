@@ -1,16 +1,16 @@
 "use client"
 
-import { getHomeContent } from "@/data/homepage"
-import { siteContent } from "@/config/site-content"
-import { siteChrome } from "@/data/site"
-import { useSiteLanguage } from "@/lib/use-site-language"
+import {
+  useResolvedHomeContent,
+  useResolvedSiteChrome,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import SectionHeader from "./SectionHeader"
 
 export default function HomeWhyMarajo() {
-  const { lang } = useSiteLanguage()
-  const { whyMarajo } = getHomeContent(lang)
-  const content = siteContent[lang]
-  const chrome = siteChrome[lang]
+  const { whyMarajo } = useResolvedHomeContent()
+  const content = useResolvedSiteContent()
+  const chrome = useResolvedSiteChrome()
 
   return (
     <section id="por-que" className="tm-section bg-[linear-gradient(180deg,#f6f3ee_0%,#ffffff_100%)]">

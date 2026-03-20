@@ -1,8 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { homeAuthorityContent } from "@/data/site"
-import { siteContent } from "@/config/site-content"
+import {
+  useResolvedHomeAuthorityContent,
+  useResolvedSiteContent,
+} from "@/components/content/ContentOverridesProvider"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 import { buildWhatsAppUrl } from "@/lib/whatsapp-message"
@@ -10,8 +12,8 @@ import SectionHeader from "./SectionHeader"
 
 export default function HomeConciergeSupport() {
   const { lang } = useSiteLanguage()
-  const authority = homeAuthorityContent[lang]
-  const content = siteContent[lang]
+  const authority = useResolvedHomeAuthorityContent()
+  const content = useResolvedSiteContent()
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
   const whatsappHref = phone ? buildWhatsAppUrl(phone, content.pages.planTrip.whatsappMessage) : null
 

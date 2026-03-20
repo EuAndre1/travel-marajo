@@ -24,17 +24,21 @@ function formatSavedAt(savedAt: string | null) {
 
 export function useAdminDraft<T>(storageKey: string, initialValue: T) {
   const pristineValue = useMemo(() => cloneValue(initialValue), [initialValue])
+  const [baselineValue, setBaselineValue] = useState<T>(pristineValue)
   const [draft, setDraft] = useState<T>(pristineValue)
   const [savedAt, setSavedAt] = useState<string | null>(null)
   const [statusMessage, setStatusMessage] = useState("")
   const [hasStoredDraft, setHasStoredDraft] = useState(false)
 
   useEffect(() => {
+    const nextBaseline = cloneValue(pristineValue)
+    setBaselineValue(nextBaseline)
+
     try {
       const rawValue = window.localStorage.getItem(storageKey)
 
       if (!rawValue) {
-        setDraft(cloneValue(pristineValue))
+        setDraft(cloneValue(nextBaseline))
         setSavedAt(null)
         setHasStoredDraft(false)
         return
@@ -52,7 +56,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
 
       setHasStoredDraft(true)
     } catch {
-      setDraft(cloneValue(pristineValue))
+      setDraft(cloneValue(nextBaseline))
       setSavedAt(null)
       setHasStoredDraft(false)
     }
@@ -73,11 +77,11 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
 
   const resetDraft = useCallback(() => {
     window.localStorage.removeItem(storageKey)
-    setDraft(cloneValue(pristineValue))
+    setDraft(cloneValue(baselineValue))
     setSavedAt(null)
     setHasStoredDraft(false)
-    setStatusMessage("Rascunho local removido. O editor voltou para a versão atual do projeto.")
-  }, [pristineValue, storageKey])
+    setStatusMessage("Rascunho local removido. O editor voltou para a versao ativa deste ambiente.")
+  }, [baselineValue, storageKey])
 
   const exportDraft = useCallback(
     (fileName: string) => {
@@ -93,10 +97,30 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
     [draft],
   )
 
+  const markPersisted = useCallback(
+    (value: T, message = "Camada persistida atualizada com sucesso.") => {
+      const nextSavedAt = new Date().toISOString()
+      const clonedValue = cloneValue(value)
+      const payload: StoredDraft<T> = {
+        value: clonedValue,
+        savedAt: nextSavedAt,
+      }
+
+      window.localStorage.setItem(storageKey, JSON.stringify(payload))
+      setBaselineValue(clonedValue)
+      setDraft(clonedValue)
+      setSavedAt(nextSavedAt)
+      setHasStoredDraft(true)
+      setStatusMessage(message)
+    },
+    [storageKey],
+  )
+
   return {
     draft,
     setDraft,
     saveDraft,
+    markPersisted,
     resetDraft,
     exportDraft,
     hasStoredDraft,

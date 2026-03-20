@@ -2,15 +2,18 @@
 
 import { SessionProvider } from 'next-auth/react'
 import { ReactNode } from 'react'
+import { ContentOverridesProvider } from '@/components/content/ContentOverridesProvider'
+import type { ContentStudioState } from '@/lib/content-studio/resolvers'
 
 interface ProvidersProps {
   children: ReactNode
+  initialContentState: ContentStudioState
 }
 
-export function Providers({ children }: ProvidersProps) {
+export function Providers({ children, initialContentState }: ProvidersProps) {
   return (
     <SessionProvider>
-      {children}
+      <ContentOverridesProvider initialState={initialContentState}>{children}</ContentOverridesProvider>
     </SessionProvider>
   )
 }

@@ -1,13 +1,13 @@
 "use client"
 
-import { getHomeContent } from "@/data/homepage"
-import { homeAuthorityContent } from "@/data/site"
-import { useSiteLanguage } from "@/lib/use-site-language"
+import {
+  useResolvedHomeAuthorityContent,
+  useResolvedHomeContent,
+} from "@/components/content/ContentOverridesProvider"
 
 export default function HomeTrustStrip() {
-  const { lang } = useSiteLanguage()
-  const { hero } = getHomeContent(lang)
-  const authority = homeAuthorityContent[lang]
+  const { hero } = useResolvedHomeContent()
+  const authority = useResolvedHomeAuthorityContent()
 
   return (
     <section className="border-b border-slate-200/70 bg-white">
