@@ -114,6 +114,22 @@ export interface AdminPackagesDraft {
   items: AdminPackageDraftItem[]
 }
 
+export interface AdminMediaDraftItem {
+  id: string
+  kind: "image" | "video"
+  fileName: string
+  mimeType: string
+  sizeBytes: number
+  displayName: string
+  usageNote: string
+  persisted: false
+  addedAt: string
+}
+
+export interface AdminMediaDraft {
+  items: AdminMediaDraftItem[]
+}
+
 function createLocaleRecord<T>(builder: (locale: AppLocale) => T) {
   return adminStudioLocales.reduce(
     (accumulator, locale) => {
@@ -321,4 +337,8 @@ export const adminPackagesInitialDraft: AdminPackagesDraft = {
       }),
     }
   }),
+}
+
+export const adminMediaInitialDraft: AdminMediaDraft = {
+  items: [],
 }

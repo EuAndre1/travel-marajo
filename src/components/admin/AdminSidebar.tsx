@@ -68,9 +68,22 @@ export default function AdminSidebar({
         </p>
 
         <div className="mt-5 rounded-[1.4rem] border border-white/10 bg-white/6 p-4">
-          <p className="text-xs uppercase tracking-[0.24em] text-white/55">Admin autenticado</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-white/55">Conta autenticada</p>
           <p className="mt-2 text-sm font-semibold">{userName}</p>
           <p className="mt-1 text-sm text-white/70">{userEmail}</p>
+          <p className="mt-3 text-xs leading-5 text-white/58">
+            Este acesso admin esta liberado para a conta atual. Cada colaborador entra com o proprio
+            login, e o email precisa estar autorizado em ADMIN_EMAILS.
+          </p>
+        </div>
+
+        <div className="mt-4 rounded-[1.4rem] border border-white/10 bg-white/6 p-4">
+          <p className="text-xs uppercase tracking-[0.24em] text-white/55">Como liberar outro editor</p>
+          <p className="mt-2 text-sm leading-6 text-white/72">
+            O fundador e colaboradores usam logins separados. Para permitir acesso ao Admin Studio,
+            adicione o email da pessoa na variavel ADMIN_EMAILS do ambiente e ela podera entrar com
+            a propria conta.
+          </p>
         </div>
       </div>
 
