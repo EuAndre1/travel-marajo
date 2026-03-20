@@ -74,7 +74,7 @@ export default function AssistantPanel({
   labels,
 }: AssistantPanelProps) {
   return (
-    <div className="w-[92vw] sm:w-[360px] rounded-2xl border border-white/20 bg-white shadow-2xl overflow-hidden">
+    <div className="w-[min(88vw,360px)] rounded-2xl border border-white/20 bg-white shadow-2xl overflow-hidden sm:w-[360px]">
       <div className="flex items-center justify-between px-4 py-3 bg-[#0B1C2C] text-white">
         <div className="text-sm font-semibold">{title}</div>
         <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ export default function AssistantPanel({
         </div>
       </div>
 
-      <div className="max-h-[320px] overflow-y-auto px-4 py-4 space-y-3 bg-white">
+      <div className="max-h-[54vh] space-y-3 overflow-y-auto bg-white px-4 py-4 sm:max-h-[320px]">
         {messages.map((message) => (
           <div
             key={message.id}

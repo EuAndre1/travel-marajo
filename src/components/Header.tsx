@@ -9,7 +9,7 @@ import { useResolvedSiteChrome } from "@/components/content/ContentOverridesProv
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { detectLocaleFromPathname, getLocalizedPath, stripLocalePrefix } from "@/i18n/routing"
 
-const HEADER_HEIGHT_CLASS = "h-[76px] lg:h-[82px]"
+const HEADER_HEIGHT_CLASS = "h-[72px] lg:h-[80px]"
 
 function isLocalizedHomeRoute(pathname: string | null) {
   if (!pathname || pathname === "/") {
@@ -69,14 +69,17 @@ export default function Header() {
     <>
       <header className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${headerSurfaceClass}`}>
         <div className="tm-shell">
-          <div className={`flex ${HEADER_HEIGHT_CLASS} items-center gap-4 lg:gap-5`}>
-            <Link href={getLocalizedPath(lang, "home")} className="flex min-w-0 shrink-0 items-center gap-3 pr-1">
+          <div className={`flex ${HEADER_HEIGHT_CLASS} items-center justify-between gap-3 sm:gap-4 lg:gap-5`}>
+            <Link
+              href={getLocalizedPath(lang, "home")}
+              className="flex min-w-0 flex-1 items-center gap-2.5 pr-3 sm:gap-3 sm:pr-5 xl:max-w-fit xl:flex-none"
+            >
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[18px] ${
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[16px] sm:h-10 sm:w-10 sm:rounded-[18px] ${
                   usesOverlayHeader ? "bg-white/15 backdrop-blur-sm" : "bg-primary"
                 }`}
               >
-                <svg className="h-5.5 w-5.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -86,8 +89,12 @@ export default function Header() {
                 </svg>
               </div>
               <div className="min-w-0 leading-tight">
-                <span className={`block truncate text-[1.05rem] font-display leading-none ${brandTextClass}`}>{chrome.brandName}</span>
-                <span className={`mt-1 block truncate text-[10px] uppercase tracking-[0.24em] ${supportingTextClass}`}>
+                <span className={`block truncate text-[0.98rem] font-display leading-none sm:text-[1.05rem] ${brandTextClass}`}>
+                  {chrome.brandName}
+                </span>
+                <span
+                  className={`mt-0.5 block truncate text-[9px] uppercase tracking-[0.18em] sm:mt-1 sm:text-[10px] sm:tracking-[0.24em] ${supportingTextClass}`}
+                >
                   {chrome.brandTagline}
                 </span>
               </div>
@@ -105,12 +112,12 @@ export default function Header() {
               ))}
             </nav>
 
-            <div className="hidden shrink-0 items-center justify-end gap-2.5 whitespace-nowrap xl:flex">
+            <div className="hidden shrink-0 items-center justify-end gap-2 whitespace-nowrap xl:flex">
               <div className={`flex h-10 shrink-0 items-center gap-2 rounded-full px-3 ${utilitySurfaceClass}`}>
                 <span className={`text-[11px] font-semibold uppercase tracking-[0.18em] ${utilityMutedClass}`}>
                   {chrome.languageLabel}
                 </span>
-                <div className="relative min-w-[66px]">
+                <div className="relative min-w-[62px]">
                   <select
                     value={lang}
                     onChange={(e) => setLang(e.target.value as "pt" | "en" | "es" | "fr")}
@@ -166,7 +173,7 @@ export default function Header() {
               </Link>
             </div>
 
-            <div className="ml-auto xl:hidden">
+            <div className="ml-2 shrink-0 xl:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen((prev) => !prev)}
                 className={`rounded-full p-2 transition ${
@@ -182,8 +189,8 @@ export default function Header() {
 
         {isMobileMenuOpen ? (
           <div className="border-t border-slate-200/70 bg-white/95 shadow-lg backdrop-blur xl:hidden">
-            <div className="tm-shell pb-6 pt-4">
-              <nav className="flex flex-col gap-3" aria-label="Mobile menu">
+            <div className="tm-shell pb-5 pt-3">
+              <nav className="flex flex-col gap-2.5" aria-label="Mobile menu">
                 {chrome.mainNav.map((item) => (
                   <Link
                     key={item.label}

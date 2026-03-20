@@ -321,7 +321,7 @@ export default function TravelAssistantWidget() {
   if (isHidden) return null
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+1rem)] right-4 z-50 flex max-w-[calc(100vw-1rem)] flex-col items-end gap-3 sm:bottom-6 sm:right-6 sm:max-w-[420px]">
       {isOpen ? (
         <AssistantPanel
           title={resolveAssistantTitle(lang)}

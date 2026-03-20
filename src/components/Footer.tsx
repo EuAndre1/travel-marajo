@@ -12,20 +12,20 @@ export default function Footer() {
 
   return (
     <footer className="bg-[#06111d] text-white">
-      <div className="tm-shell -translate-y-12">
-        <div className="tm-card-dark overflow-hidden border-[#163049] bg-[radial-gradient(circle_at_top_right,rgba(229,122,31,0.22),transparent_26%),linear-gradient(135deg,#071521_0%,#0B1C2C_55%,#10283d_100%)] px-6 py-8 sm:px-8 lg:px-10">
-          <div className="grid gap-8 xl:grid-cols-[1.15fr_0.85fr] xl:items-end">
+      <div className="tm-shell -translate-y-8 sm:-translate-y-10 lg:-translate-y-12">
+        <div className="tm-card-dark overflow-hidden border-[#163049] bg-[radial-gradient(circle_at_top_right,rgba(229,122,31,0.22),transparent_26%),linear-gradient(135deg,#071521_0%,#0B1C2C_55%,#10283d_100%)] px-6 py-7 sm:px-8 lg:px-10">
+          <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr] xl:items-end">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.34em] text-accent-light/85">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-accent-light/85 sm:text-[11px] sm:tracking-[0.34em]">
                 {chrome.brandTagline}
               </p>
-              <h2 className="mt-4 max-w-3xl text-3xl font-display leading-tight sm:text-4xl">{chrome.footerHeadline}</h2>
-              <p className="mt-4 max-w-3xl text-base leading-7 text-white/72">{chrome.footerDescription}</p>
+              <h2 className="mt-3 max-w-3xl text-[2rem] font-display leading-tight sm:text-4xl">{chrome.footerHeadline}</h2>
+              <p className="mt-3 max-w-3xl text-[15px] leading-7 text-white/72 sm:text-base">{chrome.footerDescription}</p>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
               {chrome.footerHighlights.map((item) => (
-                <div key={item} className="rounded-[1.5rem] border border-white/10 bg-white/6 px-4 py-4 text-sm leading-6 text-white/80">
+                <div key={item} className="rounded-[1.35rem] border border-white/10 bg-white/6 px-4 py-3.5 text-sm leading-6 text-white/80">
                   {item}
                 </div>
               ))}
@@ -34,9 +34,9 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="-mt-2 pb-10">
+      <div className="-mt-1 pb-8 sm:pb-10">
         <div className="tm-shell">
-          <div className="grid gap-10 rounded-[2rem] border border-white/6 bg-white/[0.03] px-6 py-8 sm:px-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
+          <div className="grid gap-8 rounded-[2rem] border border-white/6 bg-white/[0.03] px-6 py-7 sm:px-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
             <div>
               <Link href={getLocalizedPath(lang, "home")} className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-[18px] bg-white">
@@ -55,9 +55,9 @@ export default function Footer() {
                 </div>
               </Link>
 
-              <p className="mt-5 max-w-sm text-sm leading-7 text-white/68">{chrome.authorityLabel}</p>
+              <p className="mt-4 max-w-sm text-sm leading-6 text-white/68 sm:leading-7">{chrome.authorityLabel}</p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <Link
                   href={getLocalizedPath(lang, "planTrip")}
                   className="inline-flex items-center justify-center rounded-full bg-[#E57A1F] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c96815]"
@@ -76,7 +76,7 @@ export default function Footer() {
             {chrome.footerColumns.map((column) => (
               <div key={column.title}>
                 <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-white/58">{column.title}</h3>
-                <ul className="mt-5 space-y-3">
+                <ul className="mt-4 space-y-3">
                   {column.links.map((link) => (
                     <li key={link.label}>
                       <Link
@@ -93,7 +93,7 @@ export default function Footer() {
 
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-white/58">{chrome.footerContactTitle}</h3>
-              <ul className="mt-5 space-y-3 text-sm text-white/72">
+              <ul className="mt-4 space-y-3 text-sm text-white/72">
                 {footerContact.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
@@ -101,7 +101,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="mt-6 flex flex-col gap-3 border-t border-white/8 pt-6 text-sm text-white/48 md:flex-row md:items-center md:justify-between">
+          <div className="mt-5 flex flex-col gap-3 border-t border-white/8 pt-5 text-sm text-white/48 md:flex-row md:items-center md:justify-between">
             <p>
               Copyright {new Date().getFullYear()} {chrome.brandName}. {chrome.footerLegalLabel}
             </p>

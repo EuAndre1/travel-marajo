@@ -11,23 +11,23 @@ export default function HomeProofLayer() {
   const content = useResolvedSiteContent()
 
   return (
-    <section className="tm-section bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_100%)] py-12 sm:py-14">
+    <section className="tm-section bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_100%)] py-10 sm:py-12">
       <div className="tm-shell">
-        <div className="grid gap-8 xl:grid-cols-[0.9fr_1.1fr] xl:items-end">
+        <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr] xl:items-end">
           <SectionHeader
             eyebrow={content.home.proofEyebrow}
             title={content.home.proofTitle}
             subtitle={content.home.proofSubtitle}
           />
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {hero.stats.map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-[1.8rem] border border-slate-200/80 bg-white px-5 py-6 shadow-[0_18px_40px_rgba(15,23,42,0.06)]"
+                className="rounded-[1.55rem] border border-slate-200/80 bg-white px-4 py-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)]"
               >
-                <div className="text-3xl font-semibold text-[#0B1C2C]">{stat.value}</div>
-                <div className="mt-3 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+                <div className="text-[1.8rem] font-semibold text-[#0B1C2C] sm:text-3xl">{stat.value}</div>
+                <div className="mt-2.5 text-[10px] uppercase tracking-[0.22em] text-slate-500 sm:text-[11px] sm:tracking-[0.24em]">
                   {stat.label}
                 </div>
               </div>
@@ -35,13 +35,13 @@ export default function HomeProofLayer() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-4 lg:grid-cols-3">
+        <div className="mt-6 grid gap-3 lg:grid-cols-3">
           {content.home.proofHighlights.map((item) => (
             <div
               key={item}
-              className="rounded-[1.75rem] border border-slate-200/80 bg-slate-50/75 px-5 py-5 text-sm leading-7 text-slate-600"
+              className="rounded-[1.55rem] border border-slate-200/80 bg-slate-50/75 px-4 py-4 text-[15px] leading-6 text-slate-600 sm:leading-7"
             >
-              <span className="mb-4 block h-1.5 w-12 rounded-full bg-accent" />
+              <span className="mb-3 block h-1.5 w-10 rounded-full bg-accent sm:w-12" />
               {item}
             </div>
           ))}

@@ -11,10 +11,10 @@ export default function HomeTrustStrip() {
 
   return (
     <section className="border-b border-slate-200/70 bg-white">
-      <div className="tm-shell py-6">
-        <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-center">
+      <div className="tm-shell py-4 sm:py-5">
+        <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-center">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.32em] text-primary/80">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary/80 sm:text-[11px] sm:tracking-[0.32em]">
               {authority.trustStripLabel}
             </p>
           </div>
@@ -23,9 +23,9 @@ export default function HomeTrustStrip() {
             {hero.trustItems.map((item) => (
               <div
                 key={item}
-                className="rounded-[1.35rem] border border-slate-200/80 bg-slate-50/70 px-4 py-4 text-sm leading-6 text-slate-600"
+                className="rounded-[1.25rem] border border-slate-200/80 bg-slate-50/70 px-4 py-3.5 text-[15px] leading-6 text-slate-600"
               >
-                <span className="mb-3 block h-1.5 w-12 rounded-full bg-accent" />
+                <span className="mb-2.5 block h-1.5 w-10 rounded-full bg-accent sm:w-12" />
                 {item}
               </div>
             ))}

@@ -13,7 +13,7 @@ export default function AssistantLauncher({ label, text, onClick, unreadCount = 
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="relative flex items-center gap-2 rounded-full bg-[#0B1C2C] px-4 py-3 text-sm font-semibold text-white shadow-xl transition hover:bg-[#11263C]"
+      className="relative flex max-w-[calc(100vw-2rem)] items-center gap-2 rounded-full bg-[#0B1C2C] px-3.5 py-2.5 text-[13px] font-semibold text-white shadow-lg transition hover:bg-[#11263C] sm:px-4 sm:py-3 sm:text-sm"
     >
       <span className="h-2 w-2 rounded-full bg-accent" />
       {text}

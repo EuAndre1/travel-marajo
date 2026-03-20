@@ -228,19 +228,19 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(11,28,44,0.46)_0%,rgba(11,28,44,0.68)_38%,rgba(11,28,44,0.92)_100%)]" />
         </div>
 
-        <div className="relative z-10 tm-shell pb-16 pt-36 lg:pb-20">
-          <div className="grid gap-8 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
+        <div className="relative z-10 tm-shell pb-12 pt-12 sm:pb-16 sm:pt-14 lg:pb-20 lg:pt-16">
+          <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr] xl:items-end">
             <div className="text-white">
               <span className="inline-flex items-center rounded-full border border-white/16 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-white/82">
                 {localizedExperience.category}
               </span>
-              <h1 className="mt-5 max-w-4xl text-4xl font-display leading-[1.02] sm:text-5xl xl:text-6xl">
+              <h1 className="mt-4 max-w-4xl text-[2.4rem] font-display leading-[1.02] sm:text-5xl xl:text-6xl">
                 {localizedExperience.title}
               </h1>
-              <p className="mt-5 max-w-3xl text-base leading-8 text-white/82 sm:text-lg">
+              <p className="mt-4 max-w-3xl text-[15px] leading-7 text-white/82 sm:text-lg sm:leading-8">
                 {localizedExperience.fullDescription}
               </p>
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-white/82">
+              <div className="mt-5 flex flex-wrap items-center gap-2.5 text-sm text-white/82">
                 <span className="rounded-full border border-white/14 bg-white/10 px-4 py-2">{localizedExperience.location}</span>
                 <span className="rounded-full border border-white/14 bg-white/10 px-4 py-2">{localizedExperience.duration}</span>
                 <span className="rounded-full bg-[#E57A1F] px-4 py-2 text-white">
@@ -249,17 +249,17 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
               </div>
             </div>
 
-            <div className="tm-card-dark border-white/10 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-6 sm:p-7">
+            <div className="tm-card-dark border-white/10 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-5 sm:p-6">
               <div className="tm-chip !border-white/14 !bg-white/10 !text-white/70">{detailLabels.eyebrow}</div>
-              <h2 className="mt-5 text-2xl font-display text-white">{detailLabels.title}</h2>
-              <div className="mt-6 grid gap-3">
+              <h2 className="mt-4 text-[1.7rem] font-display text-white sm:text-2xl">{detailLabels.title}</h2>
+              <div className="mt-5 grid gap-2.5">
                 {localizedExperience.highlights.slice(0, 4).map((item) => (
-                  <div key={item} className="rounded-[1.4rem] border border-white/8 bg-white/6 px-4 py-4 text-sm text-white/78">
+                  <div key={item} className="rounded-[1.25rem] border border-white/8 bg-white/6 px-4 py-3.5 text-sm text-white/78">
                     {item}
                   </div>
                 ))}
               </div>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <ExperienceCheckoutButton
                   slug={resolvedExperience.slug}
                   label={detailLabels.reserveNow}
@@ -277,21 +277,21 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
         </div>
       </section>
 
-      <section className="tm-section pt-12">
+      <section className="tm-section pt-10 sm:pt-12">
         <div className="tm-shell">
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.75fr_0.95fr]">
-            <div className="space-y-8">
-              <div className="tm-card p-6 sm:p-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.75fr_0.95fr]">
+            <div className="space-y-6">
+              <div className="tm-card p-5 sm:p-7">
                 <SectionHeader
                   eyebrow={detailLabels.eyebrow}
                   title={detailLabels.title}
                   subtitle={localizedExperience.shortDescription}
                 />
-                <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {localizedExperience.highlights.map((item) => (
                     <div
                       key={item}
-                      className="rounded-[1.6rem] border border-slate-200/80 bg-slate-50/70 px-5 py-4 text-sm font-medium leading-7 text-[#0B1C2C]"
+                      className="rounded-[1.4rem] border border-slate-200/80 bg-slate-50/70 px-4 py-3.5 text-sm font-medium leading-6 text-[#0B1C2C] sm:leading-7"
                     >
                       {item}
                     </div>
@@ -299,9 +299,9 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 </div>
               </div>
 
-              <div className="tm-card p-6 sm:p-8">
+              <div className="tm-card p-5 sm:p-7">
                 <h3 className="text-2xl font-display text-[#0B1C2C]">{detailLabels.includedTitle}</h3>
-                <ul className="mt-6 space-y-3 text-sm leading-7 text-slate-600">
+                <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-600 sm:leading-7">
                   {localizedExperience.included.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span aria-hidden="true" className="mt-3 h-1.5 w-1.5 rounded-full bg-accent" />
@@ -312,15 +312,15 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
               </div>
 
               {relatedGuides.length > 0 ? (
-                <div className="tm-card bg-[linear-gradient(135deg,#fffaf4,#f8fbfd)] p-6 sm:p-8">
+                <div className="tm-card bg-[linear-gradient(135deg,#fffaf4,#f8fbfd)] p-5 sm:p-7">
                   <p className="tm-chip">{guideLabels.eyebrow}</p>
                   <h3 className="mt-5 text-2xl font-display text-[#0B1C2C]">
                     {guideContext?.title ?? guideLabels.fallbackTitle}
                   </h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">
+                  <p className="mt-3 text-sm leading-6 text-slate-600 sm:leading-7">
                     {guideContext?.body ?? guideLabels.fallbackBody}
                   </p>
-                  <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     {relatedGuides.map((guide) => (
                       <Link
                         key={guide!.slug}
@@ -338,8 +338,8 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
               ) : null}
             </div>
 
-            <aside className="space-y-6">
-              <div className="tm-card p-6 sm:p-7">
+            <aside className="space-y-5">
+              <div className="tm-card p-5 sm:p-6">
                 <p className="tm-chip">{detailLabels.priceLabel}</p>
                 <p className="mt-5 text-4xl font-semibold text-[#E57A1F]">
                   {formatPrice(resolvedExperience.priceFrom, locale)}
@@ -347,7 +347,7 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 <p className="mt-3 text-sm text-slate-500">
                   {detailLabels.perPersonLabel} {resolvedExperience.rating}
                 </p>
-                <div className="mt-6 flex flex-col gap-3">
+                <div className="mt-5 flex flex-col gap-3">
                   <ExperienceCheckoutButton
                     slug={resolvedExperience.slug}
                     label={detailLabels.reserveExperience}
@@ -362,15 +362,15 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 </div>
               </div>
 
-              <div className="tm-card bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_100%)] p-6 sm:p-7">
+              <div className="tm-card bg-[linear-gradient(180deg,#fffaf4_0%,#ffffff_100%)] p-5 sm:p-6">
                 <p className="tm-chip">{experiencePageContent.trustEyebrow}</p>
                 <h3 className="mt-5 text-2xl font-display text-[#0B1C2C]">
                   {experiencePageContent.trustTitle}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-sm leading-6 text-slate-600 sm:leading-7">
                   {experiencePageContent.trustSubtitle}
                 </p>
-                <ul className="mt-6 space-y-3 text-sm leading-7 text-slate-600">
+                <ul className="mt-5 space-y-3 text-sm leading-6 text-slate-600 sm:leading-7">
                   {experiencePageContent.trustItems.map((item) => (
                     <li key={item} className="flex items-start gap-3">
                       <span aria-hidden="true" className="mt-3 h-1.5 w-1.5 rounded-full bg-accent" />
@@ -380,11 +380,11 @@ export default function ExperienceDetailContent({ experience }: ExperienceDetail
                 </ul>
               </div>
 
-              <div className="rounded-[2rem] bg-[linear-gradient(135deg,#0B1C2C,#10283d)] p-6 text-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]">
-                <p className="text-xs uppercase tracking-[0.28em] text-accent-light/70">
+              <div className="rounded-[2rem] bg-[linear-gradient(135deg,#0B1C2C,#10283d)] p-5 text-white shadow-[0_24px_60px_rgba(15,23,42,0.18)] sm:p-6">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-accent-light/70 sm:text-xs sm:tracking-[0.28em]">
                   {guideLabels.eyebrow}
                 </p>
-                <p className="mt-3 text-sm leading-7 text-white/76">
+                <p className="mt-3 text-sm leading-6 text-white/76 sm:leading-7">
                   {guideContext?.body ?? guideLabels.fallbackBody}
                 </p>
               </div>
