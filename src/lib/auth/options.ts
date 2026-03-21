@@ -3,8 +3,9 @@ import { type AuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
 import { DEFAULT_LOCALE } from "@/config/i18n"
+import { isAdminEmail } from "@/lib/admin-studio/admin-config"
 import { db } from "@/database/client"
-import { getSafeAuthSecret, isAdminEmail, normalizeLocalizedAppPath } from "@/lib/env"
+import { getSafeAuthSecret, normalizeLocalizedAppPath } from "@/lib/env"
 import { getLocalizedPath } from "@/i18n/routing"
 import { validateUserCredentials } from "@/services/user.service"
 
@@ -100,9 +101,16 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       if (session.user && token.id) {
         session.user.id = token.id as string
-        session.user.isAdmin = Boolean(token.isAdmin)
+        session.user.isAdmin = isAdminEmail(session.user.email)
         if (typeof token.picture === "string") {
           session.user.image = token.picture
+        }
+
+        if (process.env.NODE_ENV !== "production") {
+          console.log("AUTH SESSION:", {
+            email: session.user?.email,
+            isAdmin: session.user?.isAdmin,
+          })
         }
       }
       return session

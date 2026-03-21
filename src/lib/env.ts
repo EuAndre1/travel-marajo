@@ -7,6 +7,7 @@ import {
   stripLocalePrefix,
   type AppRouteKey,
 } from "@/i18n/routing"
+export { ADMIN_EMAILS, getAdminEmails, isAdminEmail } from "@/lib/admin-studio/admin-config"
 
 const FALLBACK_SITE_URL = "https://www.travelmarajo.com"
 
@@ -24,21 +25,6 @@ const RECOMMENDED_ENV_VARS = [
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
 ] as const
-
-export function getAdminEmails(): string[] {
-  return (process.env.ADMIN_EMAILS ?? "")
-    .split(",")
-    .map((value) => value.trim().toLowerCase())
-    .filter(Boolean)
-}
-
-export function isAdminEmail(email?: string | null): boolean {
-  if (!email) {
-    return false
-  }
-
-  return getAdminEmails().includes(email.trim().toLowerCase())
-}
 
 export interface EnvReadinessReport {
   critical: {
