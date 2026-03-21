@@ -115,6 +115,7 @@ export default function ExperiencesStudioEditor({
     markPersisted,
     resetDraft,
     exportDraft,
+    hasUnsavedChanges,
     savedAtLabel,
     statusMessage,
   } = useAdminDraft(STORAGE_KEY, initialDraft)
@@ -134,7 +135,7 @@ export default function ExperiencesStudioEditor({
     [selectedDraft],
   )
 
-  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+  const { isPersisting, persistMessage, persistState, saveAndPersist } = useAdminPersistedSave({
     surface: "experiences",
     draft,
     saveDraft,
@@ -163,7 +164,7 @@ export default function ExperiencesStudioEditor({
       <AdminPageIntro
         eyebrow="Experiencias"
         title="Editor do catalogo de experiencias"
-        description="Escolha uma experiencia, veja o que ja esta no site e atualize o texto com linguagem clara para a equipe editorial. Slugs, rotas e checkout permanecem intactos."
+        description="Escolha uma experiencia, veja o texto que esta no ar e escreva a nova versao logo abaixo. Slugs, rotas e checkout continuam intactos."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
@@ -171,6 +172,8 @@ export default function ExperiencesStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
+        hasUnsavedChanges={hasUnsavedChanges}
+        persistState={persistState}
         scopeNote="Os textos desta area sao persistidos e podem refletir no site. A imagem escolhida aqui fica registrada no Admin Studio como referencia visual para a proxima fase de publicacao de midia."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-experiences-${activeLocale}.json`)}
@@ -202,7 +205,7 @@ export default function ExperiencesStudioEditor({
           <AdminSectionCard
             eyebrow="Imagem"
             title={`Imagem e apresentacao de ${localeDraft.title}`}
-            description="A imagem serve como referencia visual para a equipe. O texto abaixo continua sendo a parte publicada desta superficie."
+            description="A imagem abaixo serve como preparo visual. O texto desta pagina continua sendo a parte efetivamente publicada."
           >
             <div className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-600">
               <strong className="text-[#0B1C2C]">Slug fixo:</strong> {selectedDraft.slug}
@@ -214,8 +217,8 @@ export default function ExperiencesStudioEditor({
             </div>
 
             <AdminMediaField
-              label="Main image for this experience"
-              helper="Selecione uma imagem da biblioteca para representar esta experiencia no estúdio."
+              label="Imagem principal desta experiencia"
+              helper="Escolha uma imagem da biblioteca para representar esta experiencia de forma visual no estudio."
               liveImageUrl={selectedBase.selectedMediaUrl}
               draftImageUrl={selectedDraft.selectedMediaUrl}
               onChange={(value) =>
@@ -231,26 +234,26 @@ export default function ExperiencesStudioEditor({
           <AdminSectionCard
             eyebrow="Texto principal"
             title="O que o viajante le primeiro"
-            description="Mantenha o texto claro e facil de decidir para quem esta comparando experiencias."
+            description="Mantenha o texto claro, facil de comparar e direto para quem esta decidindo qual experiencia reservar."
           >
             <AdminTextFieldCard
-              label="Main title shown on cards and pages"
-              helper="Titulo principal da experiencia."
+              label="Titulo principal da experiencia"
+              helper="Nome que aparece nos cards e na pagina desta experiencia."
               liveValue={liveLocale.title}
               value={localeDraft.title}
               onChange={(value) => updateField("title", value)}
             />
             <AdminTextFieldCard
-              label="Short description used to convince quickly"
-              helper="Texto curto que aparece antes do detalhe completo."
+              label="Descricao curta para convencer rapidamente"
+              helper="Texto curto usado para apresentar o valor da experiencia de forma imediata."
               liveValue={liveLocale.shortDescription}
               value={localeDraft.shortDescription}
               onChange={(value) => updateField("shortDescription", value)}
               multiline
             />
             <AdminTextFieldCard
-              label="Full description for the detail page"
-              helper="Texto mais completo para quem quer entender melhor a experiencia."
+              label="Descricao completa da pagina"
+              helper="Texto mais detalhado para quem quer entender melhor a experiencia antes de reservar."
               liveValue={liveLocale.fullDescription}
               value={localeDraft.fullDescription}
               onChange={(value) => updateField("fullDescription", value)}
@@ -265,14 +268,14 @@ export default function ExperiencesStudioEditor({
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <AdminTextFieldCard
-                label="Location shown to the traveler"
+                label="Local exibido ao viajante"
                 helper="Nome do lugar usado nos cards e na pagina."
                 liveValue={liveLocale.locationLabel}
                 value={localeDraft.locationLabel}
                 onChange={(value) => updateField("locationLabel", value)}
               />
               <AdminTextFieldCard
-                label="Duration shown to the traveler"
+                label="Duracao exibida ao viajante"
                 helper="Duracao resumida para comparacao rapida."
                 liveValue={liveLocale.durationLabel}
                 value={localeDraft.durationLabel}
@@ -287,7 +290,7 @@ export default function ExperiencesStudioEditor({
             description="Use listas claras e objetivas para facilitar a leitura."
           >
             <AdminTextFieldCard
-              label="Highlights shown to help the traveler decide"
+              label="Destaques para ajudar na decisao"
               helper="Escreva um destaque por linha."
               liveValue={liveLocale.highlightsText}
               value={localeDraft.highlightsText}
@@ -295,7 +298,7 @@ export default function ExperiencesStudioEditor({
               multiline
             />
             <AdminTextFieldCard
-              label="What is included"
+              label="O que esta incluido"
               helper="Liste um item incluido por linha."
               liveValue={liveLocale.includedText}
               value={localeDraft.includedText}

@@ -16,10 +16,12 @@ export function useAdminPersistedSave<T>({
 }) {
   const [isPersisting, setIsPersisting] = useState(false)
   const [persistMessage, setPersistMessage] = useState("")
+  const [persistState, setPersistState] = useState<"idle" | "saving" | "success" | "error">("idle")
 
   const saveAndPersist = useCallback(async () => {
     saveDraft()
     setIsPersisting(true)
+    setPersistState("saving")
     setPersistMessage("Sincronizando com a camada persistida do site...")
 
     try {
@@ -45,6 +47,7 @@ export function useAdminPersistedSave<T>({
         draft,
         "Conteudo persistido no banco com fallback seguro para os arquivos do projeto.",
       )
+      setPersistState("success")
       setPersistMessage(
         "Override salvo no banco e pronto para refletir no site publico quando esta superficie for renderizada.",
       )
@@ -57,6 +60,7 @@ export function useAdminPersistedSave<T>({
       setPersistMessage(
         `O rascunho local foi salvo neste navegador, mas houve falha ao persistir no site: ${message}`,
       )
+      setPersistState("error")
     } finally {
       setIsPersisting(false)
     }
@@ -64,6 +68,7 @@ export function useAdminPersistedSave<T>({
 
   return {
     isPersisting,
+    persistState,
     persistMessage,
     saveAndPersist,
   }

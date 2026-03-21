@@ -19,10 +19,16 @@ export default function AdminTextFieldCard({
 }) {
   const changed = liveValue !== value
   const inputClassName =
-    "mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition focus:border-[#0B1C2C]"
+    "mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition focus:border-[#0B1C2C] focus:ring-4 focus:ring-[#0B1C2C]/10"
 
   return (
-    <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5">
+    <div
+      className={`rounded-[1.6rem] border p-5 transition ${
+        changed
+          ? "border-amber-200 bg-amber-50/70"
+          : "border-slate-200 bg-slate-50/80"
+      }`}
+    >
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <h3 className="text-base font-semibold text-[#0B1C2C]">{label}</h3>
@@ -47,7 +53,18 @@ export default function AdminTextFieldCard({
       </div>
 
       <label className="mt-4 block">
-        <span className="text-sm font-semibold text-[#0B1C2C]">Novo texto</span>
+        <div className="rounded-[1.3rem] border border-dashed border-slate-300 bg-white/80 px-4 py-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+            Area editavel
+          </p>
+          <span className="mt-2 block text-sm font-semibold text-[#0B1C2C]">
+            Digite a nova versao abaixo
+          </span>
+          <p className="mt-1 text-sm leading-6 text-slate-500">
+            O campo abaixo e a parte que voce pode editar agora. O valor atual do site fica sempre
+            visivel logo acima para comparacao.
+          </p>
+        </div>
         {multiline ? (
           <textarea
             className={`${inputClassName} min-h-[120px]`}

@@ -35,6 +35,7 @@ export default function ContentStudioEditor({
     markPersisted,
     resetDraft,
     exportDraft,
+    hasUnsavedChanges,
     savedAtLabel,
     statusMessage,
   } = useAdminDraft(STORAGE_KEY, initialDraft)
@@ -55,7 +56,7 @@ export default function ContentStudioEditor({
     }))
   }
 
-  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+  const { isPersisting, persistMessage, persistState, saveAndPersist } = useAdminPersistedSave({
     surface: "content",
     draft,
     saveDraft,
@@ -78,6 +79,8 @@ export default function ContentStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
+        hasUnsavedChanges={hasUnsavedChanges}
+        persistState={persistState}
         scopeNote="Salvar cria ou atualiza a camada persistida que o site usa para este conteudo estrutural. Resetar remove apenas o rascunho local deste navegador."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-content-${activeLocale}.json`)}
@@ -90,15 +93,15 @@ export default function ContentStudioEditor({
         description="Campos usados perto do logo e nas areas institucionais para explicar o posicionamento da Travel Marajo."
       >
         <AdminTextFieldCard
-          label="Brand line shown near the logo"
-          helper="Frase curta usada como complemento da marca."
+          label="Frase curta da marca"
+          helper="Complemento da marca usado perto do logo e em pontos institucionais."
           liveValue={liveLocale.brandTagline}
           value={localeDraft.brandTagline}
           onChange={(value) => updateField("brandTagline", value)}
         />
         <AdminTextFieldCard
-          label="Main authority statement"
-          helper="Mensagem principal que apresenta a Travel Marajo como referencia de destino e planejamento."
+          label="Mensagem principal de autoridade"
+          helper="Texto institucional que apresenta a Travel Marajo como referencia de destino e planejamento."
           liveValue={liveLocale.authorityStatement}
           value={localeDraft.authorityStatement}
           onChange={(value) => updateField("authorityStatement", value)}
@@ -112,24 +115,24 @@ export default function ContentStudioEditor({
         description="Edite o fechamento do site com uma linguagem clara para o visitante."
       >
         <AdminTextFieldCard
-          label="Footer headline"
-          helper="Titulo principal do rodape."
+          label="Titulo principal do rodape"
+          helper="Mensagem principal de fechamento no rodape."
           liveValue={liveLocale.footerHeadline}
           value={localeDraft.footerHeadline}
           onChange={(value) => updateField("footerHeadline", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Footer support text"
-          helper="Texto de apoio que aparece no rodape institucional."
+          label="Texto de apoio do rodape"
+          helper="Paragrafo institucional que aparece no rodape."
           liveValue={liveLocale.footerSupportCopy}
           value={localeDraft.footerSupportCopy}
           onChange={(value) => updateField("footerSupportCopy", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Footer highlight points"
-          helper="Liste um destaque por linha para resumir os pontos fortes da marca no rodape."
+          label="Pontos de destaque do rodape"
+          helper="Escreva um destaque por linha para resumir os pontos fortes da marca."
           liveValue={liveLocale.footerHighlights}
           value={localeDraft.footerHighlights}
           onChange={(value) => updateField("footerHighlights", value)}
@@ -143,24 +146,24 @@ export default function ContentStudioEditor({
         description="Use estes campos para reforcar curadoria local, suporte e confianca sem exagerar a linguagem."
       >
         <AdminTextFieldCard
-          label="Trust section title"
-          helper="Titulo do bloco de prova e confianca."
+          label="Titulo da secao de confianca"
+          helper="Titulo do bloco que reforca seguranca, curadoria e credibilidade."
           liveValue={liveLocale.trustHeadline}
           value={localeDraft.trustHeadline}
           onChange={(value) => updateField("trustHeadline", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Trust section supporting text"
-          helper="Texto curto que explica por que reservar com seguranca."
+          label="Texto de apoio da secao de confianca"
+          helper="Explique em poucas linhas por que reservar com a marca transmite seguranca."
           liveValue={liveLocale.trustBody}
           value={localeDraft.trustBody}
           onChange={(value) => updateField("trustBody", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Trust highlights"
-          helper="Liste um destaque por linha. Eles aparecem como sinais curtos de prova e apoio."
+          label="Destaques de confianca"
+          helper="Escreva um destaque por linha. Eles aparecem como sinais curtos de prova e apoio."
           liveValue={liveLocale.trustHighlights}
           value={localeDraft.trustHighlights}
           onChange={(value) => updateField("trustHighlights", value)}
@@ -174,53 +177,53 @@ export default function ContentStudioEditor({
         description="Esses campos afetam a experiencia geral do visitante em varias areas do site."
       >
         <AdminTextFieldCard
-          label="Concierge title"
-          helper="Titulo usado para apresentar o suporte humano."
+          label="Titulo do concierge"
+          helper="Nome usado para apresentar o suporte humano."
           liveValue={liveLocale.conciergeTitle}
           value={localeDraft.conciergeTitle}
           onChange={(value) => updateField("conciergeTitle", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Concierge support text"
-          helper="Texto que explica a ajuda oferecida antes, durante e depois da viagem."
+          label="Texto de apoio do concierge"
+          helper="Explique a ajuda oferecida antes, durante e depois da viagem."
           liveValue={liveLocale.conciergeBody}
           value={localeDraft.conciergeBody}
           onChange={(value) => updateField("conciergeBody", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Response time text"
-          helper="Mensagem curta sobre tempo de resposta e disponibilidade."
+          label="Texto sobre tempo de resposta"
+          helper="Mensagem curta sobre disponibilidade e resposta da equipe."
           liveValue={liveLocale.conciergeResponseText}
           value={localeDraft.conciergeResponseText}
           onChange={(value) => updateField("conciergeResponseText", value)}
         />
         <div className="grid gap-5 lg:grid-cols-2">
           <AdminTextFieldCard
-            label="Sign in label"
-            helper="Texto usado no botao de entrada."
+            label="Texto do botao Entrar"
+            helper="Rotulo usado no botao de acesso."
             liveValue={liveLocale.signInLabel}
             value={localeDraft.signInLabel}
             onChange={(value) => updateField("signInLabel", value)}
           />
           <AdminTextFieldCard
-            label="Traveller profile label"
-            helper="Texto que aparece quando a pessoa ja esta logada."
+            label="Texto do perfil do viajante"
+            helper="Rotulo que aparece quando a pessoa ja esta logada."
             liveValue={liveLocale.profileLabel}
             value={localeDraft.profileLabel}
             onChange={(value) => updateField("profileLabel", value)}
           />
           <AdminTextFieldCard
-            label="Plan your trip button"
-            helper="Botao principal ligado ao planejamento com suporte."
+            label="Texto do botao Planejar viagem"
+            helper="Rotulo do botao principal ligado ao planejamento com suporte."
             liveValue={liveLocale.planTripLabel}
             value={localeDraft.planTripLabel}
             onChange={(value) => updateField("planTripLabel", value)}
           />
           <AdminTextFieldCard
-            label="Book direct button"
-            helper="Texto curto do CTA de reserva direta."
+            label="Texto do botao Reservar direto"
+            helper="Rotulo curto do CTA de reserva direta."
             liveValue={liveLocale.bookDirectLabel}
             value={localeDraft.bookDirectLabel}
             onChange={(value) => updateField("bookDirectLabel", value)}

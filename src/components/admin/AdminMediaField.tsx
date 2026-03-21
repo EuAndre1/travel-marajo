@@ -58,7 +58,7 @@ export default function AdminMediaField({
             changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
           }`}
         >
-          {changed ? "Nova imagem escolhida no estudio" : "Usando a imagem atual como base"}
+          {changed ? "Nova imagem escolhida no estudio" : "Nenhuma troca preparada ainda"}
         </span>
       </div>
 
@@ -98,7 +98,20 @@ export default function AdminMediaField({
       </div>
 
       <div className="mt-4 rounded-[1.25rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-7 text-slate-600">
-        {pendingNote}
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
+          Status desta acao
+        </p>
+        <p className="mt-2">
+          <strong className="text-[#0B1C2C]">Imagem atual do site:</strong> continua sendo a
+          referencia publica.
+        </p>
+        <p className="mt-2">
+          <strong className="text-[#0B1C2C]">Imagem escolhida no editor:</strong>{" "}
+          {changed
+            ? "ja esta preparada como rascunho visual para a equipe."
+            : "ainda nao foi trocada neste rascunho."}
+        </p>
+        <p className="mt-2">{pendingNote}</p>
       </div>
 
       <AdminMediaPickerDialog

@@ -123,6 +123,7 @@ export default function PackagesStudioEditor({
     markPersisted,
     resetDraft,
     exportDraft,
+    hasUnsavedChanges,
     savedAtLabel,
     statusMessage,
   } = useAdminDraft(STORAGE_KEY, initialDraft)
@@ -142,7 +143,7 @@ export default function PackagesStudioEditor({
     [selectedDraft],
   )
 
-  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+  const { isPersisting, persistMessage, persistState, saveAndPersist } = useAdminPersistedSave({
     surface: "packages",
     draft,
     saveDraft,
@@ -171,7 +172,7 @@ export default function PackagesStudioEditor({
       <AdminPageIntro
         eyebrow="Pacotes"
         title="Editor dos pacotes e jornadas"
-        description="Aqui o operador revisa a apresentacao comercial dos pacotes sem alterar slug, rota, checkout ou qualquer regra de negocio."
+        description="Escolha um pacote, veja o texto atual do site e escreva a nova versao logo abaixo. Slug, rota e checkout continuam fixos."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
@@ -179,6 +180,8 @@ export default function PackagesStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
+        hasUnsavedChanges={hasUnsavedChanges}
+        persistState={persistState}
         scopeNote="Os textos desta area sao persistidos e podem refletir no site. A imagem escolhida aqui fica registrada no Admin Studio como referencia visual para a proxima fase de publicacao de midia."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-packages-${activeLocale}.json`)}
@@ -223,8 +226,8 @@ export default function PackagesStudioEditor({
             </div>
 
             <AdminMediaField
-              label="Main image for this package"
-              helper="Selecione uma imagem da biblioteca para representar o pacote de forma mais visual no estudio."
+              label="Imagem principal deste pacote"
+              helper="Escolha uma imagem da biblioteca para representar o pacote de forma mais visual no estudio."
               liveImageUrl={selectedBase.selectedMediaUrl}
               draftImageUrl={selectedDraft.selectedMediaUrl}
               onChange={(value) =>
@@ -243,22 +246,22 @@ export default function PackagesStudioEditor({
             description="Estes campos aparecem nas listagens e ajudam o visitante a comparar opcoes."
           >
             <AdminTextFieldCard
-              label="Package title shown in listings and pages"
-              helper="Nome principal do pacote."
+              label="Titulo principal do pacote"
+              helper="Nome principal do pacote nas listagens e paginas."
               liveValue={liveLocale.title}
               value={localeDraft.title}
               onChange={(value) => updateField("title", value)}
             />
             <AdminTextFieldCard
-              label="Short package summary"
-              helper="Resumo curto que apresenta o valor da jornada."
+              label="Resumo curto do pacote"
+              helper="Resumo comercial que apresenta rapidamente o valor da jornada."
               liveValue={liveLocale.summary}
               value={localeDraft.summary}
               onChange={(value) => updateField("summary", value)}
               multiline
             />
             <AdminTextFieldCard
-              label="Duration shown to the traveler"
+              label="Duracao exibida ao viajante"
               helper="Duracao curta para comparacao rapida."
               liveValue={liveLocale.duration}
               value={localeDraft.duration}
@@ -272,7 +275,7 @@ export default function PackagesStudioEditor({
             description="Organize o conteudo em listas curtas, uma linha por item."
           >
             <AdminTextFieldCard
-              label="Included items"
+              label="Itens incluidos"
               helper="Liste um item por linha para mostrar o que entra no pacote."
               liveValue={liveLocale.includedText}
               value={localeDraft.includedText}
@@ -280,7 +283,7 @@ export default function PackagesStudioEditor({
               multiline
             />
             <AdminTextFieldCard
-              label="Journey or itinerary highlights"
+              label="Destaques do roteiro ou itinerario"
               helper="Descreva a ordem principal da jornada, um ponto por linha."
               liveValue={liveLocale.itineraryText}
               value={localeDraft.itineraryText}
@@ -296,45 +299,45 @@ export default function PackagesStudioEditor({
               description="Campos usados na apresentacao premium do pacote principal."
             >
               <AdminTextFieldCard
-                label="Premium landing headline"
-                helper="Titulo principal da landing premium."
+                label="Titulo principal da landing premium"
+                helper="Titulo mais forte da landing dedicada."
                 liveValue={liveLocale.premiumHeroTitle}
                 value={localeDraft.premiumHeroTitle}
                 onChange={(value) => updateField("premiumHeroTitle", value)}
                 multiline
               />
               <AdminTextFieldCard
-                label="Premium landing supporting text"
-                helper="Texto de apoio logo abaixo do titulo principal."
+                label="Texto de apoio da landing premium"
+                helper="Paragrafo logo abaixo do titulo principal."
                 liveValue={liveLocale.premiumHeroBody}
                 value={localeDraft.premiumHeroBody}
                 onChange={(value) => updateField("premiumHeroBody", value)}
                 multiline
               />
               <AdminTextFieldCard
-                label="Why this package title"
+                label="Titulo do bloco Por que este pacote"
                 helper="Titulo do bloco de valor da landing."
                 liveValue={liveLocale.premiumWhyTitle}
                 value={localeDraft.premiumWhyTitle}
                 onChange={(value) => updateField("premiumWhyTitle", value)}
               />
               <AdminTextFieldCard
-                label="Why this package text"
-                helper="Texto que explica por que esta jornada vale a reserva."
+                label="Texto do bloco Por que este pacote"
+                helper="Explique por que esta jornada vale a reserva."
                 liveValue={liveLocale.premiumWhyBody}
                 value={localeDraft.premiumWhyBody}
                 onChange={(value) => updateField("premiumWhyBody", value)}
                 multiline
               />
               <AdminTextFieldCard
-                label="Why book with Travel Marajo title"
+                label="Titulo do bloco Por que reservar com a Travel Marajo"
                 helper="Titulo do bloco de confianca da landing."
                 liveValue={liveLocale.premiumWhyBookTitle}
                 value={localeDraft.premiumWhyBookTitle}
                 onChange={(value) => updateField("premiumWhyBookTitle", value)}
               />
               <AdminTextFieldCard
-                label="Why book with Travel Marajo text"
+                label="Texto do bloco Por que reservar com a Travel Marajo"
                 helper="Texto que reforca suporte local, curadoria e seguranca."
                 liveValue={liveLocale.premiumWhyBookSubtitle}
                 value={localeDraft.premiumWhyBookSubtitle}
@@ -342,14 +345,14 @@ export default function PackagesStudioEditor({
                 multiline
               />
               <AdminTextFieldCard
-                label="Listing highlight title"
-                helper="Titulo usado quando o pacote aparece em destaque na listagem."
+                label="Titulo do destaque na listagem"
+                helper="Titulo usado quando o pacote aparece em destaque."
                 liveValue={liveLocale.premiumListingTitle}
                 value={localeDraft.premiumListingTitle}
                 onChange={(value) => updateField("premiumListingTitle", value)}
               />
               <AdminTextFieldCard
-                label="Listing highlight text"
+                label="Texto do destaque na listagem"
                 helper="Texto curto que acompanha o destaque do pacote."
                 liveValue={liveLocale.premiumListingBody}
                 value={localeDraft.premiumListingBody}
@@ -357,23 +360,23 @@ export default function PackagesStudioEditor({
                 multiline
               />
               <AdminTextFieldCard
-                label="Hero trust notes"
-                helper="Liste um sinal de confianca por linha para a hero da landing."
+                label="Pontos de confianca da hero"
+                helper="Escreva um sinal de confianca por linha para a hero da landing."
                 liveValue={liveLocale.premiumTrustNotes}
                 value={localeDraft.premiumTrustNotes}
                 onChange={(value) => updateField("premiumTrustNotes", value)}
                 multiline
               />
               <AdminTextFieldCard
-                label="Final call-to-action title"
-                helper="Titulo do ultimo bloco de conversao da landing."
+                label="Titulo do ultimo bloco de conversao"
+                helper="Titulo do fechamento premium da landing."
                 liveValue={liveLocale.premiumFinalTitle}
                 value={localeDraft.premiumFinalTitle}
                 onChange={(value) => updateField("premiumFinalTitle", value)}
                 multiline
               />
               <AdminTextFieldCard
-                label="Final call-to-action supporting text"
+                label="Texto de apoio do ultimo bloco de conversao"
                 helper="Texto de apoio do fechamento premium."
                 liveValue={liveLocale.premiumFinalSubtitle}
                 value={localeDraft.premiumFinalSubtitle}
@@ -385,11 +388,11 @@ export default function PackagesStudioEditor({
             <AdminSectionCard
               eyebrow="Landing premium"
               title="Pacote sem landing dedicada"
-              description="Este pacote ainda nao tem uma landing premium propria. Nesta fase, foque no titulo, resumo, inclusoes e imagem de referencia."
+              description="Este bloco e apenas informativo nesta fase."
             >
               <div className="rounded-[1.4rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-600">
-                Quando uma landing premium for criada para este pacote, ela podera reaproveitar a
-                mesma biblioteca de midia e a mesma base editorial preparada aqui.
+                Visual preview only. Este pacote ainda nao tem uma landing premium propria. Nesta
+                fase, foque no titulo, resumo, inclusoes e imagem de referencia.
               </div>
             </AdminSectionCard>
           )}

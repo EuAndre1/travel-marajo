@@ -62,6 +62,11 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
     }
   }, [pristineValue, storageKey])
 
+  const hasUnsavedChanges = useMemo(
+    () => JSON.stringify(draft) !== JSON.stringify(baselineValue),
+    [baselineValue, draft],
+  )
+
   const saveDraft = useCallback(() => {
     const nextSavedAt = new Date().toISOString()
     const payload: StoredDraft<T> = {
@@ -123,6 +128,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
     markPersisted,
     resetDraft,
     exportDraft,
+    hasUnsavedChanges,
     hasStoredDraft,
     savedAtLabel: formatSavedAt(savedAt),
     statusMessage,

@@ -36,6 +36,7 @@ export default function HomepageStudioEditor({
     markPersisted,
     resetDraft,
     exportDraft,
+    hasUnsavedChanges,
     savedAtLabel,
     statusMessage,
   } = useAdminDraft(STORAGE_KEY, initialDraft)
@@ -57,7 +58,7 @@ export default function HomepageStudioEditor({
     }))
   }
 
-  const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
+  const { isPersisting, persistMessage, persistState, saveAndPersist } = useAdminPersistedSave({
     surface: "homepage",
     draft,
     saveDraft,
@@ -80,6 +81,8 @@ export default function HomepageStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
+        hasUnsavedChanges={hasUnsavedChanges}
+        persistState={persistState}
         scopeNote="Os textos desta pagina podem ser persistidos e refletidos no site. A imagem escolhida aqui fica salva no Admin Studio como referencia editorial para a proxima etapa de publicacao visual."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-homepage-${activeLocale}.json`)}
@@ -101,8 +104,8 @@ export default function HomepageStudioEditor({
         />
 
         <AdminTextFieldCard
-          label="Main title of the homepage"
-          helper="Titulo mais importante da home, mostrado em destaque no primeiro bloco."
+          label="Titulo principal da homepage"
+          helper="Este e o texto mais forte da primeira dobra. O visitante deve entender o valor da Travel Marajo logo aqui."
           liveValue={liveLocale.heroHeadline}
           value={localeDraft.heroHeadline}
           onChange={(value) => updateField("heroHeadline", value)}
@@ -110,8 +113,8 @@ export default function HomepageStudioEditor({
         />
 
         <AdminTextFieldCard
-          label="Short text below the main title"
-          helper="Texto de apoio logo abaixo do titulo. Ele deve explicar o valor da Travel Marajo em poucas linhas."
+          label="Texto curto logo abaixo do titulo"
+          helper="Explique em poucas linhas o que a plataforma ajuda o visitante a descobrir, planejar e reservar."
           liveValue={liveLocale.heroSubheadline}
           value={localeDraft.heroSubheadline}
           onChange={(value) => updateField("heroSubheadline", value)}
@@ -120,15 +123,15 @@ export default function HomepageStudioEditor({
 
         <div className="grid gap-5 lg:grid-cols-2">
           <AdminTextFieldCard
-            label="Primary button label"
-            helper="Botao principal do hero."
+            label="Texto do botao principal"
+            helper="Acao principal que voce quer incentivar no hero."
             liveValue={liveLocale.primaryCtaLabel}
             value={localeDraft.primaryCtaLabel}
             onChange={(value) => updateField("primaryCtaLabel", value)}
           />
           <AdminTextFieldCard
-            label="Secondary button label"
-            helper="Segundo botao visivel no hero."
+            label="Texto do botao secundario"
+            helper="Segunda acao disponivel para quem ainda quer explorar melhor."
             liveValue={liveLocale.secondaryCtaLabel}
             value={localeDraft.secondaryCtaLabel}
             onChange={(value) => updateField("secondaryCtaLabel", value)}
@@ -136,16 +139,16 @@ export default function HomepageStudioEditor({
         </div>
 
         <AdminTextFieldCard
-          label="Trust line shown below the hero"
-          helper="Frase curta usada para reforcar confianca logo abaixo da area principal."
+          label="Frase de confianca abaixo do hero"
+          helper="Linha curta que reforca seguranca, apoio local ou curadoria logo abaixo da primeira dobra."
           liveValue={liveLocale.trustStripLabel}
           value={localeDraft.trustStripLabel}
           onChange={(value) => updateField("trustStripLabel", value)}
         />
 
         <AdminTextFieldCard
-          label="Trust points shown below the hero"
-          helper="Liste um ponto por linha. Eles aparecem como sinais rapidos de confianca."
+          label="Pontos de confianca abaixo do hero"
+          helper="Escreva um ponto por linha. Eles aparecem como sinais rapidos de confianca."
           liveValue={liveLocale.trustItems}
           value={localeDraft.trustItems}
           onChange={(value) => updateField("trustItems", value)}
@@ -159,16 +162,16 @@ export default function HomepageStudioEditor({
         description="Este bloco ajuda o visitante a entender por que Marajo merece a viagem."
       >
         <AdminTextFieldCard
-          label="Section title for Why Marajo"
-          helper="Titulo que apresenta o bloco sobre o destino."
+          label="Titulo do bloco Why Marajo"
+          helper="Apresenta o bloco editorial sobre a ilha e prepara a leitura do visitante."
           liveValue={liveLocale.whyMarajoTitle}
           value={localeDraft.whyMarajoTitle}
           onChange={(value) => updateField("whyMarajoTitle", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Introductory text for Why Marajo"
-          helper="Texto introdutorio curto para contextualizar natureza, cultura e identidade da ilha."
+          label="Texto introdutorio do bloco Why Marajo"
+          helper="Contextualize natureza, cultura e identidade da ilha em um paragrafo curto."
           liveValue={liveLocale.whyMarajoIntro}
           value={localeDraft.whyMarajoIntro}
           onChange={(value) => updateField("whyMarajoIntro", value)}
@@ -182,32 +185,32 @@ export default function HomepageStudioEditor({
         description="Ajuste a mensagem do suporte local e o convite final para reservar ou falar com um especialista."
       >
         <AdminTextFieldCard
-          label="Concierge block title"
-          helper="Titulo do bloco de suporte humano."
+          label="Titulo do bloco de suporte humano"
+          helper="Nome do bloco que apresenta o concierge e o atendimento local."
           liveValue={liveLocale.conciergeTitle}
           value={localeDraft.conciergeTitle}
           onChange={(value) => updateField("conciergeTitle", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Concierge support text"
-          helper="Texto que explica como a equipe local ajuda antes, durante e depois da viagem."
+          label="Texto de apoio do concierge"
+          helper="Explique como a equipe ajuda antes, durante e depois da viagem."
           liveValue={liveLocale.conciergeText}
           value={localeDraft.conciergeText}
           onChange={(value) => updateField("conciergeText", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Final call-to-action title"
-          helper="Titulo do ultimo bloco de conversao da homepage."
+          label="Titulo do ultimo bloco de conversao"
+          helper="Mensagem final para levar o visitante a reservar ou falar com a equipe."
           liveValue={liveLocale.finalCtaTitle}
           value={localeDraft.finalCtaTitle}
           onChange={(value) => updateField("finalCtaTitle", value)}
           multiline
         />
         <AdminTextFieldCard
-          label="Final call-to-action supporting text"
-          helper="Texto de apoio que fecha a pagina e orienta o visitante para a acao."
+          label="Texto de apoio do ultimo bloco de conversao"
+          helper="Complemento do fechamento da homepage com orientacao clara para a proxima acao."
           liveValue={liveLocale.finalCtaText}
           value={localeDraft.finalCtaText}
           onChange={(value) => updateField("finalCtaText", value)}
@@ -215,15 +218,15 @@ export default function HomepageStudioEditor({
         />
         <div className="grid gap-5 lg:grid-cols-2">
           <AdminTextFieldCard
-            label="Final primary button"
-            helper="Botao principal do ultimo bloco."
+            label="Botao principal do fechamento"
+            helper="Acao principal do ultimo bloco da homepage."
             liveValue={liveLocale.finalPrimaryLabel}
             value={localeDraft.finalPrimaryLabel}
             onChange={(value) => updateField("finalPrimaryLabel", value)}
           />
           <AdminTextFieldCard
-            label="Final secondary button"
-            helper="Botao secundario do ultimo bloco."
+            label="Botao secundario do fechamento"
+            helper="Acao secundaria do ultimo bloco da homepage."
             liveValue={liveLocale.finalSecondaryLabel}
             value={localeDraft.finalSecondaryLabel}
             onChange={(value) => updateField("finalSecondaryLabel", value)}

@@ -422,7 +422,7 @@ export default function MediaStudioEditor() {
                 <strong className="text-[#0B1C2C]">Imagens:</strong> ficam salvas no storage persistente e podem ser reutilizadas em varios editores.
               </p>
               <p className="mt-2">
-                <strong className="text-[#0B1C2C]">Videos:</strong> nesta fase servem como preparo visual local. Voce pode revisar o arquivo, mas ele ainda nao recebe URL publica.
+                <strong className="text-[#0B1C2C]">Videos:</strong> nesta fase servem apenas como preparo visual local. Voce pode revisar o arquivo, mas ele ainda nao recebe URL publica.
               </p>
             </div>
 
@@ -515,7 +515,7 @@ export default function MediaStudioEditor() {
         />
 
         {actionMessage ? (
-          <div className="rounded-[1.25rem] bg-slate-100 px-4 py-3 text-sm text-slate-700">
+          <div className="rounded-[1.25rem] border border-slate-200 bg-slate-100 px-4 py-3 text-sm leading-6 text-slate-700">
             {actionMessage}
           </div>
         ) : null}
@@ -568,6 +568,10 @@ export default function MediaStudioEditor() {
             title="Rascunhos visuais locais"
             description="Aqui o colaborador pode carregar videos para revisar visualmente nesta sessao. Eles ainda nao sao persistidos nem recebem URL publica."
           >
+            <div className="mb-4 rounded-[1.2rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-600">
+              <strong className="text-[#0B1C2C]">Editing not connected yet:</strong> videos podem
+              ser revisados aqui, mas ainda nao entram na biblioteca publica de midia.
+            </div>
             {stagedVideos.length === 0 ? (
               <div className="rounded-[1.6rem] border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm leading-7 text-slate-500">
                 Nenhum video preparado ainda. Use o botao Upload video para revisar um arquivo neste navegador.
@@ -656,7 +660,7 @@ export default function MediaStudioEditor() {
                     className="inline-flex shrink-0 items-center justify-center rounded-full border border-[#0B1C2C]/15 px-4 py-2.5 text-sm font-semibold text-[#0B1C2C] transition hover:border-[#0B1C2C]"
                   >
                     <LinkIcon className="mr-2 h-5 w-5" />
-                    Use this media
+                    Use this media / Copy URL
                   </button>
                 </div>
               </label>
