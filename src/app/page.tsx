@@ -1,17 +1,12 @@
 import type { Metadata } from "next"
 import HomeHero from "@/components/home/HomeHero"
 import HomeTrustStrip from "@/components/home/HomeTrustStrip"
-import HomeProofLayer from "@/components/home/HomeProofLayer"
+import HomeHowToGetThere from "@/components/home/HomeHowToGetThere"
 import HomeHowItWorks from "@/components/home/HomeHowItWorks"
 import HomeWhyMarajo from "@/components/home/HomeWhyMarajo"
-import HomeFeatureExperience from "@/components/home/HomeFeatureExperience"
 import HomeTopExperiences from "@/components/home/HomeTopExperiences"
 import HomeDestinations from "@/components/home/HomeDestinations"
 import HomeRoutesPackages from "@/components/home/HomeRoutesPackages"
-import HomePlanningSupport from "@/components/home/HomePlanningSupport"
-import HomeTravelGuide from "@/components/home/HomeTravelGuide"
-import HomeSocialProof from "@/components/home/HomeSocialProof"
-import HomePartners from "@/components/home/HomePartners"
 import HomeConciergeSupport from "@/components/home/HomeConciergeSupport"
 import HomeFinalCta from "@/components/home/HomeFinalCta"
 
@@ -42,17 +37,12 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <HomeHero />
       <HomeTrustStrip />
-      <HomeProofLayer />
+      <HomeHowToGetThere />
+      <HomeTopExperiences />
+      <HomeRoutesPackages />
       <HomeHowItWorks />
       <HomeWhyMarajo />
-      <HomeTopExperiences />
-      <HomeFeatureExperience />
-      <HomeRoutesPackages />
-      <HomePlanningSupport />
       <HomeDestinations />
-      <HomeTravelGuide />
-      <HomeSocialProof />
-      <HomePartners />
       <HomeConciergeSupport />
       <HomeFinalCta />
     </main>

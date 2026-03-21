@@ -17,6 +17,12 @@ export default function HomeHero() {
   const chrome = useResolvedSiteChrome()
   const authority = useResolvedHomeAuthorityContent()
   const content = useResolvedSiteContent()
+  const arrivalNote = {
+    pt: "De Belém - ferry + transfer disponíveis",
+    en: "From Belem - ferry + transfer available",
+    es: "Desde Belem - ferry + transfer disponibles",
+    fr: "Depuis Belem - ferry + transfert disponibles",
+  }[lang]
   const plannerQuickLinks = [
     {
       label: content.tabs[0] ?? "Voos",
@@ -41,25 +47,25 @@ export default function HomeHero() {
   ]
 
   return (
-    <section id="hero" className="relative min-h-[78vh] overflow-hidden bg-[#04101b] sm:min-h-[84vh] lg:min-h-[90vh]">
+    <section id="hero" className="relative min-h-[70vh] overflow-hidden bg-[#04101b] sm:min-h-[76vh] lg:min-h-[84vh]">
       <div className="absolute inset-0">
         <Image src="/hero-bg.jpg" alt={content.home.homeHeroImageAlt} fill priority className="object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,16,27,0.38)_0%,rgba(4,16,27,0.58)_18%,rgba(4,16,27,0.94)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(229,122,31,0.28),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.06),transparent_28%)]" />
       </div>
 
-      <div className="relative z-10 flex min-h-[78vh] items-center sm:min-h-[84vh] lg:min-h-[90vh]">
-        <div className="tm-shell py-10 pt-[88px] sm:py-12 sm:pt-[96px] lg:py-16 lg:pt-[112px]">
-          <div className="grid gap-6 lg:gap-8 xl:grid-cols-[minmax(0,540px)_minmax(320px,400px)] xl:items-center xl:justify-between">
-            <div className="max-w-[540px] space-y-6 text-white">
+      <div className="relative z-10 flex min-h-[70vh] items-center sm:min-h-[76vh] lg:min-h-[84vh]">
+        <div className="tm-shell py-8 pt-[82px] sm:py-10 sm:pt-[90px] lg:py-12 lg:pt-[104px]">
+          <div className="grid gap-5 lg:gap-8 xl:grid-cols-[minmax(0,540px)_minmax(300px,380px)] xl:items-center xl:justify-between">
+            <div className="max-w-[540px] space-y-5 text-white">
               <div className="space-y-3 sm:space-y-4">
                 <div className="inline-flex items-center rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/78 sm:text-[11px] sm:tracking-[0.3em]">
                   {content.home.heroKicker}
                 </div>
-                <h1 className="text-[2.45rem] font-display leading-[0.98] sm:text-[3.35rem] lg:text-[4rem] xl:text-[4.35rem]">
+                <h1 className="text-[2.2rem] font-display leading-[0.98] sm:text-[3rem] lg:text-[3.7rem] xl:text-[4rem]">
                   {hero.title}
                 </h1>
-                <p className="max-w-[520px] text-[15px] leading-7 text-white/80 sm:text-lg sm:leading-8">
+                <p className="max-w-[500px] text-[15px] leading-7 text-white/80 sm:text-[17px] sm:leading-8">
                   {hero.subtitle}
                 </p>
               </div>
@@ -79,54 +85,23 @@ export default function HomeHero() {
                 </Link>
               </div>
 
-              <div className="flex flex-wrap gap-2.5 text-sm text-white/72">
-                <Link
-                  href={getLocalizedPath(lang, "packages")}
-                  className="rounded-full border border-white/10 bg-white/6 px-4 py-2 transition hover:bg-white/10"
-                >
-                  {hero.ctas.secondary}
-                </Link>
-                <Link
-                  href={getLocalizedPath(lang, "guides")}
-                  className="rounded-full border border-white/10 bg-white/6 px-4 py-2 transition hover:bg-white/10"
-                >
-                  {chrome.mainNav[4]?.label}
-                </Link>
-                <span className="rounded-full border border-white/10 bg-white/6 px-4 py-2">
-                  {chrome.authorityLabel}
-                </span>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-white/74">
+                <span className="inline-flex h-2 w-2 rounded-full bg-accent" />
+                <span>{arrivalNote}</span>
               </div>
             </div>
 
-            <div className="tm-card-dark w-full overflow-hidden border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-5 sm:p-6 xl:justify-self-end">
+            <div className="tm-card-dark w-full overflow-hidden border-white/12 bg-[linear-gradient(160deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03)),linear-gradient(180deg,#0B1C2C_0%,#071521_100%)] p-4 sm:p-5 xl:justify-self-end">
               <div className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/76 sm:text-[11px] sm:tracking-[0.28em]">
                 {authority.heroPlannerEyebrow}
               </div>
 
-              <h2 className="mt-4 text-[1.65rem] font-display leading-tight text-white sm:text-2xl">
+              <h2 className="mt-4 text-[1.45rem] font-display leading-tight text-white sm:text-[1.7rem]">
                 {authority.heroPlannerTitle}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-white/72 sm:leading-7">
+              <p className="mt-3 text-sm leading-6 text-white/72">
                 {authority.heroPlannerBody}
               </p>
-
-              <ul className="mt-5 grid gap-2.5 text-sm text-white/78">
-                {authority.heroPlannerHighlights.map((item) => (
-                  <li key={item} className="flex items-start gap-3 rounded-[1.25rem] border border-white/10 bg-white/6 px-4 py-3.5">
-                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-accent" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-                {hero.stats.map((stat) => (
-                  <div key={stat.label} className="rounded-[1.35rem] border border-white/10 bg-white/6 px-4 py-4">
-                    <div className="text-xl font-semibold text-white sm:text-2xl">{stat.value}</div>
-                    <div className="mt-2 text-[10px] uppercase tracking-[0.22em] text-white/58 sm:text-[11px] sm:tracking-[0.24em]">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
 
               <div className="mt-5 space-y-3">
                 <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/58 sm:text-[11px]">
@@ -152,6 +127,8 @@ export default function HomeHero() {
                   ))}
                 </div>
               </div>
+
+              <p className="mt-4 text-sm leading-6 text-white/62">{hero.trustItems[1]}</p>
             </div>
           </div>
         </div>

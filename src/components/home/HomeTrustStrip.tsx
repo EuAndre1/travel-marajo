@@ -19,14 +19,11 @@ export default function HomeTrustStrip() {
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
             {hero.trustItems.map((item) => (
-              <div
-                key={item}
-                className="rounded-[1.25rem] border border-slate-200/80 bg-slate-50/70 px-4 py-3.5 text-[15px] leading-6 text-slate-600"
-              >
-                <span className="mb-2.5 block h-1.5 w-10 rounded-full bg-accent sm:w-12" />
-                {item}
+              <div key={item} className="flex items-start gap-2.5 rounded-[1rem] bg-slate-50/80 px-3.5 py-3 text-sm leading-6 text-slate-600">
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent" />
+                <span>{item}</span>
               </div>
             ))}
           </div>

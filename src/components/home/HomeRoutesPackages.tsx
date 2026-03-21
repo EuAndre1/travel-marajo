@@ -16,59 +16,45 @@ export default function HomeRoutesPackages() {
   return (
     <section id="roteiros" className="tm-section bg-white">
       <div className="tm-shell">
-        <div className="grid gap-6 xl:grid-cols-[0.92fr_1.08fr] xl:items-end">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <SectionHeader
             eyebrow={content.home.routesEyebrow}
             title={routes.title}
             subtitle={routes.subtitle}
           />
 
-          <div className="tm-card bg-[linear-gradient(135deg,#fff8f1,#f7fafc)] p-5 sm:p-6">
-            <p className="tm-chip">{content.pages.packages.eyebrow}</p>
-            <p className="mt-4 text-sm leading-6 text-slate-600 sm:leading-7">{content.pages.packages.subtitle}</p>
-            <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link
-                href={getLocalizedPath(lang, "packages")}
-                className="inline-flex items-center justify-center rounded-full bg-[#E57A1F] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c96815]"
-              >
-                {content.pages.packages.reserveCta}
-              </Link>
-              <Link
-                href={getLocalizedPath(lang, "planTrip")}
-                className="inline-flex items-center justify-center rounded-full border border-primary/20 px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary"
-              >
-                {content.pages.packages.consultCta}
-              </Link>
-            </div>
-          </div>
+          <Link
+            href={getLocalizedPath(lang, "packages")}
+            className="inline-flex items-center justify-center rounded-full border border-primary/15 bg-white px-5 py-3 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
+          >
+            {content.pages.packages.detailsCta}
+          </Link>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-3">
-          {routes.items.map((route) => (
+        <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          {routes.items.slice(0, 4).map((route) => (
             <article
               key={route.title}
-              className="tm-card flex h-full flex-col overflow-hidden bg-white transition hover:-translate-y-1 hover:shadow-[0_30px_70px_rgba(15,23,42,0.15)]"
+              className="overflow-hidden rounded-[1.7rem] border border-slate-200/80 bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)] transition hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(15,23,42,0.12)]"
             >
               <div className="relative h-44 sm:h-48">
                 <Image src={route.image} alt={route.title} fill className="object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B1C2C]/60 to-transparent" />
               </div>
-              <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
-                <div className="flex flex-wrap items-center justify-between gap-2 text-[10px] uppercase tracking-[0.18em] text-slate-400 sm:text-xs sm:tracking-[0.2em]">
+              <div className="flex flex-col gap-3 p-4 sm:p-5">
+                <h3 className="text-lg font-semibold leading-snug text-[#0B1C2C]">{route.title}</h3>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
                   <span>{route.days}</span>
+                  <span className="h-1 w-1 rounded-full bg-slate-300" />
                   <span className="font-semibold text-primary">{route.price}</span>
                 </div>
-                <h3 className="text-lg font-semibold leading-snug text-[#0B1C2C]">{route.title}</h3>
-                <p className="text-sm leading-6 text-slate-600 sm:leading-7">{route.description}</p>
-                <ul className="grid gap-2 text-xs text-slate-500">
-                  {route.highlights.map((item) => (
-                    <li key={item} className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link href={route.href} className="mt-auto inline-flex items-center gap-2 pt-1 text-sm font-semibold text-primary">
+                <p className="text-sm leading-6 text-slate-600">
+                  <span className="font-semibold text-[#0B1C2C]">{content.pages.packages.includes}:</span>{" "}
+                  {route.highlights.slice(0, 2).join(" • ")}
+                </p>
+                <Link
+                  href={route.href}
+                  className="inline-flex items-center justify-center rounded-full border border-primary/15 px-4 py-2 text-sm font-semibold text-primary transition hover:border-primary/30 hover:bg-primary/5"
+                >
                   {content.home.routesViewPackage}
                 </Link>
               </div>
