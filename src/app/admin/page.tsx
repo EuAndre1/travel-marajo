@@ -3,9 +3,12 @@ import type { ComponentType, SVGProps } from "react"
 import {
   DocumentTextIcon,
   GlobeAltIcon,
+  HomeModernIcon,
   MapIcon,
   PhotoIcon,
+  RectangleGroupIcon,
   SparklesIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 
@@ -28,6 +31,12 @@ const quickLinks: Array<{
     icon: DocumentTextIcon,
   },
   {
+    href: "/admin/destinations",
+    title: "Destinations",
+    body: "Cards de destinos com imagem, CTA, ordem e visibilidade.",
+    icon: RectangleGroupIcon,
+  },
+  {
     href: "/admin/experiences",
     title: "Experiencias",
     body: "Titulos, descricoes e imagem de referencia do catalogo.",
@@ -36,8 +45,20 @@ const quickLinks: Array<{
   {
     href: "/admin/packages",
     title: "Pacotes",
-    body: "Roteiros, copy comercial e landing premium do pacote principal.",
+    body: "Cards de roteiros, copy comercial e landing premium do pacote principal.",
     icon: MapIcon,
+  },
+  {
+    href: "/admin/hotels",
+    title: "Partner Hotels",
+    body: "Cards de hospedagens parceiras com imagem, preco e CTA.",
+    icon: HomeModernIcon,
+  },
+  {
+    href: "/admin/services",
+    title: "Services",
+    body: "Cards de servicos com imagem, preco e destino do botao.",
+    icon: WrenchScrewdriverIcon,
   },
   {
     href: "/admin/media",

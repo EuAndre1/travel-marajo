@@ -4,13 +4,17 @@ import { createContext, useContext } from "react"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import {
   createDefaultContentStudioState,
+  resolveDestinationCardsForLocale,
   resolveExperienceBySlug,
   resolveExperienceItems,
+  resolveHotelCardsForLocale,
   resolveHomeAuthorityForLocale,
   resolveHomeContentForLocale,
   resolvePackageBySlug,
   resolvePackages,
   resolvePremiumPackageLandingForLocale,
+  resolveRouteCardsForLocale,
+  resolveServiceCardsForLocale,
   resolveSiteChromeForLocale,
   resolveSiteContentForLocale,
   type ContentStudioState,
@@ -84,4 +88,28 @@ export function useResolvedPremiumPackageLandingCopy() {
   const { lang } = useSiteLanguage()
   const state = useContentOverridesState()
   return resolvePremiumPackageLandingForLocale(lang, state)
+}
+
+export function useResolvedDestinationCards() {
+  const { lang } = useSiteLanguage()
+  const state = useContentOverridesState()
+  return resolveDestinationCardsForLocale(lang, state)
+}
+
+export function useResolvedRouteCards() {
+  const { lang } = useSiteLanguage()
+  const state = useContentOverridesState()
+  return resolveRouteCardsForLocale(lang, state)
+}
+
+export function useResolvedHotelCards() {
+  const { lang } = useSiteLanguage()
+  const state = useContentOverridesState()
+  return resolveHotelCardsForLocale(lang, state)
+}
+
+export function useResolvedServiceCards() {
+  const { lang } = useSiteLanguage()
+  const state = useContentOverridesState()
+  return resolveServiceCardsForLocale(lang, state)
 }

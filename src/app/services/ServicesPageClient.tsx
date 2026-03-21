@@ -1,20 +1,39 @@
 "use client"
 
 import Link from "next/link"
+import { useResolvedServiceCards } from "@/components/content/ContentOverridesProvider"
 import { siteContent } from "@/config/site-content"
-import { services } from "@/data/services"
 import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
-
-const serviceRouteBySlug = {
-  "brazil-visa-consulting": "serviceBrazilVisa",
-  "custom-travel-planning": "planTrip",
-  "concierge-assistance": "planTrip",
-} as const
 
 export default function ServicesPageClient() {
   const { lang } = useSiteLanguage()
   const content = siteContent[lang].pages.services
+  const serviceCards = useResolvedServiceCards().filter(
+    (item) => item.visible && item.imageUrl && item.title.trim() && (item.linkedSlug || item.ctaTarget),
+  )
+
+  const resolveServiceHref = (linkedSlug: string, ctaTarget: string) => {
+    if (
+      ctaTarget &&
+      (ctaTarget.startsWith("http") ||
+        ctaTarget.startsWith("mailto:") ||
+        ctaTarget.startsWith("tel:") ||
+        ctaTarget.includes("wa.me"))
+    ) {
+      return ctaTarget
+    }
+
+    if (linkedSlug === "brazil-visa-consulting") {
+      return getLocalizedPath(lang, "serviceBrazilVisa")
+    }
+
+    if (linkedSlug === "custom-travel-planning" || linkedSlug === "concierge-assistance") {
+      return getLocalizedPath(lang, "planTrip")
+    }
+
+    return ctaTarget
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -49,16 +68,18 @@ export default function ServicesPageClient() {
         <div className="px-4 sm:px-6 lg:px-10 xl:px-16">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-6 lg:grid-cols-3">
-              {services.map((service) => (
+              {serviceCards.map((service) => (
                 <Link
-                  key={service.slug}
-                  href={getLocalizedPath(lang, serviceRouteBySlug[service.slug as keyof typeof serviceRouteBySlug] ?? "planTrip")}
+                  key={service.id}
+                  href={resolveServiceHref(service.linkedSlug, service.ctaTarget)}
                   className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
                 >
-                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{service.priceModel}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{service.eyebrow}</p>
                   <h2 className="mt-3 text-2xl font-semibold text-[#0B1C2C]">{service.title}</h2>
                   <p className="mt-4 text-sm leading-6 text-slate-600">{service.description}</p>
-                  <div className="mt-6 text-sm font-semibold text-[#003366]">{content.cardCta}</div>
+                  <div className="mt-6 text-sm font-semibold text-[#003366]">
+                    {service.ctaLabel || content.cardCta}
+                  </div>
                 </Link>
               ))}
             </div>

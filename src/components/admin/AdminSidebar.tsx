@@ -8,10 +8,12 @@ import {
   ChartBarSquareIcon,
   DocumentTextIcon,
   GlobeAltIcon,
+  HomeModernIcon,
   MapIcon,
   PhotoIcon,
   RectangleGroupIcon,
   SparklesIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline"
 
 const adminLinks: Array<{
@@ -39,6 +41,12 @@ const adminLinks: Array<{
     icon: DocumentTextIcon,
   },
   {
+    href: "/admin/destinations",
+    label: "Destinations",
+    description: "Cards de destinos com imagem, texto, CTA e visibilidade.",
+    icon: RectangleGroupIcon,
+  },
+  {
     href: "/admin/experiences",
     label: "Experiencias",
     description: "Titulos, descricoes e imagem de referencia do catalogo.",
@@ -47,8 +55,20 @@ const adminLinks: Array<{
   {
     href: "/admin/packages",
     label: "Pacotes",
-    description: "Jornadas, copy comercial e landing premium.",
+    description: "Cards de roteiros, jornadas e copy comercial dos pacotes.",
     icon: MapIcon,
+  },
+  {
+    href: "/admin/hotels",
+    label: "Partner Hotels",
+    description: "Cards de hospedagem parceira com imagem e CTA.",
+    icon: HomeModernIcon,
+  },
+  {
+    href: "/admin/services",
+    label: "Services",
+    description: "Cards de servicos com imagem, preco e CTA.",
+    icon: WrenchScrewdriverIcon,
   },
   {
     href: "/admin/media",

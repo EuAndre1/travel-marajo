@@ -2,6 +2,16 @@ import type { AppLocale } from "@/config/i18n"
 import { SUPPORTED_LOCALES } from "@/config/i18n"
 import { siteContent } from "@/config/site-content"
 import {
+  adminDestinationCardsInitialDraft,
+  adminHotelCardsInitialDraft,
+  adminRouteCardsInitialDraft,
+  adminServiceCardsInitialDraft,
+  type AdminCardCollectionDraft,
+  type AdminCardDraftItem,
+  type AdminCardLocaleDraft,
+  type ResolvedAdminCardItem,
+} from "@/lib/admin-studio/card-collections"
+import {
   adminContentInitialDraft,
   adminExperiencesInitialDraft,
   adminHomepageInitialDraft,
@@ -23,7 +33,16 @@ import { FLAGSHIP_PACKAGE_SLUG, premiumPackageLandingContent } from "@/data/pack
 import { packages as basePackages, type PackageItem } from "@/data/pacotes"
 import { homeAuthorityContent, siteChrome } from "@/data/site"
 
-export const contentStudioSurfaces = ["homepage", "content", "experiences", "packages"] as const
+export const contentStudioSurfaces = [
+  "homepage",
+  "content",
+  "experiences",
+  "packages",
+  "destinationCards",
+  "routeCards",
+  "hotelCards",
+  "serviceCards",
+] as const
 
 export type ContentStudioSurface = (typeof contentStudioSurfaces)[number]
 
@@ -32,6 +51,10 @@ export interface ContentStudioState {
   content: AdminContentDraft
   experiences: AdminExperiencesDraft
   packages: AdminPackagesDraft
+  destinationCards: AdminCardCollectionDraft
+  routeCards: AdminCardCollectionDraft
+  hotelCards: AdminCardCollectionDraft
+  serviceCards: AdminCardCollectionDraft
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -45,6 +68,24 @@ function getStringValue(source: unknown, key: string, fallback: string) {
 
   const value = source[key]
   return typeof value === "string" ? value : fallback
+}
+
+function getBooleanValue(source: unknown, key: string, fallback: boolean) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  return typeof value === "boolean" ? value : fallback
+}
+
+function getNumberValue(source: unknown, key: string, fallback: number) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback
 }
 
 function parseMultilineText(value: string) {
@@ -179,6 +220,17 @@ function mergePackageLocaleDraft(
   }
 }
 
+function mergeCardLocaleDraft(base: AdminCardLocaleDraft, override: unknown): AdminCardLocaleDraft {
+  return {
+    title: getStringValue(override, "title", base.title),
+    eyebrow: getStringValue(override, "eyebrow", base.eyebrow),
+    description: getStringValue(override, "description", base.description),
+    metaPrimary: getStringValue(override, "metaPrimary", base.metaPrimary),
+    metaSecondary: getStringValue(override, "metaSecondary", base.metaSecondary),
+    ctaLabel: getStringValue(override, "ctaLabel", base.ctaLabel),
+  }
+}
+
 function mergeHomepageDraft(base: AdminHomepageDraft, override: unknown): AdminHomepageDraft {
   const locales = isRecord(override) && isRecord(override.locales) ? override.locales : {}
 
@@ -238,6 +290,25 @@ function mergePackageItem(base: AdminPackageDraftItem, override: unknown): Admin
   }
 }
 
+function mergeCardItem(base: AdminCardDraftItem, override: unknown): AdminCardDraftItem {
+  const locales = isRecord(override) && isRecord(override.locales) ? override.locales : {}
+
+  return {
+    ...base,
+    imageUrl: getStringValue(override, "imageUrl", base.imageUrl),
+    ctaTarget: getStringValue(override, "ctaTarget", base.ctaTarget),
+    linkedSlug: getStringValue(override, "linkedSlug", base.linkedSlug),
+    visible: getBooleanValue(override, "visible", base.visible),
+    sortOrder: getNumberValue(override, "sortOrder", base.sortOrder),
+    locales: {
+      pt: mergeCardLocaleDraft(base.locales.pt, locales.pt),
+      en: mergeCardLocaleDraft(base.locales.en, locales.en),
+      es: mergeCardLocaleDraft(base.locales.es, locales.es),
+      fr: mergeCardLocaleDraft(base.locales.fr, locales.fr),
+    },
+  }
+}
+
 function createOverrideMap(
   value: unknown,
   itemKey: "slug",
@@ -279,12 +350,76 @@ function mergePackagesDraft(base: AdminPackagesDraft, override: unknown): AdminP
   }
 }
 
+function mergeCardCollectionDraft(
+  base: AdminCardCollectionDraft,
+  override: unknown,
+): AdminCardCollectionDraft {
+  if (!isRecord(override) || !Array.isArray(override.items)) {
+    return {
+      items: [...base.items].sort((left, right) => left.sortOrder - right.sortOrder),
+    }
+  }
+
+  const items = override.items
+    .map((item, index) => {
+      if (!isRecord(item)) {
+        return null
+      }
+
+      const id = getStringValue(item, "id", `card-${index + 1}`)
+      const baseItem = base.items.find((candidate) => candidate.id === id)
+
+      if (baseItem) {
+        return mergeCardItem(baseItem, item)
+      }
+
+      const locales = isRecord(item.locales) ? item.locales : {}
+
+      return {
+        id,
+        linkedSlug: getStringValue(item, "linkedSlug", ""),
+        imageUrl: getStringValue(item, "imageUrl", ""),
+        ctaTarget: getStringValue(item, "ctaTarget", ""),
+        visible: getBooleanValue(item, "visible", true),
+        sortOrder: getNumberValue(item, "sortOrder", index),
+        locales: {
+          pt: mergeCardLocaleDraft(
+            { title: "", eyebrow: "", description: "", metaPrimary: "", metaSecondary: "", ctaLabel: "" },
+            locales.pt,
+          ),
+          en: mergeCardLocaleDraft(
+            { title: "", eyebrow: "", description: "", metaPrimary: "", metaSecondary: "", ctaLabel: "" },
+            locales.en,
+          ),
+          es: mergeCardLocaleDraft(
+            { title: "", eyebrow: "", description: "", metaPrimary: "", metaSecondary: "", ctaLabel: "" },
+            locales.es,
+          ),
+          fr: mergeCardLocaleDraft(
+            { title: "", eyebrow: "", description: "", metaPrimary: "", metaSecondary: "", ctaLabel: "" },
+            locales.fr,
+          ),
+        },
+      }
+    })
+    .filter((item): item is AdminCardDraftItem => Boolean(item))
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+
+  return {
+    items,
+  }
+}
+
 export function createDefaultContentStudioState(): ContentStudioState {
   return {
     homepage: adminHomepageInitialDraft,
     content: adminContentInitialDraft,
     experiences: adminExperiencesInitialDraft,
     packages: adminPackagesInitialDraft,
+    destinationCards: adminDestinationCardsInitialDraft,
+    routeCards: adminRouteCardsInitialDraft,
+    hotelCards: adminHotelCardsInitialDraft,
+    serviceCards: adminServiceCardsInitialDraft,
   }
 }
 
@@ -298,6 +433,10 @@ export function mergeContentStudioState(
     content: mergeContentDraft(defaults.content, overrideMap.content),
     experiences: mergeExperiencesDraft(defaults.experiences, overrideMap.experiences),
     packages: mergePackagesDraft(defaults.packages, overrideMap.packages),
+    destinationCards: mergeCardCollectionDraft(defaults.destinationCards, overrideMap.destinationCards),
+    routeCards: mergeCardCollectionDraft(defaults.routeCards, overrideMap.routeCards),
+    hotelCards: mergeCardCollectionDraft(defaults.hotelCards, overrideMap.hotelCards),
+    serviceCards: mergeCardCollectionDraft(defaults.serviceCards, overrideMap.serviceCards),
   }
 }
 
@@ -515,4 +654,40 @@ export function resolvePremiumPackageLandingForLocale(
     listingFeatureTitle: localeOverride.premiumListingTitle,
     listingFeatureBody: localeOverride.premiumListingBody,
   }
+}
+
+function resolveAdminCardCollectionForLocale(
+  locale: AppLocale,
+  collection: AdminCardCollectionDraft,
+): ResolvedAdminCardItem[] {
+  return [...collection.items]
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((item) => ({
+      id: item.id,
+      linkedSlug: item.linkedSlug,
+      imageUrl: item.imageUrl,
+      ctaTarget: item.ctaTarget,
+      visible: item.visible,
+      sortOrder: item.sortOrder,
+      ...item.locales[locale],
+    }))
+}
+
+export function resolveDestinationCardsForLocale(
+  locale: AppLocale,
+  state: ContentStudioState,
+) {
+  return resolveAdminCardCollectionForLocale(locale, state.destinationCards)
+}
+
+export function resolveRouteCardsForLocale(locale: AppLocale, state: ContentStudioState) {
+  return resolveAdminCardCollectionForLocale(locale, state.routeCards)
+}
+
+export function resolveHotelCardsForLocale(locale: AppLocale, state: ContentStudioState) {
+  return resolveAdminCardCollectionForLocale(locale, state.hotelCards)
+}
+
+export function resolveServiceCardsForLocale(locale: AppLocale, state: ContentStudioState) {
+  return resolveAdminCardCollectionForLocale(locale, state.serviceCards)
 }

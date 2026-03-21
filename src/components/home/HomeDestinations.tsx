@@ -2,6 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
+import { useResolvedDestinationCards } from "@/components/content/ContentOverridesProvider"
 import { getHomeContent } from "@/data/homepage"
 import { siteContent } from "@/config/site-content"
 import { useSiteLanguage } from "@/lib/use-site-language"
@@ -12,6 +13,23 @@ export default function HomeDestinations() {
   const { lang } = useSiteLanguage()
   const { destinations } = getHomeContent(lang)
   const content = siteContent[lang]
+  const destinationCards = useResolvedDestinationCards().filter(
+    (item) => item.visible && item.imageUrl && item.title.trim() && (item.linkedSlug || item.ctaTarget),
+  )
+
+  if (destinationCards.length === 0) {
+    return null
+  }
+
+  const resolveDestinationHref = (linkedSlug: string, ctaTarget: string) => {
+    if (ctaTarget && !ctaTarget.startsWith("/destinos/")) {
+      return ctaTarget
+    }
+
+    return linkedSlug
+      ? getLocalizedPath(lang, "destinationDetail", { slug: linkedSlug })
+      : ctaTarget
+  }
 
   return (
     <section id="destinos" className="tm-section bg-[linear-gradient(180deg,#f7f7f8_0%,#eef4f8_100%)]">
@@ -32,22 +50,28 @@ export default function HomeDestinations() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {destinations.items.slice(0, 3).map((destination) => (
-            <article key={destination.name} className="overflow-hidden rounded-[1.7rem] border border-white/20 bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
+          {destinationCards.map((destination) => (
+            <article key={destination.id} className="overflow-hidden rounded-[1.7rem] border border-white/20 bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)]">
               <div className="relative h-56 sm:h-60">
                 <Image
-                  src={destination.image}
-                  alt={destination.name}
+                  src={destination.imageUrl}
+                  alt={destination.title}
                   fill
                   className="object-cover"
                 />
               </div>
               <div className="p-4 sm:p-5">
                 <span className="inline-flex rounded-full bg-[#fff4ea] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#b25d18]">
-                  {destination.tag}
+                  {destination.eyebrow || content.home.destinationsEyebrow}
                 </span>
-                <h3 className="mt-3 text-lg font-semibold text-[#0B1C2C]">{destination.name}</h3>
+                <h3 className="mt-3 text-lg font-semibold text-[#0B1C2C]">{destination.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{destination.description}</p>
+                <Link
+                  href={resolveDestinationHref(destination.linkedSlug, destination.ctaTarget)}
+                  className="mt-4 inline-flex text-sm font-semibold text-primary"
+                >
+                  {destination.ctaLabel}
+                </Link>
               </div>
             </article>
           ))}

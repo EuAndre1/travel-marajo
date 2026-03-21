@@ -7,6 +7,8 @@ import HomeWhyMarajo from "@/components/home/HomeWhyMarajo"
 import HomeTopExperiences from "@/components/home/HomeTopExperiences"
 import HomeDestinations from "@/components/home/HomeDestinations"
 import HomeRoutesPackages from "@/components/home/HomeRoutesPackages"
+import HomePartnerHotels from "@/components/home/HomePartnerHotels"
+import HomeServices from "@/components/home/HomeServices"
 import HomeConciergeSupport from "@/components/home/HomeConciergeSupport"
 import HomeFinalCta from "@/components/home/HomeFinalCta"
 
@@ -40,6 +42,8 @@ export default function HomePage() {
       <HomeHowToGetThere />
       <HomeTopExperiences />
       <HomeRoutesPackages />
+      <HomePartnerHotels />
+      <HomeServices />
       <HomeHowItWorks />
       <HomeWhyMarajo />
       <HomeDestinations />
