@@ -20,6 +20,7 @@ function joinLines(items: readonly string[]) {
 }
 
 export interface AdminHomepageLocaleDraft {
+  heroImageUrl: string
   heroHeadline: string
   heroSubheadline: string
   primaryCtaLabel: string
@@ -77,6 +78,7 @@ export interface AdminExperienceDraftItem {
   categoryKey: string
   featured: boolean
   active: boolean
+  selectedMediaUrl: string
   locales: Record<AppLocale, AdminExperienceLocaleDraft>
 }
 
@@ -107,6 +109,7 @@ export interface AdminPackageDraftItem {
   slug: string
   startingPrice: number
   isFlagship: boolean
+  selectedMediaUrl: string
   locales: Record<AppLocale, AdminPackageLocaleDraft>
 }
 
@@ -143,6 +146,7 @@ function createLocaleRecord<T>(builder: (locale: AppLocale) => T) {
 export const adminHomepageInitialDraft: AdminHomepageDraft = {
   locales: {
     pt: {
+      heroImageUrl: "/hero-bg.jpg",
       heroHeadline: homeContentByLocale.pt.hero.title,
       heroSubheadline: homeContentByLocale.pt.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.pt.hero.ctas.primary,
@@ -159,6 +163,7 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
       finalSecondaryLabel: homeAuthorityContent.pt.finalSecondaryLabel,
     },
     en: {
+      heroImageUrl: "/hero-bg.jpg",
       heroHeadline: homeContentByLocale.en.hero.title,
       heroSubheadline: homeContentByLocale.en.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.en.hero.ctas.primary,
@@ -175,6 +180,7 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
       finalSecondaryLabel: homeAuthorityContent.en.finalSecondaryLabel,
     },
     es: {
+      heroImageUrl: "/hero-bg.jpg",
       heroHeadline: homeContentByLocale.es.hero.title,
       heroSubheadline: homeContentByLocale.es.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.es.hero.ctas.primary,
@@ -191,6 +197,7 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
       finalSecondaryLabel: homeAuthorityContent.es.finalSecondaryLabel,
     },
     fr: {
+      heroImageUrl: "/hero-bg.jpg",
       heroHeadline: homeContentByLocale.fr.hero.title,
       heroSubheadline: homeContentByLocale.fr.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.fr.hero.ctas.primary,
@@ -288,6 +295,7 @@ export const adminExperiencesInitialDraft: AdminExperiencesDraft = {
     categoryKey: experience.category,
     featured: experience.featured,
     active: experience.active,
+    selectedMediaUrl: experience.media.heroImage,
     locales: createLocaleRecord((locale) => {
       const translation = experience.translations[locale] ?? experience.translations.pt
 
@@ -312,6 +320,7 @@ export const adminPackagesInitialDraft: AdminPackagesDraft = {
       slug: pkg.slug,
       startingPrice: pkg.startingPrice,
       isFlagship,
+      selectedMediaUrl: pkg.heroImage,
       locales: createLocaleRecord((locale) => {
         const translation = pkg.translations[locale] ?? pkg.translations.pt
         const landingCopy = premiumPackageLandingContent[locale]

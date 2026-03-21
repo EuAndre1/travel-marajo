@@ -59,6 +59,7 @@ function mergeHomepageLocaleDraft(
   override: unknown,
 ): AdminHomepageLocaleDraft {
   return {
+    heroImageUrl: getStringValue(override, "heroImageUrl", base.heroImageUrl),
     heroHeadline: getStringValue(override, "heroHeadline", base.heroHeadline),
     heroSubheadline: getStringValue(override, "heroSubheadline", base.heroSubheadline),
     primaryCtaLabel: getStringValue(override, "primaryCtaLabel", base.primaryCtaLabel),
@@ -212,6 +213,7 @@ function mergeExperienceItem(
 
   return {
     ...base,
+    selectedMediaUrl: getStringValue(override, "selectedMediaUrl", base.selectedMediaUrl),
     locales: {
       pt: mergeExperienceLocaleDraft(base.locales.pt, locales.pt),
       en: mergeExperienceLocaleDraft(base.locales.en, locales.en),
@@ -226,6 +228,7 @@ function mergePackageItem(base: AdminPackageDraftItem, override: unknown): Admin
 
   return {
     ...base,
+    selectedMediaUrl: getStringValue(override, "selectedMediaUrl", base.selectedMediaUrl),
     locales: {
       pt: mergePackageLocaleDraft(base.locales.pt, locales.pt),
       en: mergePackageLocaleDraft(base.locales.en, locales.en),

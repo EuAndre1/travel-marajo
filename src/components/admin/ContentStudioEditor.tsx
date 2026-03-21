@@ -5,6 +5,8 @@ import type { AppLocale } from "@/config/i18n"
 import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
+import AdminSectionCard from "@/components/admin/AdminSectionCard"
+import AdminTextFieldCard from "@/components/admin/AdminTextFieldCard"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
 import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
@@ -17,69 +19,6 @@ const STORAGE_KEY = "travel-marajo-admin-content-draft"
 
 function cloneDraft<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
-}
-
-function EditorField({
-  label,
-  value,
-  onChange,
-  multiline = false,
-}: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  multiline?: boolean
-}) {
-  const className =
-    "mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#0B1C2C]"
-
-  return (
-    <label className="block">
-      <span className="text-sm font-semibold text-[#0B1C2C]">{label}</span>
-      {multiline ? (
-        <textarea
-          className={`${className} min-h-[120px]`}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      ) : (
-        <input
-          className={className}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      )}
-    </label>
-  )
-}
-
-function Snapshot({
-  title,
-  liveValue,
-  draftValue,
-}: {
-  title: string
-  liveValue: string
-  draftValue: string
-}) {
-  const changed = liveValue !== draftValue
-
-  return (
-    <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
-      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Ao vivo no site</p>
-      <p className="mt-1 text-sm leading-6 text-[#0B1C2C]">{liveValue}</p>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Rascunho atual</p>
-      <p className={`mt-1 text-sm leading-6 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>{draftValue}</p>
-      <span
-        className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-          changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
-        }`}
-      >
-        {changed ? "Rascunho diferente do live" : "Sem diferenca local"}
-      </span>
-    </div>
-  )
 }
 
 export default function ContentStudioEditor({
@@ -129,9 +68,9 @@ export default function ContentStudioEditor({
   return (
     <div className="space-y-6">
       <AdminPageIntro
-        eyebrow="Conteudo global"
-        title="Editor do conteudo estrutural do site"
-        description="Edite a voz da marca, rodape, sinais de confianca, linguagem de concierge e rotulos globais sem tocar manualmente nos arquivos."
+        eyebrow="Site Content"
+        title="Editor do conteudo geral do site"
+        description="Aqui ficam as frases que aparecem em varias areas do projeto: marca, navegacao, rodape, sinais de confianca e linguagem de suporte."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
@@ -139,155 +78,155 @@ export default function ContentStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
-        scopeNote="Salvar cria ou atualiza um override persistido no banco. O site publico usa esse texto quando existir. Resetar afeta apenas o rascunho local deste navegador."
+        scopeNote="Salvar cria ou atualiza a camada persistida que o site usa para este conteudo estrutural. Resetar remove apenas o rascunho local deste navegador."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-content-${activeLocale}.json`)}
         onReset={resetDraft}
       />
 
-      <div className="grid gap-6 xl:grid-cols-[1.3fr,0.9fr]">
-        <div className="space-y-6">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Marca e posicionamento</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Tagline da marca"
-                value={localeDraft.brandTagline}
-                onChange={(value) => updateField("brandTagline", value)}
-              />
-              <EditorField
-                label="Frase principal de autoridade"
-                value={localeDraft.authorityStatement}
-                onChange={(value) => updateField("authorityStatement", value)}
-                multiline
-              />
-            </div>
-          </section>
+      <AdminSectionCard
+        eyebrow="Marca"
+        title="Identidade principal do site"
+        description="Campos usados perto do logo e nas areas institucionais para explicar o posicionamento da Travel Marajo."
+      >
+        <AdminTextFieldCard
+          label="Brand line shown near the logo"
+          helper="Frase curta usada como complemento da marca."
+          liveValue={liveLocale.brandTagline}
+          value={localeDraft.brandTagline}
+          onChange={(value) => updateField("brandTagline", value)}
+        />
+        <AdminTextFieldCard
+          label="Main authority statement"
+          helper="Mensagem principal que apresenta a Travel Marajo como referencia de destino e planejamento."
+          liveValue={liveLocale.authorityStatement}
+          value={localeDraft.authorityStatement}
+          onChange={(value) => updateField("authorityStatement", value)}
+          multiline
+        />
+      </AdminSectionCard>
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Rodape e suporte</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Headline do rodape"
-                value={localeDraft.footerHeadline}
-                onChange={(value) => updateField("footerHeadline", value)}
-                multiline
-              />
-              <EditorField
-                label="Texto de suporte do rodape"
-                value={localeDraft.footerSupportCopy}
-                onChange={(value) => updateField("footerSupportCopy", value)}
-                multiline
-              />
-              <EditorField
-                label="Destaques do rodape (1 por linha)"
-                value={localeDraft.footerHighlights}
-                onChange={(value) => updateField("footerHighlights", value)}
-                multiline
-              />
-            </div>
-          </section>
+      <AdminSectionCard
+        eyebrow="Rodape"
+        title="Suporte institucional e sinais finais"
+        description="Edite o fechamento do site com uma linguagem clara para o visitante."
+      >
+        <AdminTextFieldCard
+          label="Footer headline"
+          helper="Titulo principal do rodape."
+          liveValue={liveLocale.footerHeadline}
+          value={localeDraft.footerHeadline}
+          onChange={(value) => updateField("footerHeadline", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Footer support text"
+          helper="Texto de apoio que aparece no rodape institucional."
+          liveValue={liveLocale.footerSupportCopy}
+          value={localeDraft.footerSupportCopy}
+          onChange={(value) => updateField("footerSupportCopy", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Footer highlight points"
+          helper="Liste um destaque por linha para resumir os pontos fortes da marca no rodape."
+          liveValue={liveLocale.footerHighlights}
+          value={localeDraft.footerHighlights}
+          onChange={(value) => updateField("footerHighlights", value)}
+          multiline
+        />
+      </AdminSectionCard>
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Confianca e conversao</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Titulo da camada de confianca"
-                value={localeDraft.trustHeadline}
-                onChange={(value) => updateField("trustHeadline", value)}
-                multiline
-              />
-              <EditorField
-                label="Texto da camada de confianca"
-                value={localeDraft.trustBody}
-                onChange={(value) => updateField("trustBody", value)}
-                multiline
-              />
-              <EditorField
-                label="Destaques de confianca (1 por linha)"
-                value={localeDraft.trustHighlights}
-                onChange={(value) => updateField("trustHighlights", value)}
-                multiline
-              />
-            </div>
-          </section>
+      <AdminSectionCard
+        eyebrow="Confianca"
+        title="Mensagem de seguranca e credibilidade"
+        description="Use estes campos para reforcar curadoria local, suporte e confianca sem exagerar a linguagem."
+      >
+        <AdminTextFieldCard
+          label="Trust section title"
+          helper="Titulo do bloco de prova e confianca."
+          liveValue={liveLocale.trustHeadline}
+          value={localeDraft.trustHeadline}
+          onChange={(value) => updateField("trustHeadline", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Trust section supporting text"
+          helper="Texto curto que explica por que reservar com seguranca."
+          liveValue={liveLocale.trustBody}
+          value={localeDraft.trustBody}
+          onChange={(value) => updateField("trustBody", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Trust highlights"
+          helper="Liste um destaque por linha. Eles aparecem como sinais curtos de prova e apoio."
+          liveValue={liveLocale.trustHighlights}
+          value={localeDraft.trustHighlights}
+          onChange={(value) => updateField("trustHighlights", value)}
+          multiline
+        />
+      </AdminSectionCard>
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Concierge e rotulos globais</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Titulo de concierge"
-                value={localeDraft.conciergeTitle}
-                onChange={(value) => updateField("conciergeTitle", value)}
-                multiline
-              />
-              <EditorField
-                label="Texto de concierge"
-                value={localeDraft.conciergeBody}
-                onChange={(value) => updateField("conciergeBody", value)}
-                multiline
-              />
-              <EditorField
-                label="Tempo de resposta"
-                value={localeDraft.conciergeResponseText}
-                onChange={(value) => updateField("conciergeResponseText", value)}
-              />
-              <div className="grid gap-5 md:grid-cols-2">
-                <EditorField
-                  label="Rotulo de entrar"
-                  value={localeDraft.signInLabel}
-                  onChange={(value) => updateField("signInLabel", value)}
-                />
-                <EditorField
-                  label="Rotulo de perfil"
-                  value={localeDraft.profileLabel}
-                  onChange={(value) => updateField("profileLabel", value)}
-                />
-                <EditorField
-                  label="CTA planejar viagem"
-                  value={localeDraft.planTripLabel}
-                  onChange={(value) => updateField("planTripLabel", value)}
-                />
-                <EditorField
-                  label="CTA reservar direto"
-                  value={localeDraft.bookDirectLabel}
-                  onChange={(value) => updateField("bookDirectLabel", value)}
-                />
-              </div>
-            </div>
-          </section>
+      <AdminSectionCard
+        eyebrow="Concierge e rotulos"
+        title="Textos compartilhados do suporte e dos botoes"
+        description="Esses campos afetam a experiencia geral do visitante em varias areas do site."
+      >
+        <AdminTextFieldCard
+          label="Concierge title"
+          helper="Titulo usado para apresentar o suporte humano."
+          liveValue={liveLocale.conciergeTitle}
+          value={localeDraft.conciergeTitle}
+          onChange={(value) => updateField("conciergeTitle", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Concierge support text"
+          helper="Texto que explica a ajuda oferecida antes, durante e depois da viagem."
+          liveValue={liveLocale.conciergeBody}
+          value={localeDraft.conciergeBody}
+          onChange={(value) => updateField("conciergeBody", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Response time text"
+          helper="Mensagem curta sobre tempo de resposta e disponibilidade."
+          liveValue={liveLocale.conciergeResponseText}
+          value={localeDraft.conciergeResponseText}
+          onChange={(value) => updateField("conciergeResponseText", value)}
+        />
+        <div className="grid gap-5 lg:grid-cols-2">
+          <AdminTextFieldCard
+            label="Sign in label"
+            helper="Texto usado no botao de entrada."
+            liveValue={liveLocale.signInLabel}
+            value={localeDraft.signInLabel}
+            onChange={(value) => updateField("signInLabel", value)}
+          />
+          <AdminTextFieldCard
+            label="Traveller profile label"
+            helper="Texto que aparece quando a pessoa ja esta logada."
+            liveValue={liveLocale.profileLabel}
+            value={localeDraft.profileLabel}
+            onChange={(value) => updateField("profileLabel", value)}
+          />
+          <AdminTextFieldCard
+            label="Plan your trip button"
+            helper="Botao principal ligado ao planejamento com suporte."
+            liveValue={liveLocale.planTripLabel}
+            value={localeDraft.planTripLabel}
+            onChange={(value) => updateField("planTripLabel", value)}
+          />
+          <AdminTextFieldCard
+            label="Book direct button"
+            helper="Texto curto do CTA de reserva direta."
+            liveValue={liveLocale.bookDirectLabel}
+            value={localeDraft.bookDirectLabel}
+            onChange={(value) => updateField("bookDirectLabel", value)}
+          />
         </div>
-
-        <aside className="space-y-6">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Leitura operacional</p>
-            <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">O que este editor cobre</h2>
-            <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
-              <li>Tagline e autoridade principal da marca</li>
-              <li>Copy de rodape e apoio institucional</li>
-              <li>Camada de prova e confianca</li>
-              <li>Mensagem de concierge</li>
-              <li>Rotulos centrais de navegacao e CTA</li>
-            </ul>
-          </section>
-
-          <Snapshot
-            title="Marca"
-            liveValue={liveLocale.authorityStatement}
-            draftValue={localeDraft.authorityStatement}
-          />
-          <Snapshot
-            title="Rodape"
-            liveValue={liveLocale.footerSupportCopy}
-            draftValue={localeDraft.footerSupportCopy}
-          />
-          <Snapshot
-            title="Concierge"
-            liveValue={liveLocale.conciergeBody}
-            draftValue={localeDraft.conciergeBody}
-          />
-        </aside>
-      </div>
+      </AdminSectionCard>
     </div>
   )
 }

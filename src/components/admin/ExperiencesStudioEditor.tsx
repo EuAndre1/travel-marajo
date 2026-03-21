@@ -4,7 +4,10 @@ import { useMemo, useState } from "react"
 import type { AppLocale } from "@/config/i18n"
 import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
+import AdminMediaField from "@/components/admin/AdminMediaField"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
+import AdminSectionCard from "@/components/admin/AdminSectionCard"
+import AdminTextFieldCard from "@/components/admin/AdminTextFieldCard"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
 import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
@@ -18,75 +21,6 @@ const STORAGE_KEY = "travel-marajo-admin-experiences-draft"
 
 function cloneDraft<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
-}
-
-function EditorField({
-  label,
-  value,
-  onChange,
-  multiline = false,
-}: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  multiline?: boolean
-}) {
-  const className =
-    "mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#0B1C2C]"
-
-  return (
-    <label className="block">
-      <span className="text-sm font-semibold text-[#0B1C2C]">{label}</span>
-      {multiline ? (
-        <textarea
-          className={`${className} min-h-[120px]`}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      ) : (
-        <input
-          className={className}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      )}
-    </label>
-  )
-}
-
-function SnapshotCard({
-  title,
-  liveValue,
-  draftValue,
-}: {
-  title: string
-  liveValue: string
-  draftValue: string
-}) {
-  const changed = liveValue !== draftValue
-
-  return (
-    <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
-      <p className="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Ao vivo no site
-      </p>
-      <p className="mt-1 text-sm leading-6 text-[#0B1C2C]">{liveValue}</p>
-      <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-        Rascunho atual
-      </p>
-      <p className={`mt-1 text-sm leading-6 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>
-        {draftValue}
-      </p>
-      <span
-        className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-          changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
-        }`}
-      >
-        {changed ? "Rascunho diferente do live" : "Sem diferenca local"}
-      </span>
-    </div>
-  )
 }
 
 function ExperienceListButton({
@@ -113,7 +47,7 @@ function ExperienceListButton({
       }`}
     >
       <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.22em]">
-        <span className={selected ? "text-white/70" : "text-slate-400"}>{item.slug}</span>
+        <span className={selected ? "text-white/72" : "text-slate-400"}>{item.slug}</span>
         {item.featured ? (
           <span
             className={`rounded-full px-2 py-1 text-[10px] font-semibold ${
@@ -126,7 +60,7 @@ function ExperienceListButton({
       </div>
       <p className="mt-3 text-sm font-semibold leading-6">{localized.title}</p>
       <p className={`mt-2 text-xs leading-5 ${selected ? "text-white/72" : "text-slate-500"}`}>
-        {localized.durationLabel} • {localized.locationLabel}
+        {localized.locationLabel} - {localized.durationLabel}
       </p>
     </button>
   )
@@ -150,6 +84,17 @@ function updateExperienceField(
               [field]: value,
             },
           },
+        }
+      : item,
+  )
+}
+
+function updateSelectedMediaUrl(items: AdminExperienceDraftItem[], slug: string, value: string) {
+  return items.map((item) =>
+    item.slug === slug
+      ? {
+          ...item,
+          selectedMediaUrl: value,
         }
       : item,
   )
@@ -182,6 +127,12 @@ export default function ExperiencesStudioEditor({
     () => liveDraft.items.find((item) => item.slug === selectedDraft?.slug) ?? liveDraft.items[0],
     [liveDraft.items, selectedDraft],
   )
+  const selectedBase = useMemo(
+    () =>
+      adminExperiencesInitialDraft.items.find((item) => item.slug === selectedDraft?.slug) ??
+      adminExperiencesInitialDraft.items[0],
+    [selectedDraft],
+  )
 
   const { isPersisting, persistMessage, saveAndPersist } = useAdminPersistedSave({
     surface: "experiences",
@@ -193,7 +144,7 @@ export default function ExperiencesStudioEditor({
     },
   })
 
-  if (!selectedDraft || !selectedLive) {
+  if (!selectedDraft || !selectedLive || !selectedBase) {
     return null
   }
 
@@ -211,8 +162,8 @@ export default function ExperiencesStudioEditor({
     <div className="space-y-6">
       <AdminPageIntro
         eyebrow="Experiencias"
-        title="Editor das experiencias"
-        description="Revise o texto visivel por idioma e publique overrides persistidos sem alterar slugs, rotas ou o checkout das experiencias."
+        title="Editor do catalogo de experiencias"
+        description="Escolha uma experiencia, veja o que ja esta no site e atualize o texto com linguagem clara para a equipe editorial. Slugs, rotas e checkout permanecem intactos."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
@@ -220,125 +171,139 @@ export default function ExperiencesStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
-        scopeNote="Salvar cria ou atualiza um override persistido no banco para o catalogo de experiencias. Resetar afeta apenas o rascunho local deste navegador."
+        scopeNote="Os textos desta area sao persistidos e podem refletir no site. A imagem escolhida aqui fica registrada no Admin Studio como referencia visual para a proxima fase de publicacao de midia."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-experiences-${activeLocale}.json`)}
         onReset={resetDraft}
       />
 
-      <div className="grid gap-6 xl:grid-cols-[280px,minmax(0,1.08fr),360px]">
+      <div className="grid gap-6 xl:grid-cols-[300px,minmax(0,1fr)]">
         <aside className="space-y-4">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Selecao</p>
-            <h2 className="mt-3 text-xl font-display text-[#0B1C2C]">Experiencias do catalogo</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
-              Escolha uma experiencia para revisar titulo, descricoes, highlights e itens incluidos no idioma ativo.
-            </p>
-          </section>
-
-          <div className="space-y-3">
-            {draft.items.map((item) => (
-              <ExperienceListButton
-                key={item.slug}
-                item={item}
-                locale={activeLocale}
-                selected={item.slug === selectedDraft.slug}
-                onSelect={() => setSelectedSlug(item.slug)}
-              />
-            ))}
-          </div>
+          <AdminSectionCard
+            eyebrow="Selecao"
+            title="Experiencias do catalogo"
+            description="Clique em uma experiencia para editar o texto e preparar a imagem de referencia."
+          >
+            <div className="space-y-3">
+              {draft.items.map((item) => (
+                <ExperienceListButton
+                  key={item.slug}
+                  item={item}
+                  locale={activeLocale}
+                  selected={item.slug === selectedDraft.slug}
+                  onSelect={() => setSelectedSlug(item.slug)}
+                />
+              ))}
+            </div>
+          </AdminSectionCard>
         </aside>
 
         <div className="space-y-6">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Resumo visivel</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Titulo da experiencia"
-                value={localeDraft.title}
-                onChange={(value) => updateField("title", value)}
-              />
-              <EditorField
-                label="Descricao curta"
-                value={localeDraft.shortDescription}
-                onChange={(value) => updateField("shortDescription", value)}
-                multiline
-              />
-              <EditorField
-                label="Descricao longa"
-                value={localeDraft.fullDescription}
-                onChange={(value) => updateField("fullDescription", value)}
-                multiline
-              />
+          <AdminSectionCard
+            eyebrow="Imagem"
+            title={`Imagem e apresentacao de ${localeDraft.title}`}
+            description="A imagem serve como referencia visual para a equipe. O texto abaixo continua sendo a parte publicada desta superficie."
+          >
+            <div className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-6 text-slate-600">
+              <strong className="text-[#0B1C2C]">Slug fixo:</strong> {selectedDraft.slug}
+              <br />
+              <strong className="text-[#0B1C2C]">Categoria:</strong> {selectedDraft.categoryKey}
+              <br />
+              <strong className="text-[#0B1C2C]">Destaque:</strong>{" "}
+              {selectedDraft.featured ? "Sim" : "Nao"}
             </div>
-          </section>
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Dados de exibicao</p>
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
-              <EditorField
-                label="Local exibido"
+            <AdminMediaField
+              label="Main image for this experience"
+              helper="Selecione uma imagem da biblioteca para representar esta experiencia no estúdio."
+              liveImageUrl={selectedBase.selectedMediaUrl}
+              draftImageUrl={selectedDraft.selectedMediaUrl}
+              onChange={(value) =>
+                setDraft((current) => ({
+                  ...current,
+                  items: updateSelectedMediaUrl(current.items, selectedDraft.slug, value),
+                }))
+              }
+              pendingNote="A imagem selecionada fica salva na camada do Admin Studio como referencia editorial. A pagina publica continua usando a imagem atual ate a integracao visual dedicada."
+            />
+          </AdminSectionCard>
+
+          <AdminSectionCard
+            eyebrow="Texto principal"
+            title="O que o viajante le primeiro"
+            description="Mantenha o texto claro e facil de decidir para quem esta comparando experiencias."
+          >
+            <AdminTextFieldCard
+              label="Main title shown on cards and pages"
+              helper="Titulo principal da experiencia."
+              liveValue={liveLocale.title}
+              value={localeDraft.title}
+              onChange={(value) => updateField("title", value)}
+            />
+            <AdminTextFieldCard
+              label="Short description used to convince quickly"
+              helper="Texto curto que aparece antes do detalhe completo."
+              liveValue={liveLocale.shortDescription}
+              value={localeDraft.shortDescription}
+              onChange={(value) => updateField("shortDescription", value)}
+              multiline
+            />
+            <AdminTextFieldCard
+              label="Full description for the detail page"
+              helper="Texto mais completo para quem quer entender melhor a experiencia."
+              liveValue={liveLocale.fullDescription}
+              value={localeDraft.fullDescription}
+              onChange={(value) => updateField("fullDescription", value)}
+              multiline
+            />
+          </AdminSectionCard>
+
+          <AdminSectionCard
+            eyebrow="Informacoes praticas"
+            title="Dados que ajudam a comparar opcoes"
+            description="Estes campos aparecem como pistas rapidas para o viajante."
+          >
+            <div className="grid gap-5 lg:grid-cols-2">
+              <AdminTextFieldCard
+                label="Location shown to the traveler"
+                helper="Nome do lugar usado nos cards e na pagina."
+                liveValue={liveLocale.locationLabel}
                 value={localeDraft.locationLabel}
                 onChange={(value) => updateField("locationLabel", value)}
               />
-              <EditorField
-                label="Duracao exibida"
+              <AdminTextFieldCard
+                label="Duration shown to the traveler"
+                helper="Duracao resumida para comparacao rapida."
+                liveValue={liveLocale.durationLabel}
                 value={localeDraft.durationLabel}
                 onChange={(value) => updateField("durationLabel", value)}
               />
             </div>
-          </section>
+          </AdminSectionCard>
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Highlights e inclusoes</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Highlights visiveis (1 por linha)"
-                value={localeDraft.highlightsText}
-                onChange={(value) => updateField("highlightsText", value)}
-                multiline
-              />
-              <EditorField
-                label="Itens incluidos (1 por linha)"
-                value={localeDraft.includedText}
-                onChange={(value) => updateField("includedText", value)}
-                multiline
-              />
-            </div>
-          </section>
-
-          <section className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">O que fica fora deste editor</p>
-            <p className="mt-3 text-sm leading-7 text-slate-600">
-              Textos globais de reserva, checkout seguro e navegacao continuam centralizados no editor de conteudo global. Aqui voce ajusta apenas o texto proprio de cada experiencia.
-            </p>
-          </section>
+          <AdminSectionCard
+            eyebrow="Ajuda para decidir"
+            title="Destaques e inclusoes"
+            description="Use listas claras e objetivas para facilitar a leitura."
+          >
+            <AdminTextFieldCard
+              label="Highlights shown to help the traveler decide"
+              helper="Escreva um destaque por linha."
+              liveValue={liveLocale.highlightsText}
+              value={localeDraft.highlightsText}
+              onChange={(value) => updateField("highlightsText", value)}
+              multiline
+            />
+            <AdminTextFieldCard
+              label="What is included"
+              helper="Liste um item incluido por linha."
+              liveValue={liveLocale.includedText}
+              value={localeDraft.includedText}
+              onChange={(value) => updateField("includedText", value)}
+              multiline
+            />
+          </AdminSectionCard>
         </div>
-
-        <aside className="space-y-6">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Leitura operacional</p>
-            <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">O que esta sendo editado</h2>
-            <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
-              <li>Slug fixo: {selectedDraft.slug}</li>
-              <li>Categoria atual: {selectedDraft.categoryKey}</li>
-              <li>{selectedDraft.featured ? "Experiencia em destaque" : "Experiencia de catalogo"}</li>
-              <li>Todos os idiomas usam a mesma estrutura de campos</li>
-            </ul>
-          </section>
-
-          <SnapshotCard title="Titulo" liveValue={liveLocale.title} draftValue={localeDraft.title} />
-          <SnapshotCard
-            title="Descricao curta"
-            liveValue={liveLocale.shortDescription}
-            draftValue={localeDraft.shortDescription}
-          />
-          <SnapshotCard
-            title="Highlights"
-            liveValue={liveLocale.highlightsText}
-            draftValue={localeDraft.highlightsText}
-          />
-        </aside>
       </div>
     </div>
   )

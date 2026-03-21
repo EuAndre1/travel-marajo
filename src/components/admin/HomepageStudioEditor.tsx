@@ -4,7 +4,10 @@ import { useState } from "react"
 import type { AppLocale } from "@/config/i18n"
 import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
+import AdminMediaField from "@/components/admin/AdminMediaField"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
+import AdminSectionCard from "@/components/admin/AdminSectionCard"
+import AdminTextFieldCard from "@/components/admin/AdminTextFieldCard"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
 import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
@@ -17,75 +20,6 @@ const STORAGE_KEY = "travel-marajo-admin-homepage-draft"
 
 function cloneDraft<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
-}
-
-function EditorField({
-  label,
-  value,
-  onChange,
-  multiline = false,
-}: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  multiline?: boolean
-}) {
-  const className =
-    "mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#0B1C2C]"
-
-  return (
-    <label className="block">
-      <span className="text-sm font-semibold text-[#0B1C2C]">{label}</span>
-      {multiline ? (
-        <textarea
-          className={`${className} min-h-[120px]`}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      ) : (
-        <input
-          className={className}
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-      )}
-    </label>
-  )
-}
-
-function LiveSnapshot({
-  title,
-  liveValue,
-  draftValue,
-}: {
-  title: string
-  liveValue: string
-  draftValue: string
-}) {
-  const changed = liveValue !== draftValue
-
-  return (
-    <div className="rounded-[1.35rem] border border-slate-200 bg-slate-50 p-4">
-      <p className="text-xs uppercase tracking-[0.22em] text-slate-400">{title}</p>
-      <div className="mt-3 space-y-3 text-sm leading-6">
-        <div>
-          <p className="font-semibold text-slate-500">Ao vivo no site</p>
-          <p className="mt-1 text-[#0B1C2C]">{liveValue}</p>
-        </div>
-        <div>
-          <p className="font-semibold text-slate-500">Rascunho atual</p>
-          <p className={`mt-1 ${changed ? "text-[#0B1C2C]" : "text-slate-500"}`}>{draftValue}</p>
-        </div>
-      </div>
-      <span
-        className={`mt-4 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-          changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
-        }`}
-      >
-        {changed ? "Alterado no rascunho" : "Sem diferenca local"}
-      </span>
-    </div>
-  )
 }
 
 export default function HomepageStudioEditor({
@@ -108,6 +42,7 @@ export default function HomepageStudioEditor({
 
   const localeDraft = draft.locales[activeLocale]
   const liveLocale = liveDraft.locales[activeLocale]
+  const baseLocale = adminHomepageInitialDraft.locales[activeLocale]
 
   const updateField = (field: keyof AdminHomepageLocaleDraft, value: string) => {
     setDraft((current) => ({
@@ -137,7 +72,7 @@ export default function HomepageStudioEditor({
       <AdminPageIntro
         eyebrow="Homepage"
         title="Editor da homepage"
-        description="Edite a primeira dobra, a camada de confianca e a mensagem final da home com uma camada persistida sobre o conteudo original em arquivo."
+        description="Cada campo mostra o texto atual da home e o novo rascunho logo abaixo. Assim o colaborador edita com seguranca, sem precisar interpretar nomes tecnicos."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
@@ -145,147 +80,156 @@ export default function HomepageStudioEditor({
         saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
         savedAtLabel={savedAtLabel}
         statusMessage={persistMessage || statusMessage}
-        scopeNote="Salvar cria ou atualiza um override persistido no banco. O site publico usa esse override quando existir. Resetar remove apenas o rascunho local deste navegador."
+        scopeNote="Os textos desta pagina podem ser persistidos e refletidos no site. A imagem escolhida aqui fica salva no Admin Studio como referencia editorial para a proxima etapa de publicacao visual."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-homepage-${activeLocale}.json`)}
         onReset={resetDraft}
       />
 
-      <div className="grid gap-6 xl:grid-cols-[1.3fr,0.9fr]">
-        <div className="space-y-6">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Hero principal</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Headline principal"
-                value={localeDraft.heroHeadline}
-                onChange={(value) => updateField("heroHeadline", value)}
-                multiline
-              />
-              <EditorField
-                label="Subheadline"
-                value={localeDraft.heroSubheadline}
-                onChange={(value) => updateField("heroSubheadline", value)}
-                multiline
-              />
-              <div className="grid gap-5 md:grid-cols-2">
-                <EditorField
-                  label="CTA primario"
-                  value={localeDraft.primaryCtaLabel}
-                  onChange={(value) => updateField("primaryCtaLabel", value)}
-                />
-                <EditorField
-                  label="CTA secundario"
-                  value={localeDraft.secondaryCtaLabel}
-                  onChange={(value) => updateField("secondaryCtaLabel", value)}
-                />
-              </div>
-              <EditorField
-                label="Linha de confianca abaixo do hero"
-                value={localeDraft.trustStripLabel}
-                onChange={(value) => updateField("trustStripLabel", value)}
-              />
-              <EditorField
-                label="Sinais de confianca do hero (1 por linha)"
-                value={localeDraft.trustItems}
-                onChange={(value) => updateField("trustItems", value)}
-                multiline
-              />
-            </div>
-          </section>
+      <AdminSectionCard
+        eyebrow="Hero principal"
+        title="Primeira dobra da homepage"
+        description="Edite o que aparece logo na chegada do visitante: titulo principal, texto de apoio, botoes e sinais de confianca."
+      >
+        <AdminMediaField
+          label="Imagem principal da homepage"
+          helper="Escolha uma imagem da biblioteca para representar a primeira dobra do site de forma mais visual."
+          liveImageUrl={baseLocale.heroImageUrl}
+          draftImageUrl={localeDraft.heroImageUrl}
+          onChange={(value) => updateField("heroImageUrl", value)}
+          pendingNote="A selecao de imagem fica salva no Admin Studio para a equipe editorial. A homepage publica ainda continua usando a imagem atual ate a etapa dedicada de publicacao visual."
+        />
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Narrativa editorial</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Titulo introdutorio de Why Marajo"
-                value={localeDraft.whyMarajoTitle}
-                onChange={(value) => updateField("whyMarajoTitle", value)}
-                multiline
-              />
-              <EditorField
-                label="Texto introdutorio de Why Marajo"
-                value={localeDraft.whyMarajoIntro}
-                onChange={(value) => updateField("whyMarajoIntro", value)}
-                multiline
-              />
-            </div>
-          </section>
+        <AdminTextFieldCard
+          label="Main title of the homepage"
+          helper="Titulo mais importante da home, mostrado em destaque no primeiro bloco."
+          liveValue={liveLocale.heroHeadline}
+          value={localeDraft.heroHeadline}
+          onChange={(value) => updateField("heroHeadline", value)}
+          multiline
+        />
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Concierge e CTA final</p>
-            <div className="mt-5 space-y-5">
-              <EditorField
-                label="Titulo do bloco de concierge"
-                value={localeDraft.conciergeTitle}
-                onChange={(value) => updateField("conciergeTitle", value)}
-                multiline
-              />
-              <EditorField
-                label="Texto do bloco de concierge"
-                value={localeDraft.conciergeText}
-                onChange={(value) => updateField("conciergeText", value)}
-                multiline
-              />
-              <EditorField
-                label="Titulo do CTA final"
-                value={localeDraft.finalCtaTitle}
-                onChange={(value) => updateField("finalCtaTitle", value)}
-                multiline
-              />
-              <EditorField
-                label="Texto do CTA final"
-                value={localeDraft.finalCtaText}
-                onChange={(value) => updateField("finalCtaText", value)}
-                multiline
-              />
-              <div className="grid gap-5 md:grid-cols-2">
-                <EditorField
-                  label="CTA final primario"
-                  value={localeDraft.finalPrimaryLabel}
-                  onChange={(value) => updateField("finalPrimaryLabel", value)}
-                />
-                <EditorField
-                  label="CTA final secundario"
-                  value={localeDraft.finalSecondaryLabel}
-                  onChange={(value) => updateField("finalSecondaryLabel", value)}
-                />
-              </div>
-            </div>
-          </section>
+        <AdminTextFieldCard
+          label="Short text below the main title"
+          helper="Texto de apoio logo abaixo do titulo. Ele deve explicar o valor da Travel Marajo em poucas linhas."
+          liveValue={liveLocale.heroSubheadline}
+          value={localeDraft.heroSubheadline}
+          onChange={(value) => updateField("heroSubheadline", value)}
+          multiline
+        />
+
+        <div className="grid gap-5 lg:grid-cols-2">
+          <AdminTextFieldCard
+            label="Primary button label"
+            helper="Botao principal do hero."
+            liveValue={liveLocale.primaryCtaLabel}
+            value={localeDraft.primaryCtaLabel}
+            onChange={(value) => updateField("primaryCtaLabel", value)}
+          />
+          <AdminTextFieldCard
+            label="Secondary button label"
+            helper="Segundo botao visivel no hero."
+            liveValue={liveLocale.secondaryCtaLabel}
+            value={localeDraft.secondaryCtaLabel}
+            onChange={(value) => updateField("secondaryCtaLabel", value)}
+          />
         </div>
 
-        <aside className="space-y-6">
-          <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Leitura operacional</p>
-            <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">O que este editor controla</h2>
-            <ul className="mt-4 space-y-2 text-sm leading-6 text-slate-600">
-              <li>Headline e subheadline do hero</li>
-              <li>Rotulos principais de CTA</li>
-              <li>Trust strip e sinais de confianca do hero</li>
-              <li>Introducao do bloco Why Marajo</li>
-              <li>Mensagem de concierge</li>
-              <li>Bloco final de conversao</li>
-            </ul>
-          </section>
+        <AdminTextFieldCard
+          label="Trust line shown below the hero"
+          helper="Frase curta usada para reforcar confianca logo abaixo da area principal."
+          liveValue={liveLocale.trustStripLabel}
+          value={localeDraft.trustStripLabel}
+          onChange={(value) => updateField("trustStripLabel", value)}
+        />
 
-          <LiveSnapshot
-            title="Hero"
-            liveValue={liveLocale.heroHeadline}
-            draftValue={localeDraft.heroHeadline}
+        <AdminTextFieldCard
+          label="Trust points shown below the hero"
+          helper="Liste um ponto por linha. Eles aparecem como sinais rapidos de confianca."
+          liveValue={liveLocale.trustItems}
+          value={localeDraft.trustItems}
+          onChange={(value) => updateField("trustItems", value)}
+          multiline
+        />
+      </AdminSectionCard>
+
+      <AdminSectionCard
+        eyebrow="Why Marajo"
+        title="Bloco editorial sobre o destino"
+        description="Este bloco ajuda o visitante a entender por que Marajo merece a viagem."
+      >
+        <AdminTextFieldCard
+          label="Section title for Why Marajo"
+          helper="Titulo que apresenta o bloco sobre o destino."
+          liveValue={liveLocale.whyMarajoTitle}
+          value={localeDraft.whyMarajoTitle}
+          onChange={(value) => updateField("whyMarajoTitle", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Introductory text for Why Marajo"
+          helper="Texto introdutorio curto para contextualizar natureza, cultura e identidade da ilha."
+          liveValue={liveLocale.whyMarajoIntro}
+          value={localeDraft.whyMarajoIntro}
+          onChange={(value) => updateField("whyMarajoIntro", value)}
+          multiline
+        />
+      </AdminSectionCard>
+
+      <AdminSectionCard
+        eyebrow="Concierge e fechamento"
+        title="Ajuda humana e chamada final"
+        description="Ajuste a mensagem do suporte local e o convite final para reservar ou falar com um especialista."
+      >
+        <AdminTextFieldCard
+          label="Concierge block title"
+          helper="Titulo do bloco de suporte humano."
+          liveValue={liveLocale.conciergeTitle}
+          value={localeDraft.conciergeTitle}
+          onChange={(value) => updateField("conciergeTitle", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Concierge support text"
+          helper="Texto que explica como a equipe local ajuda antes, durante e depois da viagem."
+          liveValue={liveLocale.conciergeText}
+          value={localeDraft.conciergeText}
+          onChange={(value) => updateField("conciergeText", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Final call-to-action title"
+          helper="Titulo do ultimo bloco de conversao da homepage."
+          liveValue={liveLocale.finalCtaTitle}
+          value={localeDraft.finalCtaTitle}
+          onChange={(value) => updateField("finalCtaTitle", value)}
+          multiline
+        />
+        <AdminTextFieldCard
+          label="Final call-to-action supporting text"
+          helper="Texto de apoio que fecha a pagina e orienta o visitante para a acao."
+          liveValue={liveLocale.finalCtaText}
+          value={localeDraft.finalCtaText}
+          onChange={(value) => updateField("finalCtaText", value)}
+          multiline
+        />
+        <div className="grid gap-5 lg:grid-cols-2">
+          <AdminTextFieldCard
+            label="Final primary button"
+            helper="Botao principal do ultimo bloco."
+            liveValue={liveLocale.finalPrimaryLabel}
+            value={localeDraft.finalPrimaryLabel}
+            onChange={(value) => updateField("finalPrimaryLabel", value)}
           />
-          <LiveSnapshot
-            title="Why Marajo"
-            liveValue={liveLocale.whyMarajoIntro}
-            draftValue={localeDraft.whyMarajoIntro}
+          <AdminTextFieldCard
+            label="Final secondary button"
+            helper="Botao secundario do ultimo bloco."
+            liveValue={liveLocale.finalSecondaryLabel}
+            value={localeDraft.finalSecondaryLabel}
+            onChange={(value) => updateField("finalSecondaryLabel", value)}
           />
-          <LiveSnapshot
-            title="CTA final"
-            liveValue={liveLocale.finalCtaText}
-            draftValue={localeDraft.finalCtaText}
-          />
-        </aside>
-      </div>
+        </div>
+      </AdminSectionCard>
     </div>
   )
 }
