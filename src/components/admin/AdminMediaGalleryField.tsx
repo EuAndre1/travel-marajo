@@ -57,37 +57,52 @@ export default function AdminMediaGalleryField({
   draftImageUrls: string[]
   onChange: (value: string[]) => void
 }) {
+  const safeLiveImageUrls = useMemo(
+    () =>
+      Array.isArray(liveImageUrls)
+        ? liveImageUrls.filter((item) => typeof item === "string" && item.trim().length > 0)
+        : [],
+    [liveImageUrls],
+  )
+  const safeDraftImageUrls = useMemo(
+    () =>
+      Array.isArray(draftImageUrls)
+        ? draftImageUrls.filter((item) => typeof item === "string" && item.trim().length > 0)
+        : [],
+    [draftImageUrls],
+  )
   const [pickerOpen, setPickerOpen] = useState(false)
-  const changed = JSON.stringify(liveImageUrls) !== JSON.stringify(draftImageUrls)
+  const changed = JSON.stringify(safeLiveImageUrls) !== JSON.stringify(safeDraftImageUrls)
 
   const selectedUrl = useMemo(
-    () => draftImageUrls[draftImageUrls.length - 1] ?? liveImageUrls[0] ?? "",
-    [draftImageUrls, liveImageUrls],
+    () =>
+      safeDraftImageUrls[safeDraftImageUrls.length - 1] ?? safeLiveImageUrls[0] ?? "",
+    [safeDraftImageUrls, safeLiveImageUrls],
   )
 
   const addImage = (item: MediaAssetItem) => {
-    if (draftImageUrls.includes(item.url)) {
+    if (safeDraftImageUrls.includes(item.url)) {
       return
     }
 
-    onChange([...draftImageUrls, item.url])
+    onChange([...safeDraftImageUrls, item.url])
   }
 
   const moveImage = (index: number, direction: -1 | 1) => {
     const nextIndex = index + direction
 
-    if (nextIndex < 0 || nextIndex >= draftImageUrls.length) {
+    if (nextIndex < 0 || nextIndex >= safeDraftImageUrls.length) {
       return
     }
 
-    const nextImages = [...draftImageUrls]
+    const nextImages = [...safeDraftImageUrls]
     const [selected] = nextImages.splice(index, 1)
     nextImages.splice(nextIndex, 0, selected)
     onChange(nextImages)
   }
 
   const removeImage = (index: number) => {
-    onChange(draftImageUrls.filter((_, currentIndex) => currentIndex !== index))
+    onChange(safeDraftImageUrls.filter((_, currentIndex) => currentIndex !== index))
   }
 
   return (
@@ -114,7 +129,7 @@ export default function AdminMediaGalleryField({
         <GalleryPreview
           title="Galeria atual no site"
           description="Estas imagens representam a galeria publicada agora."
-          images={liveImageUrls}
+          images={safeLiveImageUrls}
         />
         <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
           <p className="text-sm font-semibold text-[#0B1C2C]">Galeria do rascunho</p>
@@ -122,9 +137,9 @@ export default function AdminMediaGalleryField({
             Escolha varias fotos da biblioteca, remova o que nao fizer sentido e ajuste a ordem da exibicao.
           </p>
 
-          {draftImageUrls.length > 0 ? (
+          {safeDraftImageUrls.length > 0 ? (
             <div className="mt-4 space-y-3">
-              {draftImageUrls.map((imageUrl, index) => (
+              {safeDraftImageUrls.map((imageUrl, index) => (
                 <div
                   key={`${imageUrl}-${index}`}
                   className="flex flex-col gap-3 rounded-[1rem] border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center"
@@ -184,7 +199,7 @@ export default function AdminMediaGalleryField({
         </button>
         <button
           type="button"
-          onClick={() => onChange([...liveImageUrls])}
+          onClick={() => onChange([...safeLiveImageUrls])}
           className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
         >
           Voltar para a galeria atual

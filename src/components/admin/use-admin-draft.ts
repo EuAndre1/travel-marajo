@@ -22,8 +22,19 @@ function formatSavedAt(savedAt: string | null) {
   })
 }
 
-export function useAdminDraft<T>(storageKey: string, initialValue: T) {
-  const pristineValue = useMemo(() => cloneValue(initialValue), [initialValue])
+export function useAdminDraft<T>(
+  storageKey: string,
+  initialValue: T,
+  options?: { normalizeValue?: (value: unknown) => T },
+) {
+  const normalizeValue = useMemo(
+    () => options?.normalizeValue ?? ((value: unknown) => value as T),
+    [options?.normalizeValue],
+  )
+  const pristineValue = useMemo(
+    () => cloneValue(normalizeValue(initialValue)),
+    [initialValue, normalizeValue],
+  )
   const [baselineValue, setBaselineValue] = useState<T>(pristineValue)
   const [draft, setDraft] = useState<T>(pristineValue)
   const [savedAt, setSavedAt] = useState<string | null>(null)
@@ -47,10 +58,10 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
       const stored = JSON.parse(rawValue) as StoredDraft<T> | T
 
       if (typeof stored === "object" && stored && "value" in stored) {
-        setDraft(stored.value)
+        setDraft(cloneValue(normalizeValue(stored.value)))
         setSavedAt(typeof stored.savedAt === "string" ? stored.savedAt : null)
       } else {
-        setDraft(stored as T)
+        setDraft(cloneValue(normalizeValue(stored as T)))
         setSavedAt(null)
       }
 
@@ -60,7 +71,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
       setSavedAt(null)
       setHasStoredDraft(false)
     }
-  }, [pristineValue, storageKey])
+  }, [normalizeValue, pristineValue, storageKey])
 
   const hasUnsavedChanges = useMemo(
     () => JSON.stringify(draft) !== JSON.stringify(baselineValue),
@@ -70,7 +81,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
   const saveDraft = useCallback(() => {
     const nextSavedAt = new Date().toISOString()
     const payload: StoredDraft<T> = {
-      value: draft,
+      value: normalizeValue(draft),
       savedAt: nextSavedAt,
     }
 
@@ -78,7 +89,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
     setSavedAt(nextSavedAt)
     setHasStoredDraft(true)
     setStatusMessage("Rascunho salvo neste navegador.")
-  }, [draft, storageKey])
+  }, [draft, normalizeValue, storageKey])
 
   const resetDraft = useCallback(() => {
     window.localStorage.removeItem(storageKey)
@@ -105,7 +116,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
   const markPersisted = useCallback(
     (value: T, message = "Camada persistida atualizada com sucesso.") => {
       const nextSavedAt = new Date().toISOString()
-      const clonedValue = cloneValue(value)
+      const clonedValue = cloneValue(normalizeValue(value))
       const payload: StoredDraft<T> = {
         value: clonedValue,
         savedAt: nextSavedAt,
@@ -118,7 +129,7 @@ export function useAdminDraft<T>(storageKey: string, initialValue: T) {
       setHasStoredDraft(true)
       setStatusMessage(message)
     },
-    [storageKey],
+    [normalizeValue, storageKey],
   )
 
   return {

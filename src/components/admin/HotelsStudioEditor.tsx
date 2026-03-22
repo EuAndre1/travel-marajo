@@ -23,6 +23,7 @@ import {
   adminHotelCardsInitialDraft,
   createEmptyAdminHotelCardLocaleDraft,
   createStudioSlug,
+  normalizeHotelCardCollectionDraft,
   type AdminHotelCardCollectionDraft,
   type AdminHotelCardDraftItem,
   type AdminHotelCardLocaleDraft,
@@ -76,7 +77,7 @@ function HotelListButton({
   selected: boolean
   onSelect: () => void
 }) {
-  const localized = item.locales[locale]
+  const localized = item.locales[locale] ?? createEmptyAdminHotelCardLocaleDraft()
 
   return (
     <button
@@ -180,9 +181,13 @@ export default function HotelsStudioEditor({
 }: {
   initialDraft?: AdminHotelCardCollectionDraft
 }) {
+  const normalizedInitialDraft = useMemo(
+    () => normalizeHotelCardCollectionDraft(initialDraft, adminHotelCardsInitialDraft),
+    [initialDraft],
+  )
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
-  const [selectedId, setSelectedId] = useState(initialDraft.items[0]?.id ?? "")
-  const [liveDraft, setLiveDraft] = useState(initialDraft)
+  const [selectedId, setSelectedId] = useState(normalizedInitialDraft.items[0]?.id ?? "")
+  const [liveDraft, setLiveDraft] = useState(normalizedInitialDraft)
   const {
     draft,
     setDraft,
@@ -193,7 +198,10 @@ export default function HotelsStudioEditor({
     hasUnsavedChanges,
     savedAtLabel,
     statusMessage,
-  } = useAdminDraft(STORAGE_KEY, initialDraft)
+  } = useAdminDraft(STORAGE_KEY, normalizedInitialDraft, {
+    normalizeValue: (value) =>
+      normalizeHotelCardCollectionDraft(value, normalizedInitialDraft),
+  })
 
   const selectedDraft = useMemo(
     () => draft.items.find((item) => item.id === selectedId) ?? draft.items[0],
@@ -230,11 +238,56 @@ export default function HotelsStudioEditor({
   })
 
   if (!selectedDraft || !selectedLive) {
-    return null
+    return (
+      <div className="space-y-6">
+        <AdminPageIntro
+          eyebrow="Hoteis"
+          title="Editor de hospedagens parceiras"
+          description="Nenhuma hospedagem esta pronta para edicao agora. Crie o primeiro hotel para montar a vitrine e as paginas dedicadas."
+          actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
+        />
+
+        <AdminDraftToolbar
+          saveLabel={isPersisting ? "Salvando e aplicando..." : "Salvar e aplicar"}
+          savedAtLabel={savedAtLabel}
+          statusMessage={persistMessage || statusMessage}
+          hasUnsavedChanges={hasUnsavedChanges}
+          persistState={persistState}
+          scopeNote="As hospedagens desta area sao persistidas no banco. Quando voce salvar, os cards e as paginas dedicadas passam a refletir o novo conteudo."
+          onSave={saveAndPersist}
+          onExport={() => exportDraft(`travel-marajo-hotels-${activeLocale}.json`)}
+          onReset={resetDraft}
+        />
+
+        <AdminSectionCard
+          eyebrow="Colecao"
+          title="Nenhuma hospedagem carregada"
+          description="Use o botao abaixo para criar a primeira hospedagem de forma segura."
+          actions={
+            <button
+              type="button"
+              onClick={() => {
+                const nextItem = createNewHotelCard([])
+                setDraft({ items: [nextItem] })
+                setSelectedId(nextItem.id)
+              }}
+              className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
+            >
+              <PlusIcon className="mr-2 h-5 w-5" />
+              Adicionar hotel
+            </button>
+          }
+        >
+          <div className="rounded-[1.4rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm leading-7 text-slate-600">
+            O editor foi carregado com seguranca, mas nenhum item valido foi encontrado nesta colecao. Voce pode criar um novo hotel ou resetar para a versao ativa do ambiente.
+          </div>
+        </AdminSectionCard>
+      </div>
+    )
   }
 
-  const localeDraft = selectedDraft.locales[activeLocale]
-  const liveLocale = selectedLive.locales[activeLocale]
+  const localeDraft = selectedDraft.locales[activeLocale] ?? createEmptyAdminHotelCardLocaleDraft()
+  const liveLocale = selectedLive.locales[activeLocale] ?? createEmptyAdminHotelCardLocaleDraft()
 
   const updateLocaleField = (field: keyof AdminHotelCardLocaleDraft, value: string) => {
     setDraft((current) => ({
@@ -327,7 +380,7 @@ export default function HotelsStudioEditor({
               <div className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-600">
                 <p>
                   <strong className="text-[#0B1C2C]">Card atual:</strong>{" "}
-                  {selectedDraft.locales[activeLocale].title || "Hotel sem titulo"}
+                  {localeDraft.title || "Hotel sem titulo"}
                 </p>
                 <p className="mt-2">
                   <strong className="text-[#0B1C2C]">Posicao na vitrine:</strong>{" "}

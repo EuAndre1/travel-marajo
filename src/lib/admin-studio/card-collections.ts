@@ -156,6 +156,151 @@ export function createEmptyAdminHotelCardLocaleDraft(): AdminHotelCardLocaleDraf
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+}
+
+function getStringValue(source: unknown, key: string, fallback: string) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  return typeof value === "string" ? value : fallback
+}
+
+function getBooleanValue(source: unknown, key: string, fallback: boolean) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  return typeof value === "boolean" ? value : fallback
+}
+
+function getNumberValue(source: unknown, key: string, fallback: number) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback
+}
+
+function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  if (!Array.isArray(value)) {
+    return fallback
+  }
+
+  return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+}
+
+export function normalizeHotelLocaleDraft(
+  localeValue: unknown,
+  fallback?: Partial<AdminHotelCardLocaleDraft>,
+): AdminHotelCardLocaleDraft {
+  const base = {
+    ...createEmptyAdminHotelCardLocaleDraft(),
+    ...fallback,
+  }
+
+  return {
+    title: getStringValue(localeValue, "title", base.title),
+    eyebrow: getStringValue(localeValue, "eyebrow", base.eyebrow),
+    description: getStringValue(localeValue, "description", base.description),
+    metaPrimary: getStringValue(localeValue, "metaPrimary", base.metaPrimary),
+    metaSecondary: getStringValue(localeValue, "metaSecondary", base.metaSecondary),
+    ctaLabel: getStringValue(localeValue, "ctaLabel", base.ctaLabel),
+    fullDescription: getStringValue(localeValue, "fullDescription", base.fullDescription),
+    amenitiesText: getStringValue(localeValue, "amenitiesText", base.amenitiesText),
+  }
+}
+
+export function normalizeHotelCardDraftItem(
+  itemValue: unknown,
+  index: number,
+  fallback?: AdminHotelCardDraftItem,
+): AdminHotelCardDraftItem {
+  const baseId = fallback?.id ?? `hotel-card-${index + 1}`
+  const localesValue = isRecord(itemValue) && isRecord(itemValue.locales) ? itemValue.locales : {}
+  const ptLocale = normalizeHotelLocaleDraft(localesValue.pt, fallback?.locales?.pt)
+  const imageUrl = getStringValue(itemValue, "imageUrl", fallback?.imageUrl ?? "")
+  const galleryImageUrls = getStringArrayValue(
+    itemValue,
+    "galleryImageUrls",
+    fallback?.galleryImageUrls?.length
+      ? fallback.galleryImageUrls
+      : imageUrl
+        ? [imageUrl]
+        : [],
+  )
+
+  return {
+    id: getStringValue(itemValue, "id", baseId),
+    linkedSlug: createStudioSlug(
+      getStringValue(
+        itemValue,
+        "linkedSlug",
+        fallback?.linkedSlug ?? ptLocale.title ?? baseId,
+      ),
+      baseId,
+    ),
+    imageUrl,
+    ctaTarget: getStringValue(itemValue, "ctaTarget", fallback?.ctaTarget ?? "/hotels"),
+    visible: getBooleanValue(itemValue, "visible", fallback?.visible ?? true),
+    sortOrder: getNumberValue(itemValue, "sortOrder", fallback?.sortOrder ?? index),
+    galleryImageUrls,
+    locales: {
+      pt: ptLocale,
+      en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en),
+      es: normalizeHotelLocaleDraft(localesValue.es, fallback?.locales?.es),
+      fr: normalizeHotelLocaleDraft(localesValue.fr, fallback?.locales?.fr),
+    },
+  }
+}
+
+export function normalizeHotelCardCollectionDraft(
+  collectionValue: unknown,
+  fallbackCollection: AdminHotelCardCollectionDraft = { items: [] },
+): AdminHotelCardCollectionDraft {
+  if (!isRecord(collectionValue) || !Array.isArray(collectionValue.items)) {
+    return {
+      items: [...fallbackCollection.items]
+        .map((item, index) => normalizeHotelCardDraftItem(item, index, item))
+        .sort((left, right) => left.sortOrder - right.sortOrder)
+        .map((item, index) => ({ ...item, sortOrder: index })),
+    }
+  }
+
+  const items = collectionValue.items
+    .map((item, index) => {
+      const baseItem =
+        fallbackCollection.items.find(
+          (candidate) =>
+            isRecord(item) &&
+            typeof item.id === "string" &&
+            candidate.id === item.id,
+        ) ?? undefined
+
+      return normalizeHotelCardDraftItem(item, index, baseItem)
+    })
+    .filter(Boolean)
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((item, index) => ({
+      ...item,
+      sortOrder: index,
+    }))
+
+  return {
+    items,
+  }
+}
+
 function createLocaleRecord<T>(builder: (locale: AppLocale) => T) {
   return SUPPORTED_LOCALES.reduce(
     (accumulator, locale) => {
