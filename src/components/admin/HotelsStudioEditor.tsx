@@ -14,6 +14,7 @@ import {
 import type { AppLocale } from "@/config/i18n"
 import AdminCardImageField from "@/components/admin/AdminCardImageField"
 import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
+import AdminHotelRoomsEditor from "@/components/admin/AdminHotelRoomsEditor"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminMediaGalleryField from "@/components/admin/AdminMediaGalleryField"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
@@ -55,6 +56,7 @@ function createNewHotelCard(items: AdminHotelCardDraftItem[]) {
     sortOrder: items.length,
     galleryImageUrls: [],
     galleryMediaItems: [],
+    hotelRooms: [],
     locales: {
       pt: { ...createEmptyAdminHotelCardLocaleDraft(), title: defaultTitle, ctaLabel: "Ver hospedagem" },
       en: { ...createEmptyAdminHotelCardLocaleDraft(), ctaLabel: "View stay" },
@@ -301,6 +303,7 @@ export default function HotelsStudioEditor({
             ctaTarget: "",
             galleryImageUrls: [],
             galleryMediaItems: [],
+            hotelRooms: [],
             locales: {
               pt: createEmptyAdminHotelCardLocaleDraft(),
               en: createEmptyAdminHotelCardLocaleDraft(),
@@ -736,6 +739,24 @@ export default function HotelsStudioEditor({
               multiline
             />
           </AdminSectionCard>
+
+          <AdminHotelRoomsEditor
+            draftRooms={selectedDraft.hotelRooms}
+            liveRooms={selectedLive.hotelRooms}
+            onRoomsChange={(rooms) =>
+              setDraft((current) => ({
+                ...current,
+                items: current.items.map((item) =>
+                  item.id === selectedDraft.id
+                    ? {
+                        ...item,
+                        hotelRooms: rooms,
+                      }
+                    : item,
+                ),
+              }))
+            }
+          />
         </div>
       </div>
     </div>

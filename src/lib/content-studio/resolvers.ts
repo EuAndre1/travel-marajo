@@ -845,6 +845,13 @@ function resolveAdminHotelCollectionForLocale(
         ctaTarget: item.ctaTarget,
         visible: item.visible,
         sortOrder: item.sortOrder,
+        hotelRooms: item.hotelRooms
+          .slice()
+          .sort((left, right) => left.sortOrder - right.sortOrder)
+          .map((room) => ({
+            ...room,
+            amenities: [...room.amenities],
+          })),
         galleryImageUrls:
           item.galleryImageUrls.length > 0
             ? item.galleryImageUrls

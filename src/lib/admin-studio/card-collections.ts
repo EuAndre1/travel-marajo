@@ -24,6 +24,25 @@ export interface AdminHotelCardLocaleDraft extends AdminCardLocaleDraft {
   amenitiesText: string
 }
 
+export interface AdminHotelRoomDraftItem {
+  id: string
+  visible: boolean
+  sortOrder: number
+  name: string
+  category: string
+  occupancy: string
+  beds: string
+  amenities: string[]
+  breakfastIncluded: boolean
+  price: string
+  taxesInfo: string
+  cancellation: string
+  payment: string
+  maxRooms: number | null
+  ctaLabel: string
+  ctaTarget: string
+}
+
 export interface AdminCardDraftItem {
   id: string
   linkedSlug: string
@@ -40,6 +59,7 @@ export interface AdminHotelCardDraftItem
   mediaType: MediaAssetType
   galleryImageUrls: string[]
   galleryMediaItems: MediaReference[]
+  hotelRooms: AdminHotelRoomDraftItem[]
   locales: Record<AppLocale, AdminHotelCardLocaleDraft>
 }
 
@@ -71,6 +91,26 @@ export interface ResolvedAdminHotelCardItem extends AdminHotelCardLocaleDraft {
   sortOrder: number
   galleryImageUrls: string[]
   galleryMediaItems: MediaReference[]
+  hotelRooms: ResolvedAdminHotelRoomItem[]
+}
+
+export interface ResolvedAdminHotelRoomItem {
+  id: string
+  visible: boolean
+  sortOrder: number
+  name: string
+  category: string
+  occupancy: string
+  beds: string
+  amenities: string[]
+  breakfastIncluded: boolean
+  price: string
+  taxesInfo: string
+  cancellation: string
+  payment: string
+  maxRooms: number | null
+  ctaLabel: string
+  ctaTarget: string
 }
 
 type LocaleRecord<T> = Record<AppLocale, T>
@@ -167,6 +207,30 @@ export function createEmptyAdminHotelCardLocaleDraft(): AdminHotelCardLocaleDraf
   }
 }
 
+export function createEmptyAdminHotelRoomDraftItem(
+  index = 0,
+  fallback?: Partial<AdminHotelRoomDraftItem>,
+): AdminHotelRoomDraftItem {
+  return {
+    id: fallback?.id ?? `hotel-room-${index + 1}`,
+    visible: fallback?.visible ?? true,
+    sortOrder: fallback?.sortOrder ?? index,
+    name: fallback?.name ?? "",
+    category: fallback?.category ?? "",
+    occupancy: fallback?.occupancy ?? "",
+    beds: fallback?.beds ?? "",
+    amenities: fallback?.amenities ?? [],
+    breakfastIncluded: fallback?.breakfastIncluded ?? false,
+    price: fallback?.price ?? "",
+    taxesInfo: fallback?.taxesInfo ?? "",
+    cancellation: fallback?.cancellation ?? "",
+    payment: fallback?.payment ?? "",
+    maxRooms: fallback?.maxRooms ?? null,
+    ctaLabel: fallback?.ctaLabel ?? "Reservar",
+    ctaTarget: fallback?.ctaTarget ?? "",
+  }
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
@@ -209,6 +273,15 @@ function getNumberValue(source: unknown, key: string, fallback: number) {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback
 }
 
+function getNullableNumberValue(source: unknown, key: string, fallback: number | null) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback
+}
+
 function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
   if (!isRecord(source)) {
     return fallback
@@ -227,6 +300,39 @@ function getStringArrayValueFromKeys(source: unknown, keys: string[], fallback: 
     const value = getStringArrayValue(source, key, [])
     if (value.length > 0) {
       return value
+    }
+  }
+
+  return fallback
+}
+
+function parseLooseStringList(value: string) {
+  return value
+    .split(/\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+function getStringListValueFromKeys(source: unknown, keys: string[], fallback: string[]) {
+  for (const key of keys) {
+    if (!isRecord(source)) {
+      break
+    }
+
+    const rawValue = source[key]
+
+    if (typeof rawValue === "string" && rawValue.trim().length > 0) {
+      return parseLooseStringList(rawValue)
+    }
+
+    if (Array.isArray(rawValue)) {
+      const nextItems = rawValue.filter(
+        (item): item is string => typeof item === "string" && item.trim().length > 0,
+      )
+
+      if (nextItems.length > 0) {
+        return nextItems
+      }
     }
   }
 
@@ -327,6 +433,37 @@ export function normalizeHotelLocaleDraft(
   }
 }
 
+export function normalizeHotelRoomDraftItem(
+  itemValue: unknown,
+  index: number,
+  fallback?: AdminHotelRoomDraftItem,
+): AdminHotelRoomDraftItem {
+  const base = createEmptyAdminHotelRoomDraftItem(index, fallback)
+
+  return {
+    id: getStringValue(itemValue, "id", base.id),
+    visible: getBooleanValue(itemValue, "visible", base.visible),
+    sortOrder: getNumberValue(
+      itemValue,
+      "sortOrder",
+      getNumberValue(itemValue, "order", base.sortOrder),
+    ),
+    name: getStringValueFromKeys(itemValue, ["name", "title"], base.name),
+    category: getStringValue(itemValue, "category", base.category),
+    occupancy: getStringValueFromKeys(itemValue, ["occupancy", "capacity"], base.occupancy),
+    beds: getStringValueFromKeys(itemValue, ["beds", "bedType"], base.beds),
+    amenities: getStringListValueFromKeys(itemValue, ["amenities", "amenitiesText"], base.amenities),
+    breakfastIncluded: getBooleanValue(itemValue, "breakfastIncluded", base.breakfastIncluded),
+    price: getStringValue(itemValue, "price", base.price),
+    taxesInfo: getStringValue(itemValue, "taxesInfo", base.taxesInfo),
+    cancellation: getStringValue(itemValue, "cancellation", base.cancellation),
+    payment: getStringValue(itemValue, "payment", base.payment),
+    maxRooms: getNullableNumberValue(itemValue, "maxRooms", base.maxRooms),
+    ctaLabel: getStringValueFromKeys(itemValue, ["ctaLabel", "buttonLabel"], base.ctaLabel),
+    ctaTarget: getStringValueFromKeys(itemValue, ["ctaTarget", "href", "url"], base.ctaTarget),
+  }
+}
+
 export function normalizeHotelCardDraftItem(
   itemValue: unknown,
   index: number,
@@ -409,6 +546,30 @@ export function normalizeHotelCardDraftItem(
     galleryImageUrls.length > 0
       ? galleryImageUrls
       : galleryMediaItems.filter((item) => item.type === "image").map((item) => item.url)
+  const fallbackRooms = fallback?.hotelRooms ?? []
+  const rawRooms =
+    isRecord(itemValue) && Array.isArray(itemValue.hotelRooms)
+      ? itemValue.hotelRooms
+      : isRecord(itemValue) && Array.isArray(itemValue.rooms)
+        ? itemValue.rooms
+        : undefined
+  const hotelRooms = (rawRooms ?? fallbackRooms)
+    .map((room, roomIndex) => {
+      const baseRoom =
+        fallbackRooms.find(
+          (candidate) =>
+            isRecord(room) &&
+            typeof room.id === "string" &&
+            candidate.id === room.id,
+        ) ?? fallbackRooms[roomIndex]
+
+      return normalizeHotelRoomDraftItem(room, roomIndex, baseRoom)
+    })
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((room, roomIndex) => ({
+      ...room,
+      sortOrder: roomIndex,
+    }))
 
   return {
     id: getStringValue(itemValue, "id", baseId),
@@ -440,6 +601,7 @@ export function normalizeHotelCardDraftItem(
     ),
     galleryImageUrls: syncedGalleryImageUrls,
     galleryMediaItems,
+    hotelRooms,
     locales: {
       pt: ptLocale,
       en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en ?? ptLocale),
@@ -581,6 +743,7 @@ function buildHotelCards(): AdminHotelCardCollectionDraft {
         sortOrder: 0,
         galleryImageUrls: baseOffer.image ? [baseOffer.image] : [],
         galleryMediaItems: baseOffer.image ? [{ url: baseOffer.image, type: "image" }] : [],
+        hotelRooms: [],
         locales: createLocaleRecord((locale) => {
           const localeOffer =
             homeContentByLocale[locale].offers.items.find((item) => item.href === "/hotels") ??

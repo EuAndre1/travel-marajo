@@ -4,6 +4,7 @@ import type { AppLocale } from "@/config/i18n"
 import type { ResolvedAdminHotelCardItem } from "@/lib/admin-studio/card-collections"
 import { getLocalizedPath } from "@/i18n/routing"
 import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
+import HotelAvailabilitySection from "@/components/hotels/HotelAvailabilitySection"
 
 const copyByLocale = {
   pt: {
@@ -295,6 +296,8 @@ export default function HotelDetailPageContent({
           </div>
         </section>
       ) : null}
+
+      <HotelAvailabilitySection hotel={hotel} locale={locale} />
     </main>
   )
 }
