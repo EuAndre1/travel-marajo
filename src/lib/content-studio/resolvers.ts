@@ -6,10 +6,16 @@ import {
   adminHotelCardsInitialDraft,
   adminRouteCardsInitialDraft,
   adminServiceCardsInitialDraft,
+  createEmptyAdminHotelCardLocaleDraft,
+  createStudioSlug,
   type AdminCardCollectionDraft,
   type AdminCardDraftItem,
   type AdminCardLocaleDraft,
+  type AdminHotelCardCollectionDraft,
+  type AdminHotelCardDraftItem,
+  type AdminHotelCardLocaleDraft,
   type ResolvedAdminCardItem,
+  type ResolvedAdminHotelCardItem,
 } from "@/lib/admin-studio/card-collections"
 import {
   adminContentInitialDraft,
@@ -53,7 +59,7 @@ export interface ContentStudioState {
   packages: AdminPackagesDraft
   destinationCards: AdminCardCollectionDraft
   routeCards: AdminCardCollectionDraft
-  hotelCards: AdminCardCollectionDraft
+  hotelCards: AdminHotelCardCollectionDraft
   serviceCards: AdminCardCollectionDraft
 }
 
@@ -86,6 +92,20 @@ function getNumberValue(source: unknown, key: string, fallback: number) {
 
   const value = source[key]
   return typeof value === "number" && Number.isFinite(value) ? value : fallback
+}
+
+function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  if (!Array.isArray(value)) {
+    return fallback
+  }
+
+  const nextItems = value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+  return nextItems.length ? nextItems : fallback
 }
 
 function parseMultilineText(value: string) {
@@ -231,6 +251,17 @@ function mergeCardLocaleDraft(base: AdminCardLocaleDraft, override: unknown): Ad
   }
 }
 
+function mergeHotelLocaleDraft(
+  base: AdminHotelCardLocaleDraft,
+  override: unknown,
+): AdminHotelCardLocaleDraft {
+  return {
+    ...mergeCardLocaleDraft(base, override),
+    fullDescription: getStringValue(override, "fullDescription", base.fullDescription),
+    amenitiesText: getStringValue(override, "amenitiesText", base.amenitiesText),
+  }
+}
+
 function mergeHomepageDraft(base: AdminHomepageDraft, override: unknown): AdminHomepageDraft {
   const locales = isRecord(override) && isRecord(override.locales) ? override.locales : {}
 
@@ -305,6 +336,40 @@ function mergeCardItem(base: AdminCardDraftItem, override: unknown): AdminCardDr
       en: mergeCardLocaleDraft(base.locales.en, locales.en),
       es: mergeCardLocaleDraft(base.locales.es, locales.es),
       fr: mergeCardLocaleDraft(base.locales.fr, locales.fr),
+    },
+  }
+}
+
+function mergeHotelCardItem(
+  base: AdminHotelCardDraftItem,
+  override: unknown,
+): AdminHotelCardDraftItem {
+  const locales = isRecord(override) && isRecord(override.locales) ? override.locales : {}
+  const fallbackSlug = createStudioSlug(base.locales.pt.title || base.id, base.id)
+  const imageUrl = getStringValue(override, "imageUrl", base.imageUrl)
+  const galleryImageUrls = getStringArrayValue(
+    override,
+    "galleryImageUrls",
+    base.galleryImageUrls.length
+      ? base.galleryImageUrls
+      : imageUrl
+        ? [imageUrl]
+        : [],
+  )
+
+  return {
+    ...base,
+    imageUrl,
+    ctaTarget: getStringValue(override, "ctaTarget", base.ctaTarget),
+    linkedSlug: getStringValue(override, "linkedSlug", base.linkedSlug || fallbackSlug),
+    visible: getBooleanValue(override, "visible", base.visible),
+    sortOrder: getNumberValue(override, "sortOrder", base.sortOrder),
+    galleryImageUrls,
+    locales: {
+      pt: mergeHotelLocaleDraft(base.locales.pt, locales.pt),
+      en: mergeHotelLocaleDraft(base.locales.en, locales.en),
+      es: mergeHotelLocaleDraft(base.locales.es, locales.es),
+      fr: mergeHotelLocaleDraft(base.locales.fr, locales.fr),
     },
   }
 }
@@ -410,6 +475,66 @@ function mergeCardCollectionDraft(
   }
 }
 
+function mergeHotelCardCollectionDraft(
+  base: AdminHotelCardCollectionDraft,
+  override: unknown,
+): AdminHotelCardCollectionDraft {
+  if (!isRecord(override) || !Array.isArray(override.items)) {
+    return {
+      items: [...base.items].sort((left, right) => left.sortOrder - right.sortOrder),
+    }
+  }
+
+  const items = override.items
+    .map((item, index) => {
+      if (!isRecord(item)) {
+        return null
+      }
+
+      const id = getStringValue(item, "id", `hotel-card-${index + 1}`)
+      const baseItem = base.items.find((candidate) => candidate.id === id)
+
+      if (baseItem) {
+        return mergeHotelCardItem(baseItem, item)
+      }
+
+      const locales = isRecord(item.locales) ? item.locales : {}
+      const ptLocale = mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.pt)
+      const fallbackSlug = createStudioSlug(
+        getStringValue(item, "linkedSlug", ptLocale.title || id),
+        id,
+      )
+      const imageUrl = getStringValue(item, "imageUrl", "")
+      const galleryImageUrls = getStringArrayValue(
+        item,
+        "galleryImageUrls",
+        imageUrl ? [imageUrl] : [],
+      )
+
+      return {
+        id,
+        linkedSlug: fallbackSlug,
+        imageUrl,
+        ctaTarget: getStringValue(item, "ctaTarget", ""),
+        visible: getBooleanValue(item, "visible", true),
+        sortOrder: getNumberValue(item, "sortOrder", index),
+        galleryImageUrls,
+        locales: {
+          pt: ptLocale,
+          en: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.en),
+          es: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.es),
+          fr: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.fr),
+        },
+      }
+    })
+    .filter((item): item is AdminHotelCardDraftItem => Boolean(item))
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+
+  return {
+    items,
+  }
+}
+
 export function createDefaultContentStudioState(): ContentStudioState {
   return {
     homepage: adminHomepageInitialDraft,
@@ -435,7 +560,7 @@ export function mergeContentStudioState(
     packages: mergePackagesDraft(defaults.packages, overrideMap.packages),
     destinationCards: mergeCardCollectionDraft(defaults.destinationCards, overrideMap.destinationCards),
     routeCards: mergeCardCollectionDraft(defaults.routeCards, overrideMap.routeCards),
-    hotelCards: mergeCardCollectionDraft(defaults.hotelCards, overrideMap.hotelCards),
+    hotelCards: mergeHotelCardCollectionDraft(defaults.hotelCards, overrideMap.hotelCards),
     serviceCards: mergeCardCollectionDraft(defaults.serviceCards, overrideMap.serviceCards),
   }
 }
@@ -673,6 +798,29 @@ function resolveAdminCardCollectionForLocale(
     }))
 }
 
+function resolveAdminHotelCollectionForLocale(
+  locale: AppLocale,
+  collection: AdminHotelCardCollectionDraft,
+): ResolvedAdminHotelCardItem[] {
+  return [...collection.items]
+    .sort((left, right) => left.sortOrder - right.sortOrder)
+    .map((item) => ({
+      id: item.id,
+      linkedSlug: item.linkedSlug || createStudioSlug(item.locales.pt.title || item.id, item.id),
+      imageUrl: item.imageUrl,
+      ctaTarget: item.ctaTarget,
+      visible: item.visible,
+      sortOrder: item.sortOrder,
+      galleryImageUrls:
+        item.galleryImageUrls.length > 0
+          ? item.galleryImageUrls
+          : item.imageUrl
+            ? [item.imageUrl]
+            : [],
+      ...item.locales[locale],
+    }))
+}
+
 export function resolveDestinationCardsForLocale(
   locale: AppLocale,
   state: ContentStudioState,
@@ -685,9 +833,19 @@ export function resolveRouteCardsForLocale(locale: AppLocale, state: ContentStud
 }
 
 export function resolveHotelCardsForLocale(locale: AppLocale, state: ContentStudioState) {
-  return resolveAdminCardCollectionForLocale(locale, state.hotelCards)
+  return resolveAdminHotelCollectionForLocale(locale, state.hotelCards)
 }
 
 export function resolveServiceCardsForLocale(locale: AppLocale, state: ContentStudioState) {
   return resolveAdminCardCollectionForLocale(locale, state.serviceCards)
+}
+
+export function resolveHotelBySlugForLocale(
+  locale: AppLocale,
+  slug: string,
+  state: ContentStudioState,
+) {
+  return resolveAdminHotelCollectionForLocale(locale, state.hotelCards).find(
+    (item) => item.visible && item.linkedSlug === slug,
+  )
 }

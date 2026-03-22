@@ -14,6 +14,11 @@ export interface AdminCardLocaleDraft {
   ctaLabel: string
 }
 
+export interface AdminHotelCardLocaleDraft extends AdminCardLocaleDraft {
+  fullDescription: string
+  amenitiesText: string
+}
+
 export interface AdminCardDraftItem {
   id: string
   linkedSlug: string
@@ -24,8 +29,18 @@ export interface AdminCardDraftItem {
   locales: Record<AppLocale, AdminCardLocaleDraft>
 }
 
+export interface AdminHotelCardDraftItem
+  extends Omit<AdminCardDraftItem, "locales"> {
+  galleryImageUrls: string[]
+  locales: Record<AppLocale, AdminHotelCardLocaleDraft>
+}
+
 export interface AdminCardCollectionDraft {
   items: AdminCardDraftItem[]
+}
+
+export interface AdminHotelCardCollectionDraft {
+  items: AdminHotelCardDraftItem[]
 }
 
 export interface ResolvedAdminCardItem extends AdminCardLocaleDraft {
@@ -35,6 +50,16 @@ export interface ResolvedAdminCardItem extends AdminCardLocaleDraft {
   ctaTarget: string
   visible: boolean
   sortOrder: number
+}
+
+export interface ResolvedAdminHotelCardItem extends AdminHotelCardLocaleDraft {
+  id: string
+  linkedSlug: string
+  imageUrl: string
+  ctaTarget: string
+  visible: boolean
+  sortOrder: number
+  galleryImageUrls: string[]
 }
 
 type LocaleRecord<T> = Record<AppLocale, T>
@@ -61,10 +86,10 @@ const routeCtaLabels: LocaleRecord<string> = {
 }
 
 const hotelCtaLabels: LocaleRecord<string> = {
-  pt: "Ver hospedagens",
-  en: "See stays",
-  es: "Ver alojamientos",
-  fr: "Voir les hebergements",
+  pt: "Ver hospedagem",
+  en: "View stay",
+  es: "Ver alojamiento",
+  fr: "Voir l'hebergement",
 }
 
 const serviceCtaLabels: LocaleRecord<string> = {
@@ -85,6 +110,50 @@ const serviceRouteBySlug: Record<string, string> = {
   "brazil-visa-consulting": "/services/brazil-visa-consulting",
   "custom-travel-planning": "/planejar-viagem",
   "concierge-assistance": "/planejar-viagem",
+}
+
+export function createStudioSlug(rawValue: string, fallbackSeed = "item") {
+  const normalized = rawValue
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+
+  if (normalized) {
+    return normalized.slice(0, 80)
+  }
+
+  return fallbackSeed
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .slice(0, 80) || "item"
+}
+
+export function createEmptyAdminCardLocaleDraft(): AdminCardLocaleDraft {
+  return {
+    title: "",
+    eyebrow: "",
+    description: "",
+    metaPrimary: "",
+    metaSecondary: "",
+    ctaLabel: "",
+  }
+}
+
+export function createEmptyAdminHotelCardLocaleDraft(): AdminHotelCardLocaleDraft {
+  return {
+    ...createEmptyAdminCardLocaleDraft(),
+    fullDescription: "",
+    amenitiesText: "",
+  }
 }
 
 function createLocaleRecord<T>(builder: (locale: AppLocale) => T) {
@@ -158,33 +227,32 @@ function buildRouteCards(): AdminCardCollectionDraft {
   }
 }
 
-function buildHotelCards(): AdminCardCollectionDraft {
-  return {
-    items: SUPPORTED_LOCALES.map((locale) => {
-      const offer =
-        homeContentByLocale[locale].offers.items.find((item) => item.href === "/hotels") ??
-        homeContentByLocale.pt.offers.items.find((item) => item.href === "/hotels")
+function buildHotelCards(): AdminHotelCardCollectionDraft {
+  const baseOffer =
+    homeContentByLocale.pt.offers.items.find((item) => item.href === "/hotels") ??
+    homeContentByLocale.pt.offers.items.find((item) => item.href === "/hoteis")
 
-      return offer
-        ? {
-            locale,
-            offer,
-          }
-        : null
-    })
-      .filter(Boolean)
-      .slice(0, 1)
-      .map((entry, index) => ({
+  if (!baseOffer) {
+    return { items: [] }
+  }
+
+  const linkedSlug = createStudioSlug(baseOffer.title, "hotel-parceiro")
+
+  return {
+    items: [
+      {
         id: "hotel-partner-1",
-        linkedSlug: "",
-        imageUrl: entry!.offer.image,
+        linkedSlug,
+        imageUrl: baseOffer.image,
         ctaTarget: "/hotels",
         visible: true,
-        sortOrder: index,
+        sortOrder: 0,
+        galleryImageUrls: baseOffer.image ? [baseOffer.image] : [],
         locales: createLocaleRecord((locale) => {
           const localeOffer =
             homeContentByLocale[locale].offers.items.find((item) => item.href === "/hotels") ??
-            homeContentByLocale.pt.offers.items.find((item) => item.href === "/hotels")
+            homeContentByLocale[locale].offers.items.find((item) => item.href === "/hoteis") ??
+            baseOffer
 
           return {
             title: localeOffer?.title ?? "Hospedagem parceira",
@@ -193,9 +261,12 @@ function buildHotelCards(): AdminCardCollectionDraft {
             metaPrimary: localeOffer?.price ?? "",
             metaSecondary: "",
             ctaLabel: hotelCtaLabels[locale],
+            fullDescription: localeOffer?.description ?? "",
+            amenitiesText: "",
           }
         }),
-      })),
+      },
+    ],
   }
 }
 

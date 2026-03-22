@@ -12,21 +12,25 @@ const copyByLocale = {
     eyebrow: "Partner Hotels",
     title: "Hospedagens parceiras para complementar a viagem",
     subtitle: "Sugestoes leves de estadia para quem quer comparar base, perfil e faixa de valor.",
+    fallbackCta: "Ver busca de hoteis",
   },
   en: {
     eyebrow: "Partner Hotels",
     title: "Partner stays to complete the trip",
     subtitle: "A lightweight stay selection for travelers comparing base, style, and price range.",
+    fallbackCta: "View hotel search",
   },
   es: {
     eyebrow: "Partner Hotels",
     title: "Hospedajes aliados para completar el viaje",
     subtitle: "Una seleccion ligera para comparar base, estilo y rango de precio.",
+    fallbackCta: "Ver busqueda de hoteles",
   },
   fr: {
     eyebrow: "Partner Hotels",
     title: "Hebergements partenaires pour completer le voyage",
     subtitle: "Une selection legere pour comparer base, style et gamme de prix.",
+    fallbackCta: "Voir la recherche d'hotels",
   },
 } as const
 
@@ -41,6 +45,26 @@ export default function HomePartnerHotels() {
   }
 
   const copy = copyByLocale[lang]
+
+  const resolveHotelHref = (linkedSlug: string, ctaTarget: string) => {
+    if (linkedSlug) {
+      return getLocalizedPath(lang, "hotelDetail", { slug: linkedSlug })
+    }
+
+    if (ctaTarget === "/hotels" || ctaTarget === "/hoteis") {
+      return getLocalizedPath(lang, "hotels")
+    }
+
+    return ctaTarget
+  }
+
+  const resolveHotelLabel = (linkedSlug: string, ctaTarget: string, ctaLabel: string) => {
+    if (!linkedSlug && (ctaTarget === "/hotels" || ctaTarget === "/hoteis")) {
+      return copy.fallbackCta
+    }
+
+    return ctaLabel
+  }
 
   return (
     <section className="tm-section bg-[#f8f7f3]">
@@ -66,10 +90,10 @@ export default function HomePartnerHotels() {
                   <p className="mt-3 text-sm font-semibold text-primary">{card.metaPrimary}</p>
                 ) : null}
                 <Link
-                  href={card.ctaTarget === "/hotels" || card.ctaTarget === "/hoteis" ? getLocalizedPath(lang, "hotels") : card.ctaTarget}
+                  href={resolveHotelHref(card.linkedSlug, card.ctaTarget)}
                   className="mt-4 inline-flex text-sm font-semibold text-primary"
                 >
-                  {card.ctaLabel}
+                  {resolveHotelLabel(card.linkedSlug, card.ctaTarget, card.ctaLabel)}
                 </Link>
               </div>
             </article>

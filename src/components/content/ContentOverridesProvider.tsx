@@ -8,6 +8,7 @@ import {
   resolveExperienceBySlug,
   resolveExperienceItems,
   resolveHotelCardsForLocale,
+  resolveHotelBySlugForLocale,
   resolveHomeAuthorityForLocale,
   resolveHomeContentForLocale,
   resolvePackageBySlug,
@@ -106,6 +107,12 @@ export function useResolvedHotelCards() {
   const { lang } = useSiteLanguage()
   const state = useContentOverridesState()
   return resolveHotelCardsForLocale(lang, state)
+}
+
+export function useResolvedHotelBySlug(slug: string) {
+  const { lang } = useSiteLanguage()
+  const state = useContentOverridesState()
+  return resolveHotelBySlugForLocale(lang, slug, state)
 }
 
 export function useResolvedServiceCards() {

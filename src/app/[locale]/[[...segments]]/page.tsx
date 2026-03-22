@@ -16,6 +16,7 @@ import PartnersPage from "@/app/parceiros/page"
 import ServicesPage from "@/app/services/page"
 import BrazilVisaConsultingPage from "@/app/services/brazil-visa-consulting/page"
 import HotelsPage from "@/app/hotels/page"
+import HotelDetailPage from "@/app/hotels/[slug]/page"
 import FlightsPage from "@/app/flights/page"
 import ActivitiesPage from "@/app/activities/page"
 import LoginPage from "@/app/login/page"
@@ -149,6 +150,7 @@ function getMetadataForRoute(locale: AppLocale, key: AppRouteKey, slug?: string)
     services: "Travel Maraj? Services",
     serviceBrazilVisa: "Brazil Visa Consulting",
     hotels: "Marajo Hotels",
+    hotelDetail: "Marajo Hotel",
     flights: "Marajo Flights",
     activities: "Marajo Activities",
     login: "Login",
@@ -243,6 +245,8 @@ export default async function LocalizedPage({ params }: PageProps) {
       return <BrazilVisaConsultingPage />
     case "hotels":
       return <HotelsPage />
+    case "hotelDetail":
+      return <HotelDetailPage params={{ slug: matched.params.slug }} />
     case "flights":
       return <FlightsPage />
     case "activities":
