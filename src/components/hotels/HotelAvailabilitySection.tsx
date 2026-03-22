@@ -81,6 +81,13 @@ const copyByLocale = {
   },
 } as const
 
+const numberFormatByLocale = {
+  pt: "pt-BR",
+  en: "en-US",
+  es: "es-ES",
+  fr: "fr-FR",
+} as const
+
 function isExternalHref(value: string) {
   return (
     value.startsWith("http://") ||
@@ -89,6 +96,50 @@ function isExternalHref(value: string) {
     value.startsWith("tel:") ||
     value.includes("wa.me")
   )
+}
+
+function formatRoomPrice(value: number | null, locale: AppLocale) {
+  if (value === null || value <= 0) {
+    return ""
+  }
+
+  return new Intl.NumberFormat(numberFormatByLocale[locale], {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
+function formatRoomOccupancy(value: number | null, locale: AppLocale) {
+  if (value === null || value <= 0) {
+    return ""
+  }
+
+  if (locale === "en") {
+    return `${value} guest${value === 1 ? "" : "s"}`
+  }
+
+  if (locale === "fr") {
+    return `${value} personne${value === 1 ? "" : "s"}`
+  }
+
+  return `${value} ${value === 1 ? "pessoa" : "pessoas"}`
+}
+
+function resolveRoomContactHref(
+  roomTarget: string,
+  hotelTarget: string,
+  conciergeHref: string,
+) {
+  if (!roomTarget) {
+    return hotelTarget
+  }
+
+  if (roomTarget === "whatsapp") {
+    return isExternalHref(hotelTarget) ? hotelTarget : conciergeHref
+  }
+
+  return roomTarget
 }
 
 export default function HotelAvailabilitySection({
@@ -139,9 +190,15 @@ export default function HotelAvailabilitySection({
         <div className="space-y-4">
           {rooms.map((room) => {
             const selectedQuantity = selectedQuantities[room.id] ?? 0
-            const selectionLimit = room.maxRooms && room.maxRooms > 0 ? room.maxRooms : 3
-            const roomCtaTarget = room.ctaTarget || hotel.ctaTarget
+            const selectionLimit = room.maxRooms > 0 ? room.maxRooms : 5
+            const roomCtaTarget = resolveRoomContactHref(
+              room.ctaTarget,
+              hotel.ctaTarget,
+              conciergeHref,
+            )
             const roomCtaExternal = roomCtaTarget ? isExternalHref(roomCtaTarget) : false
+            const formattedOccupancy = formatRoomOccupancy(room.occupancy, locale)
+            const formattedPrice = formatRoomPrice(room.price, locale)
 
             return (
               <div
@@ -157,9 +214,11 @@ export default function HotelAvailabilitySection({
                     ) : null}
                     <h3 className="mt-2 text-xl font-semibold text-[#0B1C2C]">{room.name}</h3>
                     <div className="mt-3 flex flex-wrap gap-2 text-sm text-slate-600">
-                      <span className="rounded-full bg-slate-100 px-3 py-1">
-                        {room.occupancy || copy.occupancyFallback}
-                      </span>
+                      {formattedOccupancy ? (
+                        <span className="rounded-full bg-slate-100 px-3 py-1">
+                          {formattedOccupancy}
+                        </span>
+                      ) : null}
                       <span className="rounded-full bg-slate-100 px-3 py-1">
                         {room.beds || copy.bedsFallback}
                       </span>
@@ -181,7 +240,7 @@ export default function HotelAvailabilitySection({
                   <div className="rounded-[1.3rem] bg-slate-50 px-4 py-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{copy.taxesLabel}</p>
                     <p className="mt-2 text-2xl font-semibold text-[#0B1C2C]">
-                      {room.price || copy.priceFallback}
+                      {formattedPrice || copy.priceFallback}
                     </p>
                     {room.taxesInfo ? (
                       <p className="mt-2 text-sm leading-6 text-slate-600">{room.taxesInfo}</p>

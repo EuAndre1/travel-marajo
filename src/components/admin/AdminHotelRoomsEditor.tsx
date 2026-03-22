@@ -14,6 +14,7 @@ import {
   createEmptyAdminHotelRoomDraftItem,
   type AdminHotelRoomDraftItem,
 } from "@/lib/admin-studio/card-collections"
+import { getDefaultHotelRoomsTemplate } from "@/lib/hotels/defaultRoomsTemplate"
 
 function normalizeRooms(rooms: AdminHotelRoomDraftItem[]) {
   return [...rooms]
@@ -32,7 +33,7 @@ function createNewRoom(existingRooms: AdminHotelRoomDraftItem[]) {
     name: `Quarto ${nextIndex}`,
     visible: false,
     ctaLabel: "Reservar",
-    maxRooms: 3,
+    maxRooms: 5,
   })
 }
 
@@ -82,11 +83,48 @@ function parseAmenities(value: string) {
     .filter(Boolean)
 }
 
+function formatRoomOccupancy(value: number | null) {
+  if (!value || value < 1) {
+    return ""
+  }
+
+  return `${value} ${value === 1 ? "pessoa" : "pessoas"}`
+}
+
+function formatRoomPrice(value: number | null) {
+  if (value === null || value <= 0) {
+    return ""
+  }
+
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(value)
+}
+
+function parseNumberInput(value: string) {
+  const cleanedValue = value
+    .replace(/[^\d,.-]/g, "")
+    .replace(/\.(?=\d{3}(?:\D|$))/g, "")
+    .replace(",", ".")
+    .trim()
+
+  if (!cleanedValue) {
+    return null
+  }
+
+  const parsedValue = Number(cleanedValue)
+  return Number.isFinite(parsedValue) ? parsedValue : null
+}
+
 export default function AdminHotelRoomsEditor({
+  hotelId,
   draftRooms,
   liveRooms,
   onRoomsChange,
 }: {
+  hotelId: string
   draftRooms: AdminHotelRoomDraftItem[]
   liveRooms: AdminHotelRoomDraftItem[]
   onRoomsChange: (rooms: AdminHotelRoomDraftItem[]) => void
@@ -99,14 +137,35 @@ export default function AdminHotelRoomsEditor({
       title="Disponibilidade por tipo de quarto"
       description="Monte as acomodacoes do hotel, ajuste preco e politicas e escolha o que pode aparecer na pagina publica."
       actions={
-        <button
-          type="button"
-          onClick={() => onRoomsChange(normalizeRooms([...normalizedDraftRooms, createNewRoom(normalizedDraftRooms)]))}
-          className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
-        >
-          <PlusIcon className="mr-2 h-5 w-5" />
-          Adicionar quarto
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              if (normalizedDraftRooms.length > 0) {
+                const confirmed = window.confirm(
+                  "Substituir os quartos atuais pelo modelo padrão desta hospedagem?",
+                )
+
+                if (!confirmed) {
+                  return
+                }
+              }
+
+              onRoomsChange(getDefaultHotelRoomsTemplate(hotelId))
+            }}
+            className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
+          >
+            Usar modelo padrão
+          </button>
+          <button
+            type="button"
+            onClick={() => onRoomsChange(normalizeRooms([...normalizedDraftRooms, createNewRoom(normalizedDraftRooms)]))}
+            className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
+          >
+            <PlusIcon className="mr-2 h-5 w-5" />
+            Adicionar quarto
+          </button>
+        </div>
       }
     >
       {normalizedDraftRooms.length === 0 ? (
@@ -134,8 +193,8 @@ export default function AdminHotelRoomsEditor({
                       {room.name || "Nome do quarto pendente"}
                     </h3>
                     <p className="mt-1 text-xs leading-5 text-slate-500">
-                      {room.occupancy || "Capacidade pendente"}
-                      {room.price ? ` - ${room.price}` : ""}
+                      {formatRoomOccupancy(room.occupancy) || "Capacidade pendente"}
+                      {room.price ? ` - ${formatRoomPrice(room.price)}` : ""}
                     </p>
                   </div>
 
@@ -216,10 +275,20 @@ export default function AdminHotelRoomsEditor({
                   />
                   <AdminTextFieldCard
                     label="Capacidade"
-                    helper="Ex.: 2 pessoas, 3 adultos ou casal + 1 crianca."
-                    liveValue={liveRoom.occupancy}
-                    value={room.occupancy}
-                    onChange={(value) => onRoomsChange(updateRoomField(normalizedDraftRooms, room.id, "occupancy", value))}
+                    helper="Use apenas o numero de pessoas. Ex.: 2, 3 ou 4."
+                    liveValue={liveRoom.occupancy ? liveRoom.occupancy.toString() : ""}
+                    value={room.occupancy ? room.occupancy.toString() : ""}
+                    onChange={(value) =>
+                      onRoomsChange(
+                        updateRoomField(
+                          normalizedDraftRooms,
+                          room.id,
+                          "occupancy",
+                          parseNumberInput(value),
+                        ),
+                      )
+                    }
+                    placeholder="ex.: 2"
                   />
                   <AdminTextFieldCard
                     label="Tipo de cama"
@@ -230,10 +299,20 @@ export default function AdminHotelRoomsEditor({
                   />
                   <AdminTextFieldCard
                     label="Preco"
-                    helper="Ex.: R$ 420 / noite ou Sob consulta."
-                    liveValue={liveRoom.price}
-                    value={room.price}
-                    onChange={(value) => onRoomsChange(updateRoomField(normalizedDraftRooms, room.id, "price", value))}
+                    helper="Use apenas o valor numerico da diaria. Ex.: 322 ou 420."
+                    liveValue={liveRoom.price ? liveRoom.price.toString() : ""}
+                    value={room.price ? room.price.toString() : ""}
+                    onChange={(value) =>
+                      onRoomsChange(
+                        updateRoomField(
+                          normalizedDraftRooms,
+                          room.id,
+                          "price",
+                          parseNumberInput(value),
+                        ),
+                      )
+                    }
+                    placeholder="ex.: 322"
                   />
                   <AdminTextFieldCard
                     label="Informacoes de taxa"
@@ -273,8 +352,8 @@ export default function AdminHotelRoomsEditor({
                   <AdminTextFieldCard
                     label="Quantidade maxima"
                     helper="Limite de selecao por tipo. Deixe vazio para usar o limite padrao da interface."
-                    liveValue={liveRoom.maxRooms ? liveRoom.maxRooms.toString() : ""}
-                    value={room.maxRooms ? room.maxRooms.toString() : ""}
+                    liveValue={liveRoom.maxRooms.toString()}
+                    value={room.maxRooms.toString()}
                     onChange={(value) =>
                       onRoomsChange(
                         updateRoomField(
@@ -283,11 +362,11 @@ export default function AdminHotelRoomsEditor({
                           "maxRooms",
                           value.trim().length > 0 && Number.isFinite(Number(value))
                             ? Number(value)
-                            : null,
+                            : 5,
                         ),
                       )
                     }
-                    placeholder="ex.: 3"
+                    placeholder="ex.: 5"
                   />
                 </div>
 

@@ -741,6 +741,7 @@ export default function HotelsStudioEditor({
           </AdminSectionCard>
 
           <AdminHotelRoomsEditor
+            hotelId={selectedDraft.id}
             draftRooms={selectedDraft.hotelRooms}
             liveRooms={selectedLive.hotelRooms}
             onRoomsChange={(rooms) =>

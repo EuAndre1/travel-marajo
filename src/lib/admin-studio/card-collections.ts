@@ -9,6 +9,10 @@ import {
   type MediaAssetType,
   type MediaReference,
 } from "@/lib/media-library/shared"
+import {
+  getDefaultHotelRoomsTemplate,
+  isMarajoHotelCardLike,
+} from "@/lib/hotels/defaultRoomsTemplate"
 
 export interface AdminCardLocaleDraft {
   title: string
@@ -30,15 +34,15 @@ export interface AdminHotelRoomDraftItem {
   sortOrder: number
   name: string
   category: string
-  occupancy: string
+  occupancy: number | null
   beds: string
   amenities: string[]
   breakfastIncluded: boolean
-  price: string
+  price: number | null
   taxesInfo: string
   cancellation: string
   payment: string
-  maxRooms: number | null
+  maxRooms: number
   ctaLabel: string
   ctaTarget: string
 }
@@ -100,15 +104,15 @@ export interface ResolvedAdminHotelRoomItem {
   sortOrder: number
   name: string
   category: string
-  occupancy: string
+  occupancy: number | null
   beds: string
   amenities: string[]
   breakfastIncluded: boolean
-  price: string
+  price: number | null
   taxesInfo: string
   cancellation: string
   payment: string
-  maxRooms: number | null
+  maxRooms: number
   ctaLabel: string
   ctaTarget: string
 }
@@ -217,15 +221,15 @@ export function createEmptyAdminHotelRoomDraftItem(
     sortOrder: fallback?.sortOrder ?? index,
     name: fallback?.name ?? "",
     category: fallback?.category ?? "",
-    occupancy: fallback?.occupancy ?? "",
+    occupancy: fallback?.occupancy ?? null,
     beds: fallback?.beds ?? "",
     amenities: fallback?.amenities ?? [],
     breakfastIncluded: fallback?.breakfastIncluded ?? false,
-    price: fallback?.price ?? "",
+    price: fallback?.price ?? null,
     taxesInfo: fallback?.taxesInfo ?? "",
     cancellation: fallback?.cancellation ?? "",
     payment: fallback?.payment ?? "",
-    maxRooms: fallback?.maxRooms ?? null,
+    maxRooms: fallback?.maxRooms ?? 5,
     ctaLabel: fallback?.ctaLabel ?? "Reservar",
     ctaTarget: fallback?.ctaTarget ?? "",
   }
@@ -280,6 +284,48 @@ function getNullableNumberValue(source: unknown, key: string, fallback: number |
 
   const value = source[key]
   return typeof value === "number" && Number.isFinite(value) ? value : fallback
+}
+
+function parseLooseNumber(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value
+  }
+
+  if (typeof value !== "string") {
+    return null
+  }
+
+  const cleanedValue = value
+    .replace(/[^\d,.-]/g, "")
+    .replace(/\.(?=\d{3}(?:\D|$))/g, "")
+    .replace(",", ".")
+    .trim()
+
+  if (!cleanedValue) {
+    return null
+  }
+
+  const parsedValue = Number(cleanedValue)
+  return Number.isFinite(parsedValue) ? parsedValue : null
+}
+
+function getLooseNumberValueFromKeys(
+  source: unknown,
+  keys: string[],
+  fallback: number | null,
+) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  for (const key of keys) {
+    const parsedValue = parseLooseNumber(source[key])
+    if (parsedValue !== null) {
+      return parsedValue
+    }
+  }
+
+  return fallback
 }
 
 function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
@@ -450,15 +496,17 @@ export function normalizeHotelRoomDraftItem(
     ),
     name: getStringValueFromKeys(itemValue, ["name", "title"], base.name),
     category: getStringValue(itemValue, "category", base.category),
-    occupancy: getStringValueFromKeys(itemValue, ["occupancy", "capacity"], base.occupancy),
+    occupancy: getLooseNumberValueFromKeys(itemValue, ["occupancy", "capacity"], base.occupancy),
     beds: getStringValueFromKeys(itemValue, ["beds", "bedType"], base.beds),
     amenities: getStringListValueFromKeys(itemValue, ["amenities", "amenitiesText"], base.amenities),
     breakfastIncluded: getBooleanValue(itemValue, "breakfastIncluded", base.breakfastIncluded),
-    price: getStringValue(itemValue, "price", base.price),
+    price: getLooseNumberValueFromKeys(itemValue, ["price"], base.price),
     taxesInfo: getStringValue(itemValue, "taxesInfo", base.taxesInfo),
     cancellation: getStringValue(itemValue, "cancellation", base.cancellation),
     payment: getStringValue(itemValue, "payment", base.payment),
-    maxRooms: getNullableNumberValue(itemValue, "maxRooms", base.maxRooms),
+    maxRooms:
+      getLooseNumberValueFromKeys(itemValue, ["maxRooms"], base.maxRooms) ??
+      base.maxRooms,
     ctaLabel: getStringValueFromKeys(itemValue, ["ctaLabel", "buttonLabel"], base.ctaLabel),
     ctaTarget: getStringValueFromKeys(itemValue, ["ctaTarget", "href", "url"], base.ctaTarget),
   }
@@ -546,6 +594,21 @@ export function normalizeHotelCardDraftItem(
     galleryImageUrls.length > 0
       ? galleryImageUrls
       : galleryMediaItems.filter((item) => item.type === "image").map((item) => item.url)
+  const resolvedId = getStringValue(itemValue, "id", baseId)
+  const resolvedLinkedSlug = createStudioSlug(
+    getStringValueFromKeys(
+      itemValue,
+      ["linkedSlug", "slug"],
+      fallback?.linkedSlug ?? ptLocale.title ?? baseId,
+    ),
+    baseId,
+  )
+  const resolvedLocales = {
+    pt: ptLocale,
+    en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en ?? ptLocale),
+    es: normalizeHotelLocaleDraft(localesValue.es, fallback?.locales?.es ?? ptLocale),
+    fr: normalizeHotelLocaleDraft(localesValue.fr, fallback?.locales?.fr ?? ptLocale),
+  }
   const fallbackRooms = fallback?.hotelRooms ?? []
   const rawRooms =
     isRecord(itemValue) && Array.isArray(itemValue.hotelRooms)
@@ -570,17 +633,20 @@ export function normalizeHotelCardDraftItem(
       ...room,
       sortOrder: roomIndex,
     }))
+  const normalizedHotelRooms =
+    hotelRooms.length > 0
+      ? hotelRooms
+      : isMarajoHotelCardLike({
+            id: resolvedId,
+            linkedSlug: resolvedLinkedSlug,
+            locales: resolvedLocales,
+          })
+        ? getDefaultHotelRoomsTemplate(resolvedId)
+        : hotelRooms
 
   return {
-    id: getStringValue(itemValue, "id", baseId),
-    linkedSlug: createStudioSlug(
-      getStringValueFromKeys(
-        itemValue,
-        ["linkedSlug", "slug"],
-        fallback?.linkedSlug ?? ptLocale.title ?? baseId,
-      ),
-      baseId,
-    ),
+    id: resolvedId,
+    linkedSlug: resolvedLinkedSlug,
     imageUrl,
     mediaUrl: mediaUrl || imageUrl,
     mediaType,
@@ -601,13 +667,8 @@ export function normalizeHotelCardDraftItem(
     ),
     galleryImageUrls: syncedGalleryImageUrls,
     galleryMediaItems,
-    hotelRooms,
-    locales: {
-      pt: ptLocale,
-      en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en ?? ptLocale),
-      es: normalizeHotelLocaleDraft(localesValue.es, fallback?.locales?.es ?? ptLocale),
-      fr: normalizeHotelLocaleDraft(localesValue.fr, fallback?.locales?.fr ?? ptLocale),
-    },
+    hotelRooms: normalizedHotelRooms,
+    locales: resolvedLocales,
   }
 }
 
@@ -743,7 +804,7 @@ function buildHotelCards(): AdminHotelCardCollectionDraft {
         sortOrder: 0,
         galleryImageUrls: baseOffer.image ? [baseOffer.image] : [],
         galleryMediaItems: baseOffer.image ? [{ url: baseOffer.image, type: "image" }] : [],
-        hotelRooms: [],
+        hotelRooms: getDefaultHotelRoomsTemplate("hotel-partner-1"),
         locales: createLocaleRecord((locale) => {
           const localeOffer =
             homeContentByLocale[locale].offers.items.find((item) => item.href === "/hotels") ??
