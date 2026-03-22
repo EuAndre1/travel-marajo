@@ -52,7 +52,7 @@ export default function AdminCardImageField({
 
   return (
     <div
-      className={`rounded-[1.6rem] border p-5 ${
+      className={`rounded-[1.45rem] border p-4 ${
         changed ? "border-amber-200 bg-amber-50/70" : "border-slate-200 bg-slate-50/80"
       }`}
     >
@@ -90,7 +90,7 @@ export default function AdminCardImageField({
           className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
         >
           <PhotoIcon className="mr-2 h-5 w-5" />
-          Selecionar imagem da biblioteca
+          Trocar imagem de capa
         </button>
         <button
           type="button"
@@ -101,14 +101,8 @@ export default function AdminCardImageField({
         </button>
       </div>
 
-      <div className="mt-4 rounded-[1.25rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-7 text-slate-600">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-          Como esta imagem funciona
-        </p>
-        <p className="mt-2">
-          A imagem escolhida aqui vem da biblioteca persistente e pode ser publicada de verdade
-          neste card quando voce salvar.
-        </p>
+      <div className="mt-4 rounded-[1.15rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-6 text-slate-600">
+        Ao salvar, a imagem do rascunho passa a ser usada neste card no site.
       </div>
 
       <AdminMediaPickerDialog

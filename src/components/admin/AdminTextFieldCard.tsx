@@ -19,11 +19,11 @@ export default function AdminTextFieldCard({
 }) {
   const changed = liveValue !== value
   const inputClassName =
-    "mt-2 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition focus:border-[#0B1C2C] focus:ring-4 focus:ring-[#0B1C2C]/10"
+    "mt-3 w-full rounded-[1.1rem] border border-slate-300 bg-white px-4 py-3 text-sm leading-6 text-slate-700 outline-none transition focus:border-[#0B1C2C] focus:ring-4 focus:ring-[#0B1C2C]/10"
 
   return (
     <div
-      className={`rounded-[1.6rem] border p-5 transition ${
+      className={`rounded-[1.45rem] border p-4 transition ${
         changed
           ? "border-amber-200 bg-amber-50/70"
           : "border-slate-200 bg-slate-50/80"
@@ -43,44 +43,38 @@ export default function AdminTextFieldCard({
         </span>
       </div>
 
-      <div className="mt-4 rounded-[1.3rem] border border-slate-200 bg-white px-4 py-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-          Valor atual no site
-        </p>
-        <p className="mt-2 whitespace-pre-line text-sm leading-7 text-[#0B1C2C]">
-          {liveValue || "Sem texto preenchido nesta superficie."}
-        </p>
-      </div>
-
-      <label className="mt-4 block">
-        <div className="rounded-[1.3rem] border border-dashed border-slate-300 bg-white/80 px-4 py-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-            Area editavel
+      <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,0.9fr),minmax(0,1.1fr)]">
+        <div className="rounded-[1.2rem] border border-slate-200 bg-white px-4 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            No site agora
           </p>
-          <span className="mt-2 block text-sm font-semibold text-[#0B1C2C]">
-            Digite a nova versao abaixo
-          </span>
-          <p className="mt-1 text-sm leading-6 text-slate-500">
-            O campo abaixo e a parte que voce pode editar agora. O valor atual do site fica sempre
-            visivel logo acima para comparacao.
+          <p className="mt-2 whitespace-pre-line text-sm leading-7 text-[#0B1C2C]">
+            {liveValue || "Sem texto preenchido nesta parte do site."}
           </p>
         </div>
-        {multiline ? (
-          <textarea
-            className={`${inputClassName} min-h-[120px]`}
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            placeholder={placeholder}
-          />
-        ) : (
-          <input
-            className={inputClassName}
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-            placeholder={placeholder}
-          />
-        )}
-      </label>
+
+        <label className="block rounded-[1.2rem] border border-dashed border-slate-300 bg-white/85 px-4 py-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400">
+            Editar agora
+          </p>
+          <p className="mt-2 text-sm font-semibold text-[#0B1C2C]">Nova versao deste texto</p>
+          {multiline ? (
+            <textarea
+              className={`${inputClassName} min-h-[132px]`}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              placeholder={placeholder}
+            />
+          ) : (
+            <input
+              className={inputClassName}
+              value={value}
+              onChange={(event) => onChange(event.target.value)}
+              placeholder={placeholder}
+            />
+          )}
+        </label>
+      </div>
     </div>
   )
 }

@@ -1,4 +1,5 @@
 "use client"
+/* eslint-disable @next/next/no-img-element */
 
 import { useMemo, useState } from "react"
 import type { AppLocale } from "@/config/i18n"
@@ -148,6 +149,62 @@ function CardListButton({
         {localized.eyebrow || localized.metaPrimary || item.ctaTarget || "Preencha este card para publicar."}
       </p>
     </button>
+  )
+}
+
+function CardVisualPreview({
+  item,
+  locale,
+}: {
+  item: AdminCardDraftItem
+  locale: AppLocale
+}) {
+  const localized = item.locales[locale]
+
+  return (
+    <div className="overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+      <div className="relative h-52 bg-slate-100">
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt={localized.title || "Card selecionado"}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-slate-400">
+            Escolha uma imagem para este card
+          </div>
+        )}
+      </div>
+      <div className="space-y-3 p-5">
+        {localized.eyebrow ? (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+            {localized.eyebrow}
+          </p>
+        ) : null}
+        <h3 className="text-2xl font-display leading-tight text-[#0B1C2C]">
+          {localized.title || "Titulo do card"}
+        </h3>
+        {localized.description ? (
+          <p className="text-sm leading-6 text-slate-600">{localized.description}</p>
+        ) : null}
+        <div className="flex flex-wrap gap-2">
+          {localized.metaPrimary ? (
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+              {localized.metaPrimary}
+            </span>
+          ) : null}
+          {localized.metaSecondary ? (
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+              {localized.metaSecondary}
+            </span>
+          ) : null}
+        </div>
+        <div className="inline-flex rounded-full bg-[#0B1C2C] px-4 py-2 text-sm font-semibold text-white">
+          {localized.ctaLabel || "Botao do card"}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -320,7 +377,7 @@ export default function CardCollectionStudioEditor({
         onReset={resetDraft}
       />
 
-      <div className="grid gap-6 xl:grid-cols-[320px,minmax(0,1fr)]">
+      <div className="grid gap-5 xl:grid-cols-[300px,minmax(0,1fr)]">
         <aside className="space-y-4">
           <AdminSectionCard
             eyebrow="Colecao"
@@ -352,6 +409,14 @@ export default function CardCollectionStudioEditor({
         <div className="space-y-6">
           {selectedDraft && selectedLive && localeDraft && liveLocale ? (
             <>
+              <AdminSectionCard
+                eyebrow="Preview do card"
+                title="Como este bloco aparece na vitrine"
+                description="Veja primeiro a leitura visual do card antes de ajustar texto, imagem e acao."
+              >
+                <CardVisualPreview item={selectedDraft} locale={activeLocale} />
+              </AdminSectionCard>
+
               <AdminSectionCard
                 eyebrow="Imagem"
                 title={copy.imageLabel}

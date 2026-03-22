@@ -30,6 +30,7 @@ function isPublicAsset(pathname: string) {
 
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl
+  const isAdminStudioPath = pathname === "/admin" || pathname.startsWith("/admin/")
 
   if (isPublicAsset(pathname)) {
     return NextResponse.next()
@@ -62,7 +63,16 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!locale) {
-    return NextResponse.next()
+    const requestHeaders = new Headers(request.headers)
+    if (isAdminStudioPath) {
+      requestHeaders.set("x-app-surface", "admin")
+    }
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    })
   }
 
   const localizedAliasMatch = resolveLocalizedAliasRoute(locale, segments)
@@ -91,6 +101,9 @@ export async function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set("x-site-locale", locale)
+  if (isAdminStudioPath) {
+    requestHeaders.set("x-app-surface", "admin")
+  }
 
   const response = NextResponse.next({
     request: {

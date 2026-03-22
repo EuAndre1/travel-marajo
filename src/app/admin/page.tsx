@@ -74,43 +74,30 @@ export default function AdminDashboardPage() {
       <AdminPageIntro
         eyebrow="Painel administrativo"
         title="Admin Studio da Travel Marajo"
-        description="Entrada unica para editar textos, organizar a biblioteca de midia e preparar atualizacoes do site sem depender de ajustes manuais no codigo."
+        description="Escolha a parte do site que voce quer atualizar e trabalhe em blocos visuais parecidos com a vitrine publica."
       />
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Como operar</p>
-          <p className="mt-3 text-3xl font-display text-[#0B1C2C]">1. Editar</p>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
-            Escolha a area do site, revise o texto atual e salve a nova versao no painel.
-          </p>
-        </div>
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Como operar</p>
-          <p className="mt-3 text-3xl font-display text-[#0B1C2C]">2. Revisar</p>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
-            Veja o texto atual do site ao lado do novo rascunho para evitar duvida na edicao.
-          </p>
-        </div>
-        <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs uppercase tracking-[0.24em] text-slate-400">Como operar</p>
-          <p className="mt-3 text-3xl font-display text-[#0B1C2C]">3. Publicar</p>
-          <p className="mt-2 text-sm leading-6 text-slate-500">
-            Onde a persistencia ja existe, o site usa o novo conteudo mantendo fallback seguro.
-          </p>
-        </div>
+      <div className="grid gap-4 md:grid-cols-3">
+        {[
+          ["1. Escolha", "Abra a area do site que quer editar."],
+          ["2. Ajuste", "Troque texto, imagem e visibilidade no proprio bloco."],
+          ["3. Salve", "Publique as mudancas quando terminar a revisao."],
+        ].map(([title, body]) => (
+          <div key={title} className="rounded-[1.5rem] border border-slate-200 bg-white px-5 py-5 shadow-[0_8px_24px_rgba(15,23,42,0.05)]">
+            <p className="text-sm font-semibold text-[#0B1C2C]">{title}</p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">{body}</p>
+          </div>
+        ))}
       </div>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] sm:p-6">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">Atalhos</p>
-            <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">
-              O que voce pode fazer agora
-            </h2>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-slate-400">Atalhos</p>
+            <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">Abrir um bloco do site</h2>
           </div>
           <p className="max-w-2xl text-sm leading-6 text-slate-600">
-            Comece pelas areas mais frequentes: homepage, conteudo geral e biblioteca de midia.
+            Comece pelo que muda mais no dia a dia: homepage, cards comerciais e biblioteca de imagem.
           </p>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -118,7 +105,7 @@ export default function AdminDashboardPage() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-[1.5rem] border border-slate-100 bg-slate-50 p-5 transition hover:-translate-y-0.5 hover:border-slate-200"
+              className="rounded-[1.35rem] border border-slate-200 bg-slate-50/70 p-5 transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white"
             >
               <div className="flex items-center gap-3">
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-white text-[#0B1C2C] shadow-sm">

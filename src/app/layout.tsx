@@ -39,18 +39,27 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const headersList = headers()
   const locale = headersList.get("x-site-locale") ?? DEFAULT_LOCALE
+  const isAdminStudio = headersList.get("x-app-surface") === "admin"
   const initialContentState = await loadPersistedContentStudioState()
 
   return (
     <html lang={locale}>
       <body className={`${inter.variable} ${playfair.variable} font-sans antialiased`}>
         <Providers initialContentState={initialContentState}>
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-          <TravelAssistantWidget />
+          {isAdminStudio ? (
+            <div className="min-h-screen bg-[#f6f3ee]">
+              <main>{children}</main>
+            </div>
+          ) : (
+            <>
+              <div className="flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+              <TravelAssistantWidget />
+            </>
+          )}
         </Providers>
       </body>
     </html>

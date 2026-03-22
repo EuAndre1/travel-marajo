@@ -12,14 +12,20 @@ export default function AdminPageIntro({
   actions?: ReactNode
 }) {
   return (
-    <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+    <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/90 bg-white/95 p-5 shadow-[0_12px_35px_rgba(15,23,42,0.06)] sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-400">{eyebrow}</p>
-          <h1 className="mt-3 text-3xl font-display leading-tight text-[#0B1C2C] sm:text-4xl">{title}</h1>
-          <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">{description}</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">
+            {eyebrow}
+          </p>
+          <h1 className="mt-2 text-[1.9rem] font-display leading-tight text-[#0B1C2C] sm:text-[2.35rem]">
+            {title}
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 sm:text-[15px]">
+            {description}
+          </p>
         </div>
-        {actions ? <div className="shrink-0">{actions}</div> : null}
+        {actions ? <div className="shrink-0 self-start lg:self-center">{actions}</div> : null}
       </div>
     </div>
   )

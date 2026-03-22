@@ -1,6 +1,8 @@
 "use client"
+/* eslint-disable @next/next/no-img-element */
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -113,6 +115,65 @@ function HotelListButton({
         {localized.metaPrimary ? ` - ${localized.metaPrimary}` : ""}
       </p>
     </button>
+  )
+}
+
+function HotelVisualPreview({
+  item,
+  locale,
+}: {
+  item: AdminHotelCardDraftItem
+  locale: AppLocale
+}) {
+  const localized = item.locales[locale] ?? createEmptyAdminHotelCardLocaleDraft()
+  const galleryCount = item.galleryImageUrls.length
+
+  return (
+    <div className="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+      <div className="relative h-64 bg-slate-100">
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt={localized.title || "Hospedagem selecionada"}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-slate-400">
+            Escolha uma imagem de capa para esta hospedagem
+          </div>
+        )}
+      </div>
+      <div className="space-y-3 p-5">
+        {localized.eyebrow ? (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-400">
+            {localized.eyebrow}
+          </p>
+        ) : null}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="text-2xl font-display leading-tight text-[#0B1C2C]">
+              {localized.title || "Nome da hospedagem"}
+            </h3>
+            {localized.description ? (
+              <p className="mt-2 text-sm leading-6 text-slate-600">{localized.description}</p>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {localized.metaPrimary ? (
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                {localized.metaPrimary}
+              </span>
+            ) : null}
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+              {galleryCount} foto{galleryCount === 1 ? "" : "s"} na galeria
+            </span>
+          </div>
+        </div>
+        <div className="inline-flex rounded-full bg-[#0B1C2C] px-4 py-2 text-sm font-semibold text-white">
+          {localized.ctaLabel || "Ver hospedagem"}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -314,7 +375,7 @@ export default function HotelsStudioEditor({
       <AdminPageIntro
         eyebrow="Hoteis"
         title="Editor de hospedagens parceiras"
-        description="Controle os cards e as paginas de hospedagem em um unico lugar. Aqui voce define slug, imagem principal, galeria, texto completo e o botao que aparece para o viajante."
+        description="Edite uma hospedagem como se estivesse montando a pagina dela: capa, galeria, texto, botao e visibilidade em um fluxo visual simples."
         actions={<AdminLocaleTabs activeLocale={activeLocale} onChange={setActiveLocale} />}
       />
 
@@ -324,18 +385,18 @@ export default function HotelsStudioEditor({
         statusMessage={persistMessage || statusMessage}
         hasUnsavedChanges={hasUnsavedChanges}
         persistState={persistState}
-        scopeNote="As hospedagens desta area sao persistidas no banco. Quando voce salvar, o card publico, a imagem principal e a galeria da pagina de detalhe passam a usar o novo conteudo."
+        scopeNote="Quando voce salvar, a vitrine publica e a pagina desta hospedagem passam a usar o novo conteudo."
         onSave={saveAndPersist}
         onExport={() => exportDraft(`travel-marajo-hotels-${activeLocale}.json`)}
         onReset={resetDraft}
       />
 
-      <div className="grid gap-6 xl:grid-cols-[320px,minmax(0,1fr)]">
+      <div className="grid gap-5 xl:grid-cols-[300px,minmax(0,1fr)]">
         <aside className="space-y-4">
           <AdminSectionCard
             eyebrow="Colecao"
             title="Hospedagens parceiras"
-            description="Escolha uma hospedagem para editar, esconda o que nao deve aparecer no site e ajuste a ordem da vitrine."
+            description="Escolha uma hospedagem, troque a ordem da vitrine e crie novos parceiros quando precisar."
             actions={
               <button
                 type="button"
@@ -372,9 +433,28 @@ export default function HotelsStudioEditor({
 
         <div className="space-y-6">
           <AdminSectionCard
+            eyebrow="Preview da hospedagem"
+            title="Como o viajante percebe este hotel"
+            description="Veja a capa, a localizacao e a chamada principal antes de entrar nos campos detalhados."
+            actions={
+              selectedDraft.linkedSlug ? (
+                <Link
+                  href={`/hotels/${selectedDraft.linkedSlug}`}
+                  target="_blank"
+                  className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
+                >
+                  Ver pagina do hotel
+                </Link>
+              ) : null
+            }
+          >
+            <HotelVisualPreview item={selectedDraft} locale={activeLocale} />
+          </AdminSectionCard>
+
+          <AdminSectionCard
             eyebrow="Publicacao"
             title="Visibilidade, ordem e rota"
-            description="Estes controles definem se o hotel aparece no site, qual a ordem dele e qual slug a pagina dedicada usa."
+            description="Estes controles definem se o hotel aparece no site, em que ordem ele entra e qual endereco a pagina dedicada usa."
           >
             <div className="grid gap-5 lg:grid-cols-2">
               <div className="rounded-[1.4rem] border border-slate-200 bg-slate-50 px-4 py-4 text-sm leading-7 text-slate-600">
@@ -454,7 +534,7 @@ export default function HotelsStudioEditor({
                     type="button"
                     onClick={() => {
                       const confirmed = window.confirm(
-                        "Remover esta hospedagem do estúdio? O conteúdo persistido desta coleção será atualizado.",
+                        "Remover esta hospedagem do estudio? O conteudo salvo desta colecao sera atualizado.",
                       )
 
                       if (!confirmed) {
@@ -501,7 +581,7 @@ export default function HotelsStudioEditor({
           <AdminSectionCard
             eyebrow="Imagens"
             title={`Imagem principal e galeria de ${localeDraft.title || "hotel selecionado"}`}
-            description="A imagem principal entra no card e na hero da hospedagem. A galeria completa aparece na pagina dedicada."
+            description="Primeiro ajuste a capa. Depois monte a galeria com as fotos extras que vao aparecer na pagina do hotel."
           >
             <AdminCardImageField
               label="Imagem principal da hospedagem"
@@ -523,7 +603,7 @@ export default function HotelsStudioEditor({
           <AdminSectionCard
             eyebrow="Card publico"
             title="O que aparece na vitrine da hospedagem"
-            description="Esses campos controlam a leitura rapida do card publico."
+            description="Esses campos montam a leitura rapida do hotel na home e nas vitrines publicas."
           >
             <AdminTextFieldCard
               label="Nome do hotel"
@@ -568,7 +648,7 @@ export default function HotelsStudioEditor({
           <AdminSectionCard
             eyebrow="Pagina dedicada"
             title="Conteudo completo da hospedagem"
-            description="Esses campos alimentam a pagina de detalhe do hotel com mais contexto para a decisao."
+            description="Aqui entra o texto mais completo para a pagina dedicada da hospedagem."
           >
             <AdminTextFieldCard
               label="Descricao completa da hospedagem"

@@ -1,45 +1,90 @@
 "use client"
 /* eslint-disable @next/next/no-img-element */
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  ArrowsPointingOutIcon,
   PhotoIcon,
   TrashIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline"
 import AdminMediaPickerDialog from "@/components/admin/AdminMediaPickerDialog"
-import type { MediaAssetItem } from "@/lib/media-library/shared"
 
 function GalleryPreview({
   title,
   description,
   images,
+  previewUrl,
+  onSelect,
+  onOpen,
 }: {
   title: string
   description: string
   images: string[]
+  previewUrl: string
+  onSelect: (value: string) => void
+  onOpen: (value: string) => void
 }) {
   return (
-    <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-      <p className="text-sm font-semibold text-[#0B1C2C]">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+    <div className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-[#0B1C2C]">{title}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+        </div>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+          {images.length} foto{images.length === 1 ? "" : "s"}
+        </span>
+      </div>
 
-      {images.length > 0 ? (
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {images.map((imageUrl, index) => (
-            <div key={`${imageUrl}-${index}`} className="overflow-hidden rounded-[1rem] border border-slate-200 bg-slate-50">
-              <div className="relative h-24 overflow-hidden">
-                <img src={imageUrl} alt={`${title} ${index + 1}`} className="h-full w-full object-cover" />
-              </div>
-            </div>
-          ))}
+      {previewUrl ? (
+        <div className="mt-4 overflow-hidden rounded-[1.2rem] border border-slate-200 bg-slate-50">
+          <div className="relative h-52">
+            <img src={previewUrl} alt={title} className="h-full w-full object-cover" />
+            <button
+              type="button"
+              onClick={() => onOpen(previewUrl)}
+              className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full bg-[#04101b]/70 p-2 text-white transition hover:bg-[#04101b]"
+              aria-label={`Abrir ${title} em destaque`}
+            >
+              <ArrowsPointingOutIcon className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       ) : (
-        <div className="mt-4 rounded-[1rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-          Nenhuma imagem selecionada.
+        <div className="mt-4 rounded-[1rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
+          Nenhuma imagem selecionada ainda.
         </div>
       )}
+
+      {images.length > 0 ? (
+        <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+          {images.map((imageUrl, index) => {
+            const selected = imageUrl === previewUrl
+
+            return (
+              <button
+                key={`${imageUrl}-${index}`}
+                type="button"
+                onClick={() => onSelect(imageUrl)}
+                className={`overflow-hidden rounded-[1rem] border transition ${
+                  selected ? "border-[#0B1C2C] shadow-sm" : "border-slate-200 hover:border-slate-300"
+                }`}
+              >
+                <div className="relative h-24 overflow-hidden bg-slate-100">
+                  <img
+                    src={imageUrl}
+                    alt={`${title} ${index + 1}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -72,20 +117,32 @@ export default function AdminMediaGalleryField({
     [draftImageUrls],
   )
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [activePreviewUrl, setActivePreviewUrl] = useState("")
+  const [modalImageUrl, setModalImageUrl] = useState("")
   const changed = JSON.stringify(safeLiveImageUrls) !== JSON.stringify(safeDraftImageUrls)
+  const selectedUrl = safeDraftImageUrls[0] ?? safeLiveImageUrls[0] ?? ""
 
-  const selectedUrl = useMemo(
-    () =>
-      safeDraftImageUrls[safeDraftImageUrls.length - 1] ?? safeLiveImageUrls[0] ?? "",
-    [safeDraftImageUrls, safeLiveImageUrls],
-  )
+  useEffect(() => {
+    const availableImages = [...safeDraftImageUrls, ...safeLiveImageUrls]
+    const nextPreview =
+      availableImages.find((imageUrl) => imageUrl === activePreviewUrl) ??
+      safeDraftImageUrls[0] ??
+      safeLiveImageUrls[0] ??
+      ""
 
-  const addImage = (item: MediaAssetItem) => {
+    if (nextPreview !== activePreviewUrl) {
+      setActivePreviewUrl(nextPreview)
+    }
+  }, [activePreviewUrl, safeDraftImageUrls, safeLiveImageUrls])
+
+  const addImage = (item: { url: string }) => {
     if (safeDraftImageUrls.includes(item.url)) {
+      setActivePreviewUrl(item.url)
       return
     }
 
     onChange([...safeDraftImageUrls, item.url])
+    setActivePreviewUrl(item.url)
   }
 
   const moveImage = (index: number, direction: -1 | 1) => {
@@ -102,12 +159,17 @@ export default function AdminMediaGalleryField({
   }
 
   const removeImage = (index: number) => {
-    onChange(safeDraftImageUrls.filter((_, currentIndex) => currentIndex !== index))
+    const nextImages = safeDraftImageUrls.filter((_, currentIndex) => currentIndex !== index)
+    onChange(nextImages)
+
+    if (safeDraftImageUrls[index] === activePreviewUrl) {
+      setActivePreviewUrl(nextImages[0] ?? safeLiveImageUrls[0] ?? "")
+    }
   }
 
   return (
     <div
-      className={`rounded-[1.6rem] border p-5 ${
+      className={`rounded-[1.45rem] border p-4 ${
         changed ? "border-amber-200 bg-amber-50/70" : "border-slate-200 bg-slate-50/80"
       }`}
     >
@@ -130,11 +192,17 @@ export default function AdminMediaGalleryField({
           title="Galeria atual no site"
           description="Estas imagens representam a galeria publicada agora."
           images={safeLiveImageUrls}
+          previewUrl={
+            safeLiveImageUrls.includes(activePreviewUrl) ? activePreviewUrl : safeLiveImageUrls[0] ?? ""
+          }
+          onSelect={setActivePreviewUrl}
+          onOpen={setModalImageUrl}
         />
-        <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
-          <p className="text-sm font-semibold text-[#0B1C2C]">Galeria do rascunho</p>
+
+        <div className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
+          <p className="text-sm font-semibold text-[#0B1C2C]">Galeria em edicao</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Escolha varias fotos da biblioteca, remova o que nao fizer sentido e ajuste a ordem da exibicao.
+            Escolha fotos da biblioteca, defina a ordem e abra qualquer imagem para conferir melhor.
           </p>
 
           {safeDraftImageUrls.length > 0 ? (
@@ -142,16 +210,35 @@ export default function AdminMediaGalleryField({
               {safeDraftImageUrls.map((imageUrl, index) => (
                 <div
                   key={`${imageUrl}-${index}`}
-                  className="flex flex-col gap-3 rounded-[1rem] border border-slate-200 bg-slate-50 p-3 sm:flex-row sm:items-center"
+                  className={`flex flex-col gap-3 rounded-[1rem] border p-3 sm:flex-row sm:items-center ${
+                    imageUrl === activePreviewUrl
+                      ? "border-[#0B1C2C] bg-[#0B1C2C]/[0.03]"
+                      : "border-slate-200 bg-slate-50"
+                  }`}
                 >
-                  <div className="h-20 w-full overflow-hidden rounded-[0.9rem] bg-slate-200 sm:w-28">
-                    <img src={imageUrl} alt={`Imagem ${index + 1}`} className="h-full w-full object-cover" />
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setModalImageUrl(imageUrl)}
+                    className="h-20 w-full overflow-hidden rounded-[0.9rem] bg-slate-200 sm:w-28"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={`Imagem ${index + 1}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold text-[#0B1C2C]">Imagem {index + 1}</p>
                     <p className="mt-1 truncate text-xs text-slate-500">{imageUrl}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActivePreviewUrl(imageUrl)}
+                      className="inline-flex items-center justify-center rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300"
+                    >
+                      Ver
+                    </button>
                     <button
                       type="button"
                       onClick={() => moveImage(index, -1)}
@@ -195,7 +282,7 @@ export default function AdminMediaGalleryField({
           className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
         >
           <PhotoIcon className="mr-2 h-5 w-5" />
-          Adicionar imagem na galeria
+          Adicionar foto na galeria
         </button>
         <button
           type="button"
@@ -206,14 +293,9 @@ export default function AdminMediaGalleryField({
         </button>
       </div>
 
-      <div className="mt-4 rounded-[1.25rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-7 text-slate-600">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-          Como esta galeria funciona
-        </p>
-        <p className="mt-2">
-          As imagens escolhidas aqui usam a biblioteca persistente do projeto. Quando voce salvar,
-          a galeria da pagina de hospedagem passa a refletir esta selecao.
-        </p>
+      <div className="mt-4 rounded-[1.15rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-6 text-slate-600">
+        A imagem principal fica no card e no topo da pagina. A galeria abaixo mostra as fotos
+        extras da hospedagem.
       </div>
 
       <AdminMediaPickerDialog
@@ -222,6 +304,28 @@ export default function AdminMediaGalleryField({
         onClose={() => setPickerOpen(false)}
         onSelect={addImage}
       />
+
+      {modalImageUrl ? (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-[#04101b]/78 p-4">
+          <div className="relative w-full max-w-5xl overflow-hidden rounded-[1.5rem] bg-white shadow-[0_30px_80px_rgba(4,16,27,0.4)]">
+            <button
+              type="button"
+              onClick={() => setModalImageUrl("")}
+              className="absolute right-4 top-4 z-10 inline-flex items-center justify-center rounded-full bg-[#04101b]/75 p-2 text-white transition hover:bg-[#04101b]"
+              aria-label="Fechar preview da imagem"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </button>
+            <div className="bg-slate-100">
+              <img
+                src={modalImageUrl}
+                alt="Preview da galeria"
+                className="max-h-[82vh] w-full object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -14,21 +14,21 @@ export default function AdminSectionCard({
   children: ReactNode
 }) {
   return (
-    <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 lg:flex-row lg:items-start lg:justify-between">
+    <section className="rounded-[1.6rem] border border-slate-200/80 bg-white/95 p-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] sm:p-6">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-400">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-400">
             {eyebrow}
           </p>
-          <h2 className="mt-3 text-2xl font-display text-[#0B1C2C]">{title}</h2>
+          <h2 className="mt-2 text-2xl font-display text-[#0B1C2C]">{title}</h2>
           {description ? (
-            <p className="mt-3 text-sm leading-7 text-slate-600">{description}</p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">{description}</p>
           ) : null}
         </div>
         {actions ? <div className="shrink-0">{actions}</div> : null}
       </div>
 
-      <div className="mt-5 space-y-5">{children}</div>
+      <div className="mt-5 space-y-4">{children}</div>
     </section>
   )
 }

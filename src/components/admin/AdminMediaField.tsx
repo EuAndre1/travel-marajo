@@ -45,9 +45,10 @@ export default function AdminMediaField({
 }) {
   const [pickerOpen, setPickerOpen] = useState(false)
   const changed = liveImageUrl !== draftImageUrl
+  const previewDraftImage = draftImageUrl || liveImageUrl
 
   return (
-    <div className="rounded-[1.6rem] border border-slate-200 bg-slate-50/80 p-5">
+    <div className="rounded-[1.45rem] border border-slate-200 bg-slate-50/75 p-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div className="max-w-2xl">
           <h3 className="text-base font-semibold text-[#0B1C2C]">{label}</h3>
@@ -75,7 +76,7 @@ export default function AdminMediaField({
               ? "Esta selecao fica salva no Admin Studio como referencia visual para a equipe."
               : "Nenhuma troca preparada no rascunho ate o momento."
           }
-          imageUrl={draftImageUrl || liveImageUrl}
+          imageUrl={previewDraftImage}
         />
       </div>
 
@@ -86,7 +87,7 @@ export default function AdminMediaField({
           className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
         >
           <PhotoIcon className="mr-2 h-5 w-5" />
-          Selecionar imagem da biblioteca
+          Escolher imagem da biblioteca
         </button>
         <button
           type="button"
@@ -97,21 +98,8 @@ export default function AdminMediaField({
         </button>
       </div>
 
-      <div className="mt-4 rounded-[1.25rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-7 text-slate-600">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-          Status desta acao
-        </p>
-        <p className="mt-2">
-          <strong className="text-[#0B1C2C]">Imagem atual do site:</strong> continua sendo a
-          referencia publica.
-        </p>
-        <p className="mt-2">
-          <strong className="text-[#0B1C2C]">Imagem escolhida no editor:</strong>{" "}
-          {changed
-            ? "ja esta preparada como rascunho visual para a equipe."
-            : "ainda nao foi trocada neste rascunho."}
-        </p>
-        <p className="mt-2">{pendingNote}</p>
+      <div className="mt-4 rounded-[1.15rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-6 text-slate-600">
+        {pendingNote}
       </div>
 
       <AdminMediaPickerDialog
