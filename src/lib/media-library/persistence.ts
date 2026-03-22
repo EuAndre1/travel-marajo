@@ -109,6 +109,13 @@ export async function createMediaAsset(input: Omit<MediaAssetItem, "createdAt">)
   await db.$executeRaw`
     INSERT INTO "MediaAsset" ("id", "url", "type", "filename", "alt", "uploadedBy")
     VALUES (${input.id}, ${input.url}, ${input.type}, ${input.filename}, ${input.alt}, ${input.uploadedBy})
+    ON CONFLICT ("id") DO UPDATE
+    SET
+      "url" = EXCLUDED."url",
+      "type" = EXCLUDED."type",
+      "filename" = EXCLUDED."filename",
+      "alt" = EXCLUDED."alt",
+      "uploadedBy" = EXCLUDED."uploadedBy"
   `
 
   return findMediaAssetById(input.id)

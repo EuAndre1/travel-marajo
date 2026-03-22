@@ -1,6 +1,7 @@
 "use client"
 /* eslint-disable @next/next/no-img-element */
 
+import { put as putBlob } from "@vercel/blob/client"
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import {
   ArrowsRightLeftIcon,
@@ -13,6 +14,8 @@ import {
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import AdminSectionCard from "@/components/admin/AdminSectionCard"
 import {
+  ACCEPTED_MEDIA_IMAGE_TYPES,
+  ACCEPTED_MEDIA_VIDEO_TYPES,
   MAX_MEDIA_IMAGE_BYTES,
   MAX_MEDIA_VIDEO_BYTES,
   getVideoMimeTypeFromPath,
@@ -48,8 +51,62 @@ function resolveUiMessage(rawMessage: string | null | undefined, fallback: strin
       return "Esta conta nao tem permissao para usar a biblioteca de midia."
     case "FILE_REQUIRED":
       return "Selecione um arquivo antes de enviar."
+    case "MEDIA_UPLOAD_INIT_FAILED":
+      return "Nao foi possivel preparar o upload desta midia."
+    case "MEDIA_UPLOAD_COMPLETE_FAILED":
+      return "O upload terminou, mas o arquivo nao entrou na biblioteca. Tente novamente."
+    case "MEDIA_UPLOAD_COMPLETE_INVALID":
+      return "Nao foi possivel registrar esta midia na biblioteca."
     default:
       return rawMessage
+  }
+}
+
+function validateSelectedMediaFile(file: File) {
+  if (file.type.startsWith("image/")) {
+    if (
+      !ACCEPTED_MEDIA_IMAGE_TYPES.includes(
+        file.type as (typeof ACCEPTED_MEDIA_IMAGE_TYPES)[number],
+      )
+    ) {
+      return "Formato invalido. Envie JPG, PNG, WEBP, GIF ou AVIF."
+    }
+
+    if (file.size > MAX_MEDIA_IMAGE_BYTES) {
+      return "Imagem muito grande. O limite atual e 5 MB."
+    }
+
+    return ""
+  }
+
+  if (file.type.startsWith("video/")) {
+    if (
+      !ACCEPTED_MEDIA_VIDEO_TYPES.includes(
+        file.type as (typeof ACCEPTED_MEDIA_VIDEO_TYPES)[number],
+      )
+    ) {
+      return "Formato invalido. Envie video MP4 ou WEBM."
+    }
+
+    if (file.size > MAX_MEDIA_VIDEO_BYTES) {
+      return "Video muito grande para o fluxo atual. Use um arquivo de ate 50 MB."
+    }
+
+    return ""
+  }
+
+  return "Formato invalido. Envie imagem ou video compativel."
+}
+
+type UploadInitResponse = {
+  upload: {
+    assetId: string
+    clientToken: string
+    pathname: string
+    contentType: string
+    type: MediaAssetType
+    maxFileSizeBytes: number
+    multipartRecommended: boolean
   }
 }
 
@@ -208,69 +265,104 @@ export default function MediaStudioEditor() {
       return
     }
 
+    const fileValidationMessage = validateSelectedMediaFile(selectedFile)
+
+    if (fileValidationMessage) {
+      setActionMessage(fileValidationMessage)
+      return
+    }
+
     setIsUploading(true)
     setActionMessage("")
     setUploadProgress(0)
 
-    const payload = new FormData()
-    payload.append("file", selectedFile)
-    if (altText.trim()) {
-      payload.append("alt", altText.trim())
-    }
-
     try {
-      const result = await new Promise<{ item: MediaAssetItem }>((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-
-        xhr.open("POST", "/api/admin/media/upload")
-        xhr.responseType = "json"
-
-        xhr.upload.onprogress = (event) => {
-          if (!event.lengthComputable) {
-            return
-          }
-
-          setUploadProgress(Math.round((event.loaded / event.total) * 100))
-        }
-
-        xhr.onload = () => {
-          const response = xhr.response
-
-          if (xhr.status >= 200 && xhr.status < 300 && response?.item) {
-            resolve(response)
-            return
-          }
-
-          reject(
-            new Error(
-              resolveUiMessage(
-                response?.message ?? response?.error,
-                "Nao foi possivel concluir o upload da midia.",
-              ),
-            ),
-          )
-        }
-
-        xhr.onerror = () => {
-          reject(new Error("Falha de rede ao enviar a midia."))
-        }
-
-        xhr.send(payload)
+      const initResponse = await fetch("/api/admin/media/upload", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          filename: selectedFile.name,
+          contentType: selectedFile.type,
+          size: selectedFile.size,
+        }),
       })
 
-      setItems((current) => [result.item, ...current])
-      setSelectedId(result.item.id)
+      const initResult = (await initResponse.json().catch(() => null)) as UploadInitResponse | null
+
+      if (!initResponse.ok || !initResult?.upload) {
+        throw new Error(
+          resolveUiMessage(
+            (initResult as { message?: string; error?: string } | null)?.message ??
+              (initResult as { message?: string; error?: string } | null)?.error,
+            selectedFile.type.startsWith("video/")
+              ? "Nao foi possivel preparar o upload do video."
+              : "Nao foi possivel preparar o upload da imagem.",
+          ),
+        )
+      }
+
+      const blob = await putBlob(initResult.upload.pathname, selectedFile, {
+        access: "public",
+        token: initResult.upload.clientToken,
+        contentType: selectedFile.type,
+        multipart: initResult.upload.multipartRecommended,
+        onUploadProgress: ({ percentage }) => {
+          setUploadProgress(Math.max(1, Math.round(percentage)))
+        },
+      })
+
+      const finalizeResponse = await fetch("/api/admin/media/upload/complete", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          assetId: initResult.upload.assetId,
+          url: blob.url,
+          filename: selectedFile.name,
+          alt: altText.trim() || null,
+          contentType: selectedFile.type,
+          type: initResult.upload.type,
+        }),
+      })
+
+      const finalizeResult = (await finalizeResponse.json().catch(() => null)) as
+        | { item?: MediaAssetItem; message?: string; error?: string }
+        | null
+
+      if (!finalizeResponse.ok || !finalizeResult?.item) {
+        throw new Error(
+          resolveUiMessage(
+            finalizeResult?.message ?? finalizeResult?.error,
+            selectedFile.type.startsWith("video/")
+              ? "O video foi enviado, mas nao entrou na biblioteca agora. Tente novamente."
+              : "A imagem foi enviada, mas nao entrou na biblioteca agora. Tente novamente.",
+          ),
+        )
+      }
+
+      setItems((current) => [
+        finalizeResult.item as MediaAssetItem,
+        ...current.filter((item) => item.id !== finalizeResult.item?.id),
+      ])
+      setSelectedId(finalizeResult.item.id)
       setActionMessage(
         replaceTargetName
           ? `Nova midia enviada. Ela entrou como um novo item da biblioteca para substituir ${replaceTargetName} quando voce quiser.`
-          : `${result.item.type === "video" ? "Video" : "Imagem"} enviada com sucesso para o storage persistente.`,
+          : `${
+              finalizeResult.item.type === "video" ? "Video" : "Imagem"
+            } enviado com sucesso para a biblioteca persistente.`,
       )
       resetUploadState()
       setUploadProgress(100)
     } catch (error) {
-      setActionMessage(
-        error instanceof Error ? error.message : "Nao foi possivel concluir o upload da midia.",
-      )
+      const fallbackMessage = selectedFile.type.startsWith("video/")
+        ? "Nao foi possivel enviar o video. Tente novamente com um arquivo menor ou reenviar."
+        : "Nao foi possivel enviar a imagem agora. Tente novamente."
+
+      setActionMessage(error instanceof Error ? error.message : fallbackMessage)
     } finally {
       setIsUploading(false)
     }
@@ -332,6 +424,16 @@ export default function MediaStudioEditor() {
   }
 
   const handleFileChoice = (file: File | null) => {
+    if (file) {
+      const fileValidationMessage = validateSelectedMediaFile(file)
+
+      if (fileValidationMessage) {
+        setSelectedFile(null)
+        setActionMessage(fileValidationMessage)
+        return
+      }
+    }
+
     setSelectedFile(file)
     setActionMessage("")
   }

@@ -1,89 +1,93 @@
-import { BlobNotFoundError } from "@vercel/blob"
+import { generateClientTokenFromReadWriteToken } from "@vercel/blob/client"
 import { NextResponse } from "next/server"
 import { requireAdminApiSession } from "@/lib/admin-studio/api-access"
-import { createMediaAsset } from "@/lib/media-library/persistence"
 import {
-  deleteMediaFromStorage,
+  getMaxMediaBytesForMimeType,
+  getMediaBlobToken,
   getMediaStorageErrorResponse,
   getMediaStorageStatus,
-  uploadMediaToStorage,
+  validateMediaFileMetadata,
+  buildMediaBlobPath,
 } from "@/lib/media-library/storage"
 import { getMediaTypeFromMimeType } from "@/lib/media-library/shared"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
+type UploadInitRequest = {
+  filename?: string
+  contentType?: string
+  size?: number
+}
+
+const CLIENT_UPLOAD_TOKEN_TTL_MS = 30 * 60 * 1000
+const MULTIPART_RECOMMENDATION_BYTES = 5 * 1024 * 1024
+
+function getFileNameFromInput(value: string | undefined) {
+  const sanitized = value?.trim()
+
+  if (!sanitized) {
+    return "upload"
+  }
+
+  return sanitized.split(/[\\/]/).pop() || "upload"
+}
+
 export async function POST(request: Request) {
-  const { response, session } = await requireAdminApiSession()
+  const { response } = await requireAdminApiSession()
 
   if (response) {
     return response
   }
 
-  if (!session?.user) {
-    return NextResponse.json({ error: "AUTH_REQUIRED" }, { status: 401 })
-  }
+  const payload = (await request.json().catch(() => null)) as UploadInitRequest | null
 
-  const formData = await request.formData().catch(() => null)
-  const fileCandidate = formData?.get("file")
-  const altCandidate = formData?.get("alt")
-
-  if (!(fileCandidate instanceof File)) {
-    return NextResponse.json({ error: "FILE_REQUIRED" }, { status: 400 })
-  }
-
-  const alt = typeof altCandidate === "string" ? altCandidate.trim() : ""
-  let uploadedUrl = ""
+  const filename = getFileNameFromInput(payload?.filename)
+  const contentType = payload?.contentType?.trim() ?? ""
+  const size = Number(payload?.size)
 
   try {
-    const blob = await uploadMediaToStorage(fileCandidate)
-    uploadedUrl = blob.url
-    const mediaType = getMediaTypeFromMimeType(fileCandidate.type)
-
-    const item = await createMediaAsset({
-      id: crypto.randomUUID(),
-      url: blob.url,
-      type: mediaType,
-      filename: fileCandidate.name,
-      alt: alt || null,
-      uploadedBy: session.user.email ?? "unknown@travelmarajo.local",
+    validateMediaFileMetadata({
+      mimeType: contentType,
+      size,
     })
 
-    if (!item) {
-      throw new Error("Nao foi possivel registrar a imagem persistida no banco.")
-    }
+    const pathname = buildMediaBlobPath(filename)
+    const maxFileSizeBytes = getMaxMediaBytesForMimeType(contentType)
+    const mediaType = getMediaTypeFromMimeType(contentType)
+    const clientToken = await generateClientTokenFromReadWriteToken({
+      token: getMediaBlobToken(),
+      pathname,
+      addRandomSuffix: false,
+      cacheControlMaxAge: 60 * 60 * 24 * 30,
+      allowedContentTypes: [contentType],
+      maximumSizeInBytes: maxFileSizeBytes,
+      validUntil: Date.now() + CLIENT_UPLOAD_TOKEN_TTL_MS,
+    })
 
-    return NextResponse.json(
-      {
-        item,
-        storage: getMediaStorageStatus(),
+    return NextResponse.json({
+      upload: {
+        assetId: crypto.randomUUID(),
+        clientToken,
+        pathname,
+        contentType,
+        type: mediaType,
+        maxFileSizeBytes,
+        multipartRecommended: size >= MULTIPART_RECOMMENDATION_BYTES,
       },
-      { status: 201 },
-    )
+      storage: getMediaStorageStatus(),
+    })
   } catch (error) {
-    if (uploadedUrl) {
-      try {
-        await deleteMediaFromStorage(uploadedUrl)
-      } catch (cleanupError) {
-        if (!(cleanupError instanceof BlobNotFoundError)) {
-          console.error("[admin/media/upload] failed to cleanup uploaded blob", {
-            message:
-              cleanupError instanceof Error ? cleanupError.message : "unknown_cleanup_error",
-          })
-        }
-      }
-    }
-
     const { message, status } = getMediaStorageErrorResponse(error)
 
-    console.error("[admin/media/upload] failed", {
+    console.error("[admin/media/upload:init] failed", {
       message,
       status,
     })
 
     return NextResponse.json(
       {
-        error: "MEDIA_UPLOAD_FAILED",
+        error: "MEDIA_UPLOAD_INIT_FAILED",
         message,
       },
       { status },

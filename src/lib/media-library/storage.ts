@@ -9,7 +9,7 @@ import {
   type MediaStorageStatus,
 } from "@/lib/media-library/shared"
 
-class MediaStorageError extends Error {
+export class MediaStorageError extends Error {
   status: number
 
   constructor(message: string, status = 400) {
@@ -41,7 +41,7 @@ function getFileExtension(fileName: string) {
   return match?.[0] ?? ""
 }
 
-function buildBlobPath(fileName: string) {
+export function buildMediaBlobPath(fileName: string) {
   const now = new Date()
   const year = String(now.getUTCFullYear())
   const month = String(now.getUTCMonth() + 1).padStart(2, "0")
@@ -67,7 +67,7 @@ export function getMediaStorageStatus(): MediaStorageStatus {
   }
 }
 
-function assertStorageReady() {
+export function getMediaBlobToken() {
   const token = getBlobToken()
 
   if (!token) {
@@ -80,13 +80,19 @@ function assertStorageReady() {
   return token
 }
 
-export function validateMediaFile(file: File) {
-  const mediaType = getMediaTypeFromMimeType(file.type)
+export function getMaxMediaBytesForMimeType(mimeType: string | null | undefined) {
+  return getMediaTypeFromMimeType(mimeType) === "video"
+    ? MAX_MEDIA_VIDEO_BYTES
+    : MAX_MEDIA_IMAGE_BYTES
+}
+
+function assertValidMediaType(mimeType: string | null | undefined) {
+  const mediaType = getMediaTypeFromMimeType(mimeType)
 
   if (mediaType === "image") {
     if (
       !ACCEPTED_MEDIA_IMAGE_TYPES.includes(
-        file.type as (typeof ACCEPTED_MEDIA_IMAGE_TYPES)[number],
+        mimeType as (typeof ACCEPTED_MEDIA_IMAGE_TYPES)[number],
       )
     ) {
       throw new MediaStorageError(
@@ -95,24 +101,47 @@ export function validateMediaFile(file: File) {
       )
     }
 
-    if (file.size > MAX_MEDIA_IMAGE_BYTES) {
-      throw new MediaStorageError("Arquivo muito grande. O limite atual para imagem e 5 MB.", 413)
-    }
-
     return
   }
 
   if (
     !ACCEPTED_MEDIA_VIDEO_TYPES.includes(
-      file.type as (typeof ACCEPTED_MEDIA_VIDEO_TYPES)[number],
+      mimeType as (typeof ACCEPTED_MEDIA_VIDEO_TYPES)[number],
     )
   ) {
     throw new MediaStorageError("Formato invalido. Envie video MP4 ou WEBM.", 415)
   }
+}
 
-  if (file.size > MAX_MEDIA_VIDEO_BYTES) {
-    throw new MediaStorageError("Arquivo muito grande. O limite atual para video e 50 MB.", 413)
+export function validateMediaFileMetadata(input: {
+  mimeType: string | null | undefined
+  size: number
+}) {
+  assertValidMediaType(input.mimeType)
+
+  const maxSize = getMaxMediaBytesForMimeType(input.mimeType)
+
+  if (!Number.isFinite(input.size) || input.size <= 0) {
+    throw new MediaStorageError("Arquivo invalido. Escolha outro arquivo para enviar.", 400)
   }
+
+  if (input.size > maxSize) {
+    if (getMediaTypeFromMimeType(input.mimeType) === "video") {
+      throw new MediaStorageError(
+        "Arquivo muito grande. O limite atual para video e 50 MB.",
+        413,
+      )
+    }
+
+    throw new MediaStorageError("Arquivo muito grande. O limite atual para imagem e 5 MB.", 413)
+  }
+}
+
+export function validateMediaFile(file: File) {
+  validateMediaFileMetadata({
+    mimeType: file.type,
+    size: file.size,
+  })
 }
 
 export function getMediaStorageErrorResponse(error: unknown) {
@@ -132,8 +161,8 @@ export function getMediaStorageErrorResponse(error: unknown) {
 export async function uploadMediaToStorage(file: File) {
   validateMediaFile(file)
 
-  const token = assertStorageReady()
-  const pathname = buildBlobPath(file.name)
+  const token = getMediaBlobToken()
+  const pathname = buildMediaBlobPath(file.name)
 
   return put(pathname, file, {
     access: "public",
@@ -145,7 +174,7 @@ export async function uploadMediaToStorage(file: File) {
 }
 
 export async function deleteMediaFromStorage(url: string) {
-  const token = assertStorageReady()
+  const token = getMediaBlobToken()
   await del(url, { token })
 }
 
