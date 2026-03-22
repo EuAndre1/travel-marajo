@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import type { AppLocale } from "@/config/i18n"
 import type { ResolvedAdminHotelCardItem } from "@/lib/admin-studio/card-collections"
 import { getLocalizedPath } from "@/i18n/routing"
+import { buildWhatsAppUrl } from "@/lib/whatsapp-message"
+import BookingActionBar from "@/components/hotels/BookingActionBar"
 
 const copyByLocale = {
   pt: {
@@ -24,6 +26,15 @@ const copyByLocale = {
     priceFallback: "Sob consulta",
     occupancyFallback: "Capacidade sob consulta",
     bedsFallback: "Configuracao de cama sob consulta",
+    summaryTitle: "Resumo da reserva",
+    selectedRoomsTitle: "Quartos selecionados",
+    hotelLabel: "Hotel",
+    totalLabel: "Total estimado",
+    checkoutLabel: "Reservar agora",
+    specialistLabel: "Falar com especialista",
+    checkoutErrorFallback: "Nao foi possivel iniciar a reserva agora. Tente novamente em instantes.",
+    whatsappHelper: "Leve esta selecao para o time e continue com apoio humano.",
+    checkoutHelper: "Pagamento seguro via Stripe para confirmar esta selecao.",
   },
   en: {
     title: "Available rooms",
@@ -42,6 +53,15 @@ const copyByLocale = {
     priceFallback: "On request",
     occupancyFallback: "Occupancy on request",
     bedsFallback: "Bed setup on request",
+    summaryTitle: "Booking summary",
+    selectedRoomsTitle: "Selected rooms",
+    hotelLabel: "Hotel",
+    totalLabel: "Estimated total",
+    checkoutLabel: "Reserve now",
+    specialistLabel: "Talk to specialist",
+    checkoutErrorFallback: "We could not start the reservation just now. Please try again.",
+    whatsappHelper: "Send this selection to our team and continue with human support.",
+    checkoutHelper: "Secure Stripe payment to confirm this selection.",
   },
   es: {
     title: "Alojamientos disponibles",
@@ -60,6 +80,15 @@ const copyByLocale = {
     priceFallback: "Bajo consulta",
     occupancyFallback: "Capacidad a confirmar",
     bedsFallback: "Configuracion de cama a confirmar",
+    summaryTitle: "Resumen de la reserva",
+    selectedRoomsTitle: "Habitaciones seleccionadas",
+    hotelLabel: "Hotel",
+    totalLabel: "Total estimado",
+    checkoutLabel: "Reservar ahora",
+    specialistLabel: "Hablar con especialista",
+    checkoutErrorFallback: "No fue posible iniciar la reserva ahora. Intentalo de nuevo.",
+    whatsappHelper: "Envia esta seleccion al equipo y continua con apoyo humano.",
+    checkoutHelper: "Pago seguro con Stripe para confirmar esta seleccion.",
   },
   fr: {
     title: "Hebergements disponibles",
@@ -78,6 +107,15 @@ const copyByLocale = {
     priceFallback: "Sur demande",
     occupancyFallback: "Capacite a confirmer",
     bedsFallback: "Configuration du lit a confirmer",
+    summaryTitle: "Resume de la reservation",
+    selectedRoomsTitle: "Chambres selectionnees",
+    hotelLabel: "Hotel",
+    totalLabel: "Total estime",
+    checkoutLabel: "Reserver maintenant",
+    specialistLabel: "Parler a un specialiste",
+    checkoutErrorFallback: "Impossible de lancer la reservation pour le moment. Veuillez reessayer.",
+    whatsappHelper: "Envoyez cette selection a notre equipe et continuez avec un accompagnement humain.",
+    checkoutHelper: "Paiement securise via Stripe pour confirmer cette selection.",
   },
 } as const
 
@@ -142,6 +180,53 @@ function resolveRoomContactHref(
   return roomTarget
 }
 
+function resolveSpecialistHref(
+  hotel: ResolvedAdminHotelCardItem,
+  locale: AppLocale,
+  message: string,
+) {
+  const configuredNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+
+  if (configuredNumber) {
+    return buildWhatsAppUrl(configuredNumber, message)
+  }
+
+  if (hotel.ctaTarget && isExternalHref(hotel.ctaTarget)) {
+    return hotel.ctaTarget
+  }
+
+  return getLocalizedPath(locale, "planTrip")
+}
+
+function buildHotelSelectionMessage(
+  hotel: ResolvedAdminHotelCardItem,
+  selectedRoomsSummary: Array<{
+    name: string
+    quantity: number
+    price: number
+    subtotal: number
+  }>,
+  totalPrice: number,
+  locale: AppLocale,
+) {
+  const formattedTotal = formatRoomPrice(totalPrice, locale)
+  const selectedLines = selectedRoomsSummary
+    .map(
+      (room) =>
+        `- ${room.name} x ${room.quantity} (${formatRoomPrice(room.subtotal, locale)})`,
+    )
+    .join("\n")
+
+  return [
+    `Ola! Quero reservar quartos em ${hotel.title}.`,
+    "",
+    "Selecao atual:",
+    selectedLines,
+    "",
+    `Total estimado: ${formattedTotal}`,
+  ].join("\n")
+}
+
 export default function HotelAvailabilitySection({
   hotel,
   locale,
@@ -154,7 +239,91 @@ export default function HotelAvailabilitySection({
     .filter((room) => room.visible && room.name.trim().length > 0)
     .sort((left, right) => left.sortOrder - right.sortOrder)
   const [selectedQuantities, setSelectedQuantities] = useState<Record<string, number>>({})
+  const [isCreatingCheckout, setIsCreatingCheckout] = useState(false)
+  const [checkoutError, setCheckoutError] = useState("")
   const conciergeHref = getLocalizedPath(locale, "planTrip")
+  const selectedRoomsSummary = useMemo(
+    () =>
+      rooms
+        .map((room) => {
+          const quantity = selectedQuantities[room.id] ?? 0
+          const price = room.price ?? 0
+
+          if (quantity < 1) {
+            return null
+          }
+
+          return {
+            id: room.id,
+            name: room.name,
+            quantity,
+            price,
+            subtotal: price * quantity,
+          }
+        })
+        .filter(
+          (
+            room,
+          ): room is {
+            id: string
+            name: string
+            quantity: number
+            price: number
+            subtotal: number
+          } => Boolean(room),
+        ),
+    [rooms, selectedQuantities],
+  )
+  const totalPrice = useMemo(
+    () => selectedRoomsSummary.reduce((sum, room) => sum + room.subtotal, 0),
+    [selectedRoomsSummary],
+  )
+  const hasSelection = selectedRoomsSummary.length > 0
+  const canCheckout =
+    hasSelection &&
+    totalPrice > 0 &&
+    selectedRoomsSummary.every((room) => room.price > 0)
+  const specialistHref = resolveSpecialistHref(
+    hotel,
+    locale,
+    buildHotelSelectionMessage(hotel, selectedRoomsSummary, totalPrice, locale),
+  )
+
+  async function handleCheckout() {
+    if (!canCheckout || isCreatingCheckout) {
+      return
+    }
+
+    setIsCreatingCheckout(true)
+    setCheckoutError("")
+
+    try {
+      const response = await fetch("/api/checkout/create-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          hotelName: hotel.title,
+          hotelSlug: hotel.linkedSlug,
+          locale,
+          total: totalPrice,
+          selectedRooms: selectedRoomsSummary,
+        }),
+      })
+
+      const payload = (await response.json()) as { checkoutUrl?: string; error?: string }
+
+      if (!response.ok || !payload.checkoutUrl) {
+        throw new Error(payload.error || copy.checkoutErrorFallback)
+      }
+
+      window.location.href = payload.checkoutUrl
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : copy.checkoutErrorFallback)
+      setIsCreatingCheckout(false)
+    }
+  }
 
   if (rooms.length === 0) {
     return (
@@ -179,7 +348,7 @@ export default function HotelAvailabilitySection({
   }
 
   return (
-    <section className="tm-section pt-0">
+    <section className={`tm-section pt-0 ${hasSelection ? "pb-32 sm:pb-36" : ""}`}>
       <div className="tm-shell">
         <div className="mb-6">
           <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{copy.title}</p>
@@ -345,7 +514,62 @@ export default function HotelAvailabilitySection({
             )
           })}
         </div>
+
+        {hasSelection ? (
+          <div className="mt-8 rounded-[1.8rem] border border-slate-200 bg-white p-5 shadow-[0_12px_28px_rgba(15,23,42,0.05)] sm:p-6">
+            <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{copy.summaryTitle}</p>
+            <div className="mt-4 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+              <div>
+                <p className="text-sm font-semibold text-[#0B1C2C]">
+                  {copy.hotelLabel}: {hotel.title}
+                </p>
+                <p className="mt-4 text-sm font-semibold text-[#0B1C2C]">
+                  {copy.selectedRoomsTitle}
+                </p>
+                <div className="mt-3 space-y-3">
+                  {selectedRoomsSummary.map((room) => (
+                    <div
+                      key={room.id}
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-[1.2rem] bg-slate-50 px-4 py-3 text-sm text-slate-700"
+                    >
+                      <span>
+                        {room.name} × {room.quantity}
+                      </span>
+                      <strong className="text-[#0B1C2C]">
+                        {formatRoomPrice(room.subtotal, locale)}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[1.3rem] bg-[linear-gradient(135deg,#fff8f1,#f8fbfd)] px-5 py-5">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-400">{copy.totalLabel}</p>
+                <p className="mt-2 text-3xl font-semibold text-[#0B1C2C]">
+                  {formatRoomPrice(totalPrice, locale) || copy.priceFallback}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-slate-600">{copy.checkoutHelper}</p>
+                {checkoutError ? (
+                  <p className="mt-3 text-sm font-medium text-rose-600">{checkoutError}</p>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
+
+      {totalPrice > 0 ? (
+        <BookingActionBar
+          totalLabel={formatRoomPrice(totalPrice, locale) || copy.priceFallback}
+          primaryLabel={copy.checkoutLabel}
+          secondaryLabel={copy.specialistLabel}
+          secondaryHref={specialistHref}
+          onPrimaryAction={handleCheckout}
+          primaryLoading={isCreatingCheckout}
+          primaryDisabled={!canCheckout}
+          helperText={checkoutError || copy.whatsappHelper}
+        />
+      ) : null}
     </section>
   )
 }

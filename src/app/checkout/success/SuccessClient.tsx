@@ -16,6 +16,12 @@ function buildWhatsappLink(message: string) {
   return `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`
 }
 
+function humanizeSlug(slug: string) {
+  return decodeURIComponent(slug)
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
 export default function CheckoutSuccessClient() {
   const { lang } = useSiteLanguage()
   const content = siteContent[lang]
@@ -25,7 +31,12 @@ export default function CheckoutSuccessClient() {
 
   const experience = slug ? getExperienceBySlug(slug) : null
   const packageItem = slug ? getPackageBySlug(slug) : null
-  const itemName = type === "pacote" ? packageItem?.title : experience?.title
+  const itemName =
+    type === "pacote"
+      ? packageItem?.title
+      : type === "hotel"
+        ? (slug ? humanizeSlug(slug) : null)
+        : experience?.title
   const message = itemName
     ? content.checkoutSuccessWhatsappMessage.replace("{itemName}", itemName)
     : content.checkoutSuccessWhatsappFallback
