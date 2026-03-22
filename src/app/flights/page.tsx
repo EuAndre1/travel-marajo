@@ -4,8 +4,8 @@ import FlightSearchForm from '@/components/flights/FlightSearchForm'
 import FlightSearchModule from '@/components/flights/FlightSearchModule'
 
 export const metadata: Metadata = {
-  title: 'Travel Maraj? Flights Search',
-  description: 'Search available flights to Maraj? Island by origin, destination and departure date.',
+  title: 'Travel Marajó Flights Search',
+  description: 'Search available flights to Marajó Island by origin, destination and departure date.',
 }
 
 export default function FlightsPage() {

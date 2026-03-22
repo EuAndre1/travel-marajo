@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     default: "Travel Marajó",
     template: "%s | Travel Marajó",
   },
-  description: "Premium destination platform for Maraj? Island with multilingual discovery, planning, and checkout-ready routes.",
+  description: "Premium destination platform for Marajó Island with multilingual discovery, planning, and checkout-ready routes.",
   keywords: ["marajo island travel", "amazon island experiences", "travel marajo"],
   alternates: {
     canonical: getLocalizedPath(DEFAULT_LOCALE, "home"),
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Travel Marajó",
-    description: "Discover Maraj? Island through experiences, destinations, guides, and international-ready travel planning.",
+    description: "Discover Marajó Island through experiences, destinations, guides, and international-ready travel planning.",
     url: getSiteUrl(),
     siteName: "Travel Marajó",
     locale: LOCALE_TO_BCP47[DEFAULT_LOCALE].replace("-", "_"),

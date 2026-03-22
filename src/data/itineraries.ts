@@ -26,7 +26,7 @@ export const itineraryCatalog: Itinerary[] = [
       heroImage: "/pesqueiro-1.png",
       altByLocale: {
         en: "Classic Marajo itinerary with beach and culture",
-        pt: "Roteiro cl?ssico no Maraj? com praia e cultura",
+        pt: "Roteiro clássico no Marajó com praia e cultura",
       },
     },
     days: [
@@ -73,9 +73,9 @@ export const itineraryCatalog: Itinerary[] = [
     ],
     translations: {
       pt: {
-        title: "Roteiro cl?ssico de 3 dias no Maraj?",
-        shortDescription: "Roteiro compacto de primeira viagem com praia ic?nica, cultura b?fala e ritmo log?stico simples.",
-        seasonalNotes: "Funciona melhor quando os hor?rios de transfer e p?r do sol s?o alinhados com anteced?ncia.",
+        title: "Roteiro clássico de 3 dias no Marajó",
+        shortDescription: "Roteiro compacto de primeira viagem com praia icônica, cultura búfala e ritmo logístico simples.",
+        seasonalNotes: "Funciona melhor quando os horários de transfer e pôr do sol são alinhados com antecedência.",
       },
       en: {
         title: "3 Day Marajo Classic",
@@ -182,7 +182,7 @@ export const itineraryCatalog: Itinerary[] = [
     ],
     translations: {
       pt: {
-        title: "Roteiro natureza de 5 dias no Maraj?",
+        title: "Roteiro natureza de 5 dias no Marajó",
         shortDescription: "Roteiro mais lento com manguezais, passeios de barco e descoberta entre Soure e Salvaterra.",
         seasonalNotes: "Melhor para quem consegue adaptar o ritmo ao tempo e a dinamica da agua.",
       },
@@ -278,8 +278,8 @@ export const itineraryCatalog: Itinerary[] = [
     ],
     translations: {
       pt: {
-        title: "Roteiro de vida selvagem no Maraj?",
-        shortDescription: "Camada de planejamento focada em observa??o de aves, habitats e ritmo de natureza.",
+        title: "Roteiro de vida selvagem no Marajó",
+        shortDescription: "Camada de planejamento focada em observação de aves, habitats e ritmo de natureza.",
         seasonalNotes: "Melhor quando a janela de campo pode se adaptar ao clima e aos habitats.",
       },
       en: {
@@ -374,8 +374,8 @@ export const itineraryCatalog: Itinerary[] = [
     ],
     translations: {
       pt: {
-        title: "Roteiro de pesca no Maraj?",
-        shortDescription: "Estrutura de planejamento para quem quer a pesca como ?ncora de uma viagem mais ampla.",
+        title: "Roteiro de pesca no Marajó",
+        shortDescription: "Estrutura de planejamento para quem quer a pesca como âncora de uma viagem mais ampla.",
         seasonalNotes: "Roteiros de pesca precisam de timing flexivel e alinhamento claro de expectativa antes da confirmacao.",
       },
       en: {

@@ -29,9 +29,9 @@ export default function HomeHero() {
     heroMediaType === "video" && Boolean(heroMediaUrl) && !videoFailed
   const arrivalNote = {
     pt: "De Belém - ferry + transfer disponíveis",
-    en: "From Belem - ferry + transfer available",
-    es: "Desde Belem - ferry + transfer disponibles",
-    fr: "Depuis Belem - ferry + transfert disponibles",
+    en: "From Belém - ferry + transfer available",
+    es: "Desde Belém - ferry + transfer disponibles",
+    fr: "Depuis Belém - ferry + transfert disponibles",
   }[lang]
   const plannerQuickLinks = [
     {

@@ -3,10 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { ContentStudioSurface } from "@/lib/content-studio/resolvers"
 
-function debugAdminPersist(event: string, payload: unknown) {
-  console.log(`[admin-persist] ${event}`, payload)
-}
-
 export function useAdminPersistedSave<T>({
   surface,
   draft,
@@ -25,11 +21,7 @@ export function useAdminPersistedSave<T>({
 
   useEffect(() => {
     draftRef.current = draft
-    debugAdminPersist("draft_snapshot_updated", {
-      surface,
-      draft,
-    })
-  }, [draft, surface])
+  }, [draft])
 
   const saveAndPersist = useCallback(async () => {
     const currentDraft = draftRef.current
@@ -37,10 +29,6 @@ export function useAdminPersistedSave<T>({
     setIsPersisting(true)
     setPersistState("saving")
     setPersistMessage("Sincronizando com a camada persistida do site...")
-    debugAdminPersist("save_requested", {
-      surface,
-      draft: currentDraft,
-    })
 
     try {
       const response = await fetch(`/api/admin/content-overrides/${surface}`, {
@@ -71,10 +59,6 @@ export function useAdminPersistedSave<T>({
       setPersistMessage(
         "Override salvo no banco e pronto para refletir no site publico quando esta superficie for renderizada.",
       )
-      debugAdminPersist("save_succeeded", {
-        surface,
-        persistedDraft,
-      })
     } catch (error) {
       const message =
         error instanceof Error
@@ -85,10 +69,6 @@ export function useAdminPersistedSave<T>({
         `O rascunho local foi salvo neste navegador, mas houve falha ao persistir no site: ${message}`,
       )
       setPersistState("error")
-      debugAdminPersist("save_failed", {
-        surface,
-        message,
-      })
     } finally {
       setIsPersisting(false)
     }

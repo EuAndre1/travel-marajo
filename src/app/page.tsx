@@ -13,7 +13,7 @@ import HomeConciergeSupport from "@/components/home/HomeConciergeSupport"
 import HomeFinalCta from "@/components/home/HomeFinalCta"
 
 export const metadata: Metadata = {
-  title: "Travel Maraj? | Global gateway to Maraj? Island",
+  title: "Travel Marajó | Global gateway to Marajó Island",
   description:
     "Discover, plan, and book Marajo through premium experiences, curated journeys, travel intelligence, and trusted local support.",
 }
@@ -22,7 +22,7 @@ export default function HomePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "TravelAgency",
-    name: "Travel Maraj?",
+    name: "Travel Marajó",
     url: "https://www.travelmarajo.com",
     description:
       "Destination platform for discovering, planning, and booking Marajo with local curation and international-facing support.",

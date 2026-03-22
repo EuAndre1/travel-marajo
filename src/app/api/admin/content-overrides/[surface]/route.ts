@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
-import { revalidatePath } from "next/cache"
 import { authOptions } from "@/lib/auth/options"
 import {
   contentStudioSurfaces,
@@ -8,61 +7,10 @@ import {
   type ContentStudioSurface,
 } from "@/lib/content-studio/resolvers"
 import { savePersistedContentStudioSurface } from "@/lib/content-studio/persistence"
+import { revalidateContentStudioSurface } from "@/lib/content-studio/revalidation"
 
 function isContentStudioSurface(value: string): value is ContentStudioSurface {
   return contentStudioSurfaces.includes(value as ContentStudioSurface)
-}
-
-function revalidateSurfacePaths(surface: ContentStudioSurface, draft: unknown) {
-  revalidatePath("/", "layout")
-
-  switch (surface) {
-    case "homepage":
-    case "content":
-      revalidatePath("/planejar-viagem")
-      revalidatePath("/destinos")
-      revalidatePath("/services")
-      revalidatePath("/pacotes")
-      revalidatePath("/hotels")
-      return
-    case "experiences":
-      revalidatePath("/experiencias")
-      revalidatePath("/experiences/pesqueiro")
-      return
-    case "packages":
-    case "routeCards":
-      revalidatePath("/pacotes")
-      revalidatePath("/packages")
-      return
-    case "destinationCards":
-      revalidatePath("/destinos")
-      return
-    case "serviceCards":
-      revalidatePath("/services")
-      return
-    case "hotelCards":
-      revalidatePath("/hotels")
-
-      if (
-        draft &&
-        typeof draft === "object" &&
-        "items" in draft &&
-        Array.isArray((draft as { items?: unknown[] }).items)
-      ) {
-        for (const item of (draft as { items: unknown[] }).items) {
-          if (
-            item &&
-            typeof item === "object" &&
-            "linkedSlug" in item &&
-            typeof (item as { linkedSlug?: unknown }).linkedSlug === "string" &&
-            (item as { linkedSlug: string }).linkedSlug
-          ) {
-            revalidatePath(`/hotels/${(item as { linkedSlug: string }).linkedSlug}`)
-          }
-        }
-      }
-      return
-  }
 }
 
 export async function PUT(
@@ -93,21 +41,10 @@ export async function PUT(
   }
 
   try {
-    console.log("[admin/content-overrides] incoming draft", {
-      surface: surfaceParam,
-      email: session.user.email ?? null,
-      draft,
-    })
-
     const mergedState = mergeContentStudioState({
       [surfaceParam]: draft,
     })
     const persistedDraft = mergedState[surfaceParam]
-
-    console.log("[admin/content-overrides] normalized draft", {
-      surface: surfaceParam,
-      draft: persistedDraft,
-    })
 
     await savePersistedContentStudioSurface(
       surfaceParam,
@@ -115,7 +52,7 @@ export async function PUT(
       session.user.email ?? null,
     )
 
-    revalidateSurfacePaths(surfaceParam, persistedDraft)
+    revalidateContentStudioSurface(surfaceParam, persistedDraft)
 
     return NextResponse.json({
       ok: true,

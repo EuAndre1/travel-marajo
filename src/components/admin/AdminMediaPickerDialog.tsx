@@ -10,6 +10,7 @@ import {
   PlayIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
+import { fetchAdminMediaLibrarySnapshot } from "@/lib/media-library/admin-client-cache"
 import type { MediaAssetItem, MediaAssetType } from "@/lib/media-library/shared"
 import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
@@ -107,18 +108,12 @@ export default function AdminMediaPickerDialog({
       setErrorMessage("")
 
       try {
-        const response = await fetch("/api/admin/media", { cache: "no-store" })
-        const result = await response.json().catch(() => null)
-
-        if (!response.ok) {
-          throw new Error(resolveErrorMessage(result?.message ?? result?.error))
-        }
-
         if (cancelled) {
           return
         }
 
-        const rawItems: MediaAssetItem[] = Array.isArray(result?.items) ? result.items : []
+        const snapshot = await fetchAdminMediaLibrarySnapshot()
+        const rawItems: MediaAssetItem[] = snapshot.items
         const nextItems = rawItems.filter((item) => acceptedTypes.includes(item.type))
         setItems(nextItems)
 
@@ -128,7 +123,7 @@ export default function AdminMediaPickerDialog({
         if (!cancelled) {
           setErrorMessage(
             error instanceof Error
-              ? error.message
+              ? resolveErrorMessage(error.message)
               : "Nao foi possivel carregar a biblioteca de midia.",
           )
         }

@@ -64,7 +64,7 @@ export const experienceCatalog: Experience[] = [
         shortDescription: "Marajo's flagship beach experience with cinematic sunset, open scenery, and local curation.",
         fullDescription:
           "A signature coastal experience for travelers who want one of the island's strongest visual moments with practical local support and a booking-ready structure.",
-        locationLabel: "Soure - Maraj? Island",
+    locationLabel: "Soure - Marajó Island",
         durationLabel: "4 hours",
         highlights: ["Signature sunset", "Open scenery", "First-trip friendly", "Human support"],
         included: ["Experience curation", "Local orientation", "Pre-trip support"],

@@ -75,7 +75,7 @@ function getMetadataForRoute(locale: AppLocale, key: AppRouteKey, slug?: string)
     openGraph: {
       locale: LOCALE_TO_BCP47[locale].replace("-", "_"),
       url: buildAbsoluteUrl(getLocalizedPath(locale, key, slug ? { slug } : undefined)),
-      siteName: "Travel Maraj?",
+      siteName: "Travel Marajó",
       type: "website",
     },
     ...(robotsPolicy
@@ -135,19 +135,19 @@ function getMetadataForRoute(locale: AppLocale, key: AppRouteKey, slug?: string)
   }
 
   const titles: Record<AppRouteKey, string> = {
-    home: "Travel Maraj?",
-    experiences: "Travel Maraj? Experiences",
-    experienceDetail: "Travel Maraj? Experience",
-    packages: "Travel Maraj? Packages",
-    packageDetail: "Travel Maraj? Package",
+    home: "Travel Marajó",
+    experiences: "Travel Marajó Experiences",
+    experienceDetail: "Travel Marajó Experience",
+    packages: "Travel Marajó Packages",
+    packageDetail: "Travel Marajó Package",
     destinations: "Marajo Destinations",
     destinationDetail: "Marajo Destination",
     guides: "Marajo Travel Guides",
     guideDetail: "Marajo Guide",
     planTrip: "Plan Your Marajo Trip",
-    offers: "Travel Maraj? Offers",
-    partners: "Travel Maraj? Partners",
-    services: "Travel Maraj? Services",
+    offers: "Travel Marajó Offers",
+    partners: "Travel Marajó Partners",
+    services: "Travel Marajó Services",
     serviceBrazilVisa: "Brazil Visa Consulting",
     hotels: "Marajo Hotels",
     hotelDetail: "Marajo Hotel",

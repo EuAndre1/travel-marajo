@@ -21,7 +21,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const experience = getExperienceBySlug(params.slug)
 
   if (!experience) {
-    return { title: "Experience | Travel Maraj?" }
+    return { title: "Experience | Travel Marajó" }
   }
 
   return buildExperienceMetadata({

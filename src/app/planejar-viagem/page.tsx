@@ -3,7 +3,7 @@ import { buildServiceMetadata, buildServiceStructuredData, type JsonLdNode } fro
 
 const title = "Planejar Viagem para Marajó: Concierge, Pacotes e Experiências"
 const description =
-  "Compare concierge planning, travel packages, and curated experiences for Maraj? Island. A premium decision page for first-time and international visitors."
+  "Compare concierge planning, travel packages, and curated experiences for Marajó Island. A premium decision page for first-time and international visitors."
 
 export const metadata = buildServiceMetadata({
   title,
@@ -19,7 +19,7 @@ export const metadata = buildServiceMetadata({
 
 export default function PlanTripPage() {
   const jsonLd = buildServiceStructuredData({
-    title: "Travel Maraj? Concierge Planning",
+    title: "Travel Marajó Concierge Planning",
     description,
     path: "/planejar-viagem",
     serviceType: "Travel planning concierge",

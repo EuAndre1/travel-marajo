@@ -132,7 +132,7 @@ export function buildGuideMetadata(input: GuideMetadataInput): Metadata {
       title: input.title,
       description: input.description,
       url,
-      siteName: "Travel Maraj?",
+      siteName: "Travel Marajó",
       type: "article",
       locale: "en_US",
     },
@@ -161,7 +161,7 @@ export function buildExperienceMetadata(input: ExperienceMetadataInput): Metadat
       title: input.title,
       description: input.description,
       url,
-      siteName: "Travel Maraj?",
+      siteName: "Travel Marajó",
       type: "website",
       locale: "en_US",
     },
@@ -186,16 +186,16 @@ export function buildGuideStructuredData(input: GuideStructuredDataInput): JsonL
     keywords: input.keywords,
     about: {
       "@type": "TouristDestination",
-      name: "Maraj? Island",
+      name: "Marajó Island",
       description:
-        "Maraj? Island in Brazil blends beaches, buffalo culture, Amazonian nature, and curated tourism experiences.",
+        "Marajó Island in Brazil blends beaches, buffalo culture, Amazonian nature, and curated tourism experiences.",
     },
   }
 
   const destinationNode: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "TouristDestination",
-    name: "Maraj? Island",
+    name: "Marajó Island",
     description:
       "A tourism destination in northern Brazil known for beaches, river landscapes, buffalo culture, and curated travel experiences.",
     url: buildAbsoluteUrl(getLocalizedPath("en", "home")),
@@ -205,7 +205,7 @@ export function buildGuideStructuredData(input: GuideStructuredDataInput): JsonL
   const attractionNode: JsonLdNode = {
     "@context": "https://schema.org",
     "@type": "TouristAttraction",
-    name: "Maraj? Island Experiences",
+    name: "Marajó Island Experiences",
     description:
       "Curated attractions and experiences across Soure, Salvaterra, beaches, mangroves, and buffalo culture routes.",
     url: buildAbsoluteUrl(getLocalizedPath("en", "experiences")),
@@ -283,7 +283,7 @@ export function buildServiceMetadata(input: ServiceMetadataInput): Metadata {
       title: input.title,
       description: input.description,
       url,
-      siteName: "Travel Maraj?",
+      siteName: "Travel Marajó",
       type: "website",
       locale: "en_US",
     },
@@ -307,7 +307,7 @@ export function buildServiceStructuredData(input: ServiceStructuredDataInput): J
     serviceType: input.serviceType,
     provider: {
       "@type": "Organization",
-      name: "Travel Maraj?",
+      name: "Travel Marajó",
       url: buildAbsoluteUrl(getLocalizedPath("en", "home")),
     },
     areaServed: ["Brazil", "United States", "Europe", "Latin America"],

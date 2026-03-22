@@ -18,10 +18,6 @@ function cloneValue<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
 }
 
-function debugAdminDraft(event: string, payload: unknown) {
-  console.log(`[admin-draft] ${event}`, payload)
-}
-
 function formatSavedAt(savedAt: string | null) {
   if (!savedAt) {
     return null
@@ -66,12 +62,8 @@ export function useAdminDraft<T>(
 
       draftRef.current = nextDraft
       setDraftState(nextDraft)
-      debugAdminDraft("draft_changed", {
-        storageKey,
-        draft: nextDraft,
-      })
     },
-    [normalizeDraft, storageKey],
+    [normalizeDraft],
   )
 
   useEffect(() => {
@@ -87,10 +79,6 @@ export function useAdminDraft<T>(
         setDraftState(cloneValue(nextBaseline))
         setSavedAt(null)
         setHasStoredDraft(false)
-        debugAdminDraft("hydrate_from_baseline", {
-          storageKey,
-          baseline: nextBaseline,
-        })
         return
       }
 
@@ -101,20 +89,11 @@ export function useAdminDraft<T>(
         draftRef.current = nextDraft
         setDraftState(nextDraft)
         setSavedAt(typeof stored.savedAt === "string" ? stored.savedAt : null)
-        debugAdminDraft("hydrate_from_storage", {
-          storageKey,
-          savedAt: typeof stored.savedAt === "string" ? stored.savedAt : null,
-          draft: nextDraft,
-        })
       } else {
         const nextDraft = normalizeDraft(stored as T)
         draftRef.current = nextDraft
         setDraftState(nextDraft)
         setSavedAt(null)
-        debugAdminDraft("hydrate_from_legacy_storage", {
-          storageKey,
-          draft: nextDraft,
-        })
       }
 
       setHasStoredDraft(true)
@@ -123,10 +102,6 @@ export function useAdminDraft<T>(
       setDraftState(cloneValue(nextBaseline))
       setSavedAt(null)
       setHasStoredDraft(false)
-      debugAdminDraft("hydrate_failed_using_baseline", {
-        storageKey,
-        baseline: nextBaseline,
-      })
     }
   }, [normalizeDraft, pristineValue, storageKey])
 
@@ -149,11 +124,6 @@ export function useAdminDraft<T>(
     setSavedAt(nextSavedAt)
     setHasStoredDraft(true)
     setStatusMessage("Rascunho salvo neste navegador.")
-    debugAdminDraft("draft_saved_locally", {
-      storageKey,
-      savedAt: nextSavedAt,
-      draft: nextDraft,
-    })
   }, [normalizeDraft, storageKey])
 
   const resetDraft = useCallback(() => {
@@ -164,10 +134,6 @@ export function useAdminDraft<T>(
     setSavedAt(null)
     setHasStoredDraft(false)
     setStatusMessage("Rascunho local removido. O editor voltou para a versao ativa deste ambiente.")
-    debugAdminDraft("draft_reset_to_baseline", {
-      storageKey,
-      draft: nextDraft,
-    })
   }, [storageKey])
 
   const exportDraft = useCallback(
@@ -180,12 +146,8 @@ export function useAdminDraft<T>(
       link.click()
       URL.revokeObjectURL(url)
       setStatusMessage("JSON exportado com sucesso.")
-      debugAdminDraft("draft_exported", {
-        storageKey,
-        fileName,
-      })
     },
-    [storageKey],
+    [],
   )
 
   const markPersisted = useCallback(
@@ -205,11 +167,6 @@ export function useAdminDraft<T>(
       setSavedAt(nextSavedAt)
       setHasStoredDraft(true)
       setStatusMessage(message)
-      debugAdminDraft("draft_marked_persisted", {
-        storageKey,
-        savedAt: nextSavedAt,
-        draft: clonedValue,
-      })
     },
     [normalizeDraft, storageKey],
   )

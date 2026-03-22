@@ -14,8 +14,8 @@ export const seoPages: SeoEditorialIndexEntry[] = [
   },
   {
     slug: "where-is-marajo-island",
-    title: "Where is Maraj? Island",
-    description: "Editorial planning entry for a location-focused guide explaining where Maraj? Island is and why it stands out in Brazil.",
+  title: "Where is Marajó Island",
+  description: "Editorial planning entry for a location-focused guide explaining where Marajó Island is and why it stands out in Brazil.",
     cluster: "guide",
     status: "planned",
     primaryKeyword: "where is marajo island",

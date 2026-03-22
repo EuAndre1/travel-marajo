@@ -18,7 +18,7 @@ export default function GuidesIndexPage() {
   const jsonLd = buildGuideStructuredData({
     title: "Marajo Travel Guides",
     description:
-      "A crawlable SEO hub for Maraj? Island travel guides covering attractions, logistics, seasonality, culture, and itinerary planning.",
+      "A crawlable SEO hub for Marajó Island travel guides covering attractions, logistics, seasonality, culture, and itinerary planning.",
     path: "/guides",
     keywords: ["marajo travel guides", "marajo island planning", "marajo destination authority"],
   })

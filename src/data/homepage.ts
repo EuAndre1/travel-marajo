@@ -189,7 +189,7 @@ const basePtContent: HomeContent = {
           { label: "Duração", placeholder: "3 a 7 dias" },
           { label: "Grupo", placeholder: "Casal, família, amigos" },
           { label: "Foco", placeholder: "Experiências ou descanso" },
-          { label: "Partida", placeholder: "Belem ou Salvaterra" },
+    { label: "Partida", placeholder: "Belém ou Salvaterra" },
         ],
         ctaLabel: "Ver roteiros",
         ctaHref: "/pacotes",
@@ -504,7 +504,7 @@ const basePtContent: HomeContent = {
       },
       {
         name: "Camila R.",
-        role: "Belem",
+    role: "Belém",
         quote:
           "Viajei com meus filhos e tudo fluiu com leveza. A curadoria ajudou a escolher o que realmente fazia sentido para a família.",
         rating: "5,0",
@@ -613,11 +613,11 @@ const enTranslations: TranslationDictionary = {
   "Experiências com búfalos e fazendas": "Buffalo and farm experiences",
   "Passeios de búfalo, produção de queijo marajoara e vivências de campo que conectam com o ritmo da ilha.": "Buffalo rides, Marajo cheese production, and countryside moments that connect travelers to the island's rhythm.",
   "Acessível, mas fora do óbvio": "Accessible, yet far from obvious",
-  "Um destino autêntico a poucas horas de Belém, com tempo desacelerado e alto potencial de descoberta.": "An authentic destination just a few hours from Belem, with a slower pace and a high discovery factor.",
+    "Um destino autêntico a poucas horas de Belém, com tempo desacelerado e alto potencial de descoberta.": "An authentic destination just a few hours from Belém, with a slower pace and a high discovery factor.",
   "Experiência destaque": "Featured experience",
   "Praia do Pesqueiro ao pôr do sol": "Pesqueiro Beach at sunset",
   "A experiência mais emblemática do Marajó. Dunas baixas, mar aberto, barracas locais e búfalos integrados à paisagem criam um cenário cinematográfico para quem busca beleza e autenticidade.": "Marajo's most emblematic experience. Low dunes, open sea, local beach huts, and buffalo woven into the landscape create a cinematic setting for travelers seeking beauty and authenticity.",
-  "Soure - Ilha de Marajó": "Soure - Maraj? Island",
+    "Soure - Ilha de Marajó": "Soure - Marajó Island",
   "4 horas": "4 hours",
   "A partir de R$ 250 por pessoa": "From BRL 250 per person",
   "Pôr do sol sobre o Atlântico": "Sunset over the Atlantic",
@@ -643,7 +643,7 @@ const enTranslations: TranslationDictionary = {
   "Condições especiais com parceiros locais e afiliados, sem comprometer qualidade ou suporte ao viajante.": "Special conditions with local partners and affiliates without compromising quality or traveler support.",
   "Guia de viagem para decidir com confiança": "Travel guide for confident decisions",
   "Informação prática e editorial para você imaginar, comparar e reservar o Marajó certo para o seu perfil.": "Practical and editorial information to help you imagine, compare, and book the Marajo trip that fits your profile.",
-  "Quem viaja com a Travel Marajó recomenda": "Travelers recommend Travel Maraj?",
+    "Quem viaja com a Travel Marajó recomenda": "Travelers recommend Travel Marajó",
   "Prova social real e transparente: viajantes que vieram pela narrativa e ficaram pela entrega.": "Transparent social proof from travelers who came for the story and stayed for the delivery.",
   "Parceiros locais e afiliados estratégicos": "Local partners and strategic affiliates",
   "Trabalhamos com operadores licenciados, pousadas selecionadas e guias locais para garantir segurança e autenticidade.": "We work with licensed operators, selected inns, and local guides to ensure safety and authenticity.",
@@ -702,7 +702,7 @@ const esTranslations: TranslationDictionary = {
   "Roteiros e pacotes pensados para você": "Itinerarios y paquetes pensados para ti",
   "Ofertas e oportunidades atuais": "Ofertas y oportunidades actuales",
   "Guia de viagem para decidir com confiança": "Guia de viaje para decidir con confianza",
-  "Quem viaja com a Travel Marajó recomenda": "Quienes viajan con Travel Maraj? lo recomiendan",
+    "Quem viaja com a Travel Marajó recomenda": "Quienes viajan con Travel Marajó lo recomiendan",
   "Parceiros locais e afiliados estratégicos": "Socios locales y afiliados estrategicos",
   "Receba roteiros secretos e alertas de ofertas": "Recibe itinerarios secretos y alertas de ofertas",
   "Quero receber": "Quiero recibir",
@@ -758,7 +758,7 @@ const frTranslations: TranslationDictionary = {
   "Roteiros e pacotes pensados para você": "Itineraires et forfaits pensés pour vous",
   "Ofertas e oportunidades atuais": "Offres et opportunites du moment",
   "Guia de viagem para decidir com confiança": "Guide de voyage pour decider en confiance",
-  "Quem viaja com a Travel Marajó recomenda": "Les voyageurs recommandent Travel Maraj?",
+    "Quem viaja com a Travel Marajó recomenda": "Les voyageurs recommandent Travel Marajó",
   "Parceiros locais e afiliados estratégicos": "Partenaires locaux et affilies strategiques",
   "Receba roteiros secretos e alertas de ofertas": "Recevez des itineraires secrets et des alertes d'offres",
   "Quero receber": "Je veux les recevoir",
@@ -789,7 +789,7 @@ Object.assign(enTranslations, {
   "Búfalos, fazendas e identidade própria": "Buffalo, ranches, and a distinct identity",
   "Do queijo marajoara às vivências rurais, a ilha entrega experiências impossíveis de replicar em outro destino brasileiro.":
     "From Marajoara cheese to rural encounters, the island delivers experiences that are impossible to replicate in any other Brazilian destination.",
-  "Perto de Belém, longe do óbvio": "Close to Belem, far from obvious",
+    "Perto de Belém, longe do óbvio": "Close to Belém, far from obvious",
   "A logística é acessível, mas a sensação é de descoberta rara para quem busca Brasil autêntico com mais profundidade.":
     "Logistics are accessible, but the feeling is one of rare discovery for travelers seeking a more authentic Brazil.",
   "Experiência assinatura": "Signature experience",
@@ -875,7 +875,7 @@ Object.assign(esTranslations, {
   "Búfalos, fazendas e identidade própria": "Bufalos, haciendas e identidad propia",
   "Do queijo marajoara às vivências rurais, a ilha entrega experiências impossíveis de replicar em outro destino brasileiro.":
     "Del queso marajoara a las vivencias rurales, la isla ofrece experiencias imposibles de replicar en otro destino brasileno.",
-  "Perto de Belém, longe do óbvio": "Cerca de Belem, lejos de lo obvio",
+    "Perto de Belém, longe do óbvio": "Cerca de Belém, lejos de lo obvio",
   "A logística é acessível, mas a sensação é de descoberta rara para quem busca Brasil autêntico com mais profundidade.":
     "La logistica es accesible, pero la sensacion es de descubrimiento raro para quienes buscan un Brasil autentico con mas profundidad.",
   "Experiência assinatura": "Experiencia insignia",
@@ -961,7 +961,7 @@ Object.assign(frTranslations, {
   "Búfalos, fazendas e identidade própria": "Buffles, fermes et identite propre",
   "Do queijo marajoara às vivências rurais, a ilha entrega experiências impossíveis de replicar em outro destino brasileiro.":
     "Du fromage marajoara aux experiences rurales, l'ile propose des moments impossibles a reproduire dans une autre destination bresilienne.",
-  "Perto de Belém, longe do óbvio": "Pres de Belem, loin de l'evidence",
+    "Perto de Belém, longe do óbvio": "Près de Belém, loin de l'évidence",
   "A logística é acessível, mas a sensação é de descoberta rara para quem busca Brasil autêntico com mais profundidade.":
     "La logistique reste accessible, mais la sensation est celle d'une decouverte rare pour les voyageurs qui cherchent un Bresil plus authentique.",
   "Experiência assinatura": "Experience signature",

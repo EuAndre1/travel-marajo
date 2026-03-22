@@ -14,6 +14,10 @@ import {
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import AdminSectionCard from "@/components/admin/AdminSectionCard"
 import {
+  fetchAdminMediaLibrarySnapshot,
+  primeAdminMediaLibraryCache,
+} from "@/lib/media-library/admin-client-cache"
+import {
   ACCEPTED_MEDIA_IMAGE_TYPES,
   ACCEPTED_MEDIA_VIDEO_TYPES,
   MAX_MEDIA_IMAGE_BYTES,
@@ -200,21 +204,10 @@ export default function MediaStudioEditor() {
     setLoadError("")
 
     try {
-      const response = await fetch("/api/admin/media", {
-        cache: "no-store",
-      })
-
-      const result = await response.json().catch(() => null)
-
-      if (!response.ok) {
-        throw new Error(
-          resolveUiMessage(result?.message ?? result?.error, "Nao foi possivel carregar a biblioteca."),
-        )
-      }
-
-      const nextItems: MediaAssetItem[] = Array.isArray(result?.items) ? result.items : []
+      const snapshot = await fetchAdminMediaLibrarySnapshot(true)
+      const nextItems = snapshot.items
       setItems(nextItems)
-      setStorage(result?.storage ?? null)
+      setStorage(snapshot.storage)
       setSelectedId((current) => current || nextItems[0]?.id || "")
     } catch (error) {
       setLoadError(
@@ -343,10 +336,19 @@ export default function MediaStudioEditor() {
         )
       }
 
-      setItems((current) => [
-        finalizeResult.item as MediaAssetItem,
-        ...current.filter((item) => item.id !== finalizeResult.item?.id),
-      ])
+      setItems((current) => {
+        const nextItems = [
+          finalizeResult.item as MediaAssetItem,
+          ...current.filter((item) => item.id !== finalizeResult.item?.id),
+        ]
+
+        primeAdminMediaLibraryCache({
+          items: nextItems,
+          storage,
+        })
+
+        return nextItems
+      })
       setSelectedId(finalizeResult.item.id)
       setActionMessage(
         replaceTargetName
@@ -399,6 +401,10 @@ export default function MediaStudioEditor() {
 
       const remainingItems = items.filter((item) => item.id !== selectedItem.id)
       setItems(remainingItems)
+      primeAdminMediaLibraryCache({
+        items: remainingItems,
+        storage,
+      })
       setSelectedId(remainingItems[0]?.id ?? "")
       setActionMessage("Midia removida da biblioteca.")
     } catch (error) {
