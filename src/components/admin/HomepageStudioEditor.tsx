@@ -1,13 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import type { AppLocale } from "@/config/i18n"
 import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
+import { EditableModeProvider } from "@/components/admin/Editable"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
 import AdminMediaField from "@/components/admin/AdminMediaField"
 import AdminPageIntro from "@/components/admin/AdminPageIntro"
 import AdminSectionCard from "@/components/admin/AdminSectionCard"
 import AdminTextFieldCard from "@/components/admin/AdminTextFieldCard"
+import { ContentOverridesProvider, ResolvedContentLocaleProvider, useContentOverridesState } from "@/components/content/ContentOverridesProvider"
+import HomeHero from "@/components/home/HomeHero"
 import { useAdminDraft } from "@/components/admin/use-admin-draft"
 import { useAdminPersistedSave } from "@/components/admin/use-admin-persisted-save"
 import {
@@ -27,6 +30,7 @@ export default function HomepageStudioEditor({
 }: {
   initialDraft?: AdminHomepageDraft
 }) {
+  const persistedContentState = useContentOverridesState()
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
   const [liveDraft, setLiveDraft] = useState(initialDraft)
   const {
@@ -43,6 +47,13 @@ export default function HomepageStudioEditor({
 
   const localeDraft = draft.locales[activeLocale]
   const liveLocale = liveDraft.locales[activeLocale]
+  const previewState = useMemo(
+    () => ({
+      ...persistedContentState,
+      homepage: draft,
+    }),
+    [draft, persistedContentState],
+  )
   const updateField = (field: keyof AdminHomepageLocaleDraft, value: string) => {
     setDraft((current) => ({
       ...current,
@@ -65,6 +76,7 @@ export default function HomepageStudioEditor({
       setLiveDraft(cloneDraft(value))
     },
   })
+  const canInlineEdit = Boolean(localeDraft)
 
   return (
     <div className="space-y-6">
@@ -86,6 +98,47 @@ export default function HomepageStudioEditor({
         onExport={() => exportDraft(`travel-marajo-homepage-${activeLocale}.json`)}
         onReset={resetDraft}
       />
+
+      <AdminSectionCard
+        eyebrow="Preview visual"
+        title="Edite direto sobre o hero"
+        description="Clique no titulo, no subtitulo, nos botoes ou na midia do hero para ajustar o rascunho sem sair da visualizacao da homepage."
+      >
+        <div className="overflow-hidden rounded-[1.75rem] border border-slate-200">
+          <EditableModeProvider enabled={canInlineEdit}>
+            <ResolvedContentLocaleProvider locale={activeLocale}>
+              <ContentOverridesProvider initialState={previewState}>
+                <HomeHero
+                  inlineEditing={{
+                    enabled: true,
+                    canEdit: canInlineEdit,
+                    onHeroHeadlineChange: (value) => updateField("heroHeadline", value),
+                    onHeroSubheadlineChange: (value) => updateField("heroSubheadline", value),
+                    onPrimaryCtaLabelChange: (value) => updateField("primaryCtaLabel", value),
+                    onSecondaryCtaLabelChange: (value) => updateField("secondaryCtaLabel", value),
+                    onHeroMediaChange: (media) =>
+                      setDraft((current) => ({
+                        ...current,
+                        locales: {
+                          ...current.locales,
+                          [activeLocale]: {
+                            ...current.locales[activeLocale],
+                            heroMediaUrl: media.url,
+                            heroMediaType: media.type,
+                            heroImageUrl:
+                              media.type === "image"
+                                ? media.url
+                                : current.locales[activeLocale].heroImageUrl,
+                          },
+                        },
+                      })),
+                  }}
+                />
+              </ContentOverridesProvider>
+            </ResolvedContentLocaleProvider>
+          </EditableModeProvider>
+        </div>
+      </AdminSectionCard>
 
       <AdminSectionCard
         eyebrow="Hero principal"

@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext } from "react"
+import type { AppLocale } from "@/config/i18n"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import {
   createDefaultContentStudioState,
@@ -22,6 +23,7 @@ import {
 } from "@/lib/content-studio/resolvers"
 
 const ContentOverridesContext = createContext<ContentStudioState>(createDefaultContentStudioState())
+const ResolvedContentLocaleContext = createContext<AppLocale | null>(null)
 
 export function ContentOverridesProvider({
   children,
@@ -37,36 +39,57 @@ export function ContentOverridesProvider({
   )
 }
 
+export function ResolvedContentLocaleProvider({
+  children,
+  locale,
+}: {
+  children: React.ReactNode
+  locale: AppLocale
+}) {
+  return (
+    <ResolvedContentLocaleContext.Provider value={locale}>
+      {children}
+    </ResolvedContentLocaleContext.Provider>
+  )
+}
+
 export function useContentOverridesState() {
   return useContext(ContentOverridesContext)
 }
 
-export function useResolvedSiteChrome() {
+export function useResolvedContentLocale() {
+  const forcedLocale = useContext(ResolvedContentLocaleContext)
   const { lang } = useSiteLanguage()
+
+  return forcedLocale ?? lang
+}
+
+export function useResolvedSiteChrome() {
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveSiteChromeForLocale(lang, state)
 }
 
 export function useResolvedHomeContent() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveHomeContentForLocale(lang, state)
 }
 
 export function useResolvedHomepageStudioContent() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return state.homepage.locales[lang]
 }
 
 export function useResolvedHomeAuthorityContent() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveHomeAuthorityForLocale(lang, state)
 }
 
 export function useResolvedSiteContent() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveSiteContentForLocale(lang, state)
 }
@@ -92,37 +115,37 @@ export function useResolvedPackageBySlug(slug: string) {
 }
 
 export function useResolvedPremiumPackageLandingCopy() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolvePremiumPackageLandingForLocale(lang, state)
 }
 
 export function useResolvedDestinationCards() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveDestinationCardsForLocale(lang, state)
 }
 
 export function useResolvedRouteCards() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveRouteCardsForLocale(lang, state)
 }
 
 export function useResolvedHotelCards() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveHotelCardsForLocale(lang, state)
 }
 
 export function useResolvedHotelBySlug(slug: string) {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveHotelBySlugForLocale(lang, slug, state)
 }
 
 export function useResolvedServiceCards() {
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const state = useContentOverridesState()
   return resolveServiceCardsForLocale(lang, state)
 }

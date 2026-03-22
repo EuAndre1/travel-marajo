@@ -1,22 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type MouseEvent } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import Editable from "@/components/admin/Editable"
 import {
+  useResolvedContentLocale,
   useResolvedHomeAuthorityContent,
   useResolvedHomeContent,
   useResolvedHomepageStudioContent,
   useResolvedSiteChrome,
   useResolvedSiteContent,
 } from "@/components/content/ContentOverridesProvider"
-import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
-import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
+import { getVideoMimeTypeFromPath, type MediaAssetType } from "@/lib/media-library/shared"
 
-export default function HomeHero() {
+export interface HomeHeroInlineEditing {
+  enabled: boolean
+  canEdit: boolean
+  onHeroHeadlineChange: (value: string) => void
+  onHeroSubheadlineChange: (value: string) => void
+  onPrimaryCtaLabelChange: (value: string) => void
+  onSecondaryCtaLabelChange: (value: string) => void
+  onHeroMediaChange: (media: { url: string; type: MediaAssetType }) => void
+}
+
+export default function HomeHero({
+  inlineEditing,
+}: {
+  inlineEditing?: HomeHeroInlineEditing
+}) {
   const [videoFailed, setVideoFailed] = useState(false)
-  const { lang } = useSiteLanguage()
+  const lang = useResolvedContentLocale()
   const { hero } = useResolvedHomeContent()
   const homepageStudio = useResolvedHomepageStudioContent()
   const chrome = useResolvedSiteChrome()
@@ -27,6 +42,7 @@ export default function HomeHero() {
   const heroMediaType = homepageStudio.heroMediaType
   const shouldRenderHeroVideo =
     heroMediaType === "video" && Boolean(heroMediaUrl) && !videoFailed
+  const canInlineEdit = Boolean(inlineEditing?.enabled && inlineEditing.canEdit)
   const arrivalNote = {
     pt: "De Belém - ferry + transfer disponíveis",
     en: "From Belém - ferry + transfer available",
@@ -56,39 +72,64 @@ export default function HomeHero() {
     },
   ]
 
+  const preventPreviewNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!canInlineEdit) {
+      return
+    }
+
+    event.preventDefault()
+  }
+
   return (
-    <section id="hero" className="relative min-h-[70vh] overflow-hidden bg-[#04101b] sm:min-h-[76vh] lg:min-h-[84vh]">
+    <section
+      id="hero"
+      className="relative min-h-[70vh] overflow-hidden bg-[#04101b] sm:min-h-[76vh] lg:min-h-[84vh]"
+    >
       <div className="absolute inset-0">
-        {heroFallbackImageUrl ? (
-          <Image
-            src={heroFallbackImageUrl}
-            alt={content.home.homeHeroImageAlt}
-            fill
-            priority
-            className="object-cover"
-          />
-        ) : null}
-        {shouldRenderHeroVideo ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="none"
-            className="absolute inset-0 h-full w-full object-cover"
-            onError={() => setVideoFailed(true)}
-          >
-            <source src={heroMediaUrl} type={getVideoMimeTypeFromPath(heroMediaUrl)} />
-          </video>
-        ) : heroMediaType === "image" && heroMediaUrl && heroMediaUrl !== heroFallbackImageUrl ? (
-          <Image
-            src={heroMediaUrl}
-            alt={content.home.homeHeroImageAlt}
-            fill
-            priority
-            className="object-cover"
-          />
-        ) : null}
+        <Editable
+          type="image"
+          value={heroMediaUrl}
+          label="Imagem ou vídeo de fundo"
+          disabled={!canInlineEdit}
+          acceptedTypes={["image", "video"]}
+          onMediaSelect={(item) => inlineEditing?.onHeroMediaChange({ url: item.url, type: item.type })}
+          className="absolute inset-0"
+        >
+          <>
+            {heroFallbackImageUrl ? (
+              <Image
+                src={heroFallbackImageUrl}
+                alt={content.home.homeHeroImageAlt}
+                fill
+                priority
+                className="object-cover"
+              />
+            ) : null}
+            {shouldRenderHeroVideo ? (
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="none"
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={() => setVideoFailed(true)}
+              >
+                <source src={heroMediaUrl} type={getVideoMimeTypeFromPath(heroMediaUrl)} />
+              </video>
+            ) : heroMediaType === "image" &&
+              heroMediaUrl &&
+              heroMediaUrl !== heroFallbackImageUrl ? (
+              <Image
+                src={heroMediaUrl}
+                alt={content.home.homeHeroImageAlt}
+                fill
+                priority
+                className="object-cover"
+              />
+            ) : null}
+          </>
+        </Editable>
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(229,122,31,0.28),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.06),transparent_28%)]" />
       </div>
@@ -101,27 +142,62 @@ export default function HomeHero() {
                 <div className="inline-flex items-center rounded-full border border-white/12 bg-white/8 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/78 sm:text-[11px] sm:tracking-[0.3em]">
                   {content.home.heroKicker}
                 </div>
-                <h1 className="text-[2.2rem] font-display leading-[0.98] sm:text-[3rem] lg:text-[3.7rem] xl:text-[4rem]">
-                  {hero.title}
-                </h1>
-                <p className="max-w-[500px] text-[15px] leading-7 text-white/80 sm:text-[17px] sm:leading-8">
-                  {hero.subtitle}
-                </p>
+
+                <Editable
+                  type="textarea"
+                  value={hero.title}
+                  onChange={inlineEditing?.onHeroHeadlineChange}
+                  disabled={!canInlineEdit}
+                  label="Título principal da homepage"
+                >
+                  <h1 className="text-[2.2rem] font-display leading-[0.98] sm:text-[3rem] lg:text-[3.7rem] xl:text-[4rem]">
+                    {hero.title}
+                  </h1>
+                </Editable>
+
+                <Editable
+                  type="textarea"
+                  value={hero.subtitle}
+                  onChange={inlineEditing?.onHeroSubheadlineChange}
+                  disabled={!canInlineEdit}
+                  label="Subtítulo principal da homepage"
+                >
+                  <p className="max-w-[500px] text-[15px] leading-7 text-white/80 sm:text-[17px] sm:leading-8">
+                    {hero.subtitle}
+                  </p>
+                </Editable>
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link
-                  href={getLocalizedPath(lang, "experiences")}
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#E57A1F] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c96815] sm:w-auto"
+                <Editable
+                  value={hero.ctas.primary}
+                  onChange={inlineEditing?.onPrimaryCtaLabelChange}
+                  disabled={!canInlineEdit}
+                  label="Texto do botão principal"
                 >
-                  {hero.ctas.primary}
-                </Link>
-                <Link
-                  href={getLocalizedPath(lang, "planTrip")}
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/22 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+                  <Link
+                    href={getLocalizedPath(lang, "experiences")}
+                    onClick={preventPreviewNavigation}
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#E57A1F] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c96815] sm:w-auto"
+                  >
+                    {hero.ctas.primary}
+                  </Link>
+                </Editable>
+
+                <Editable
+                  value={hero.ctas.secondary}
+                  onChange={inlineEditing?.onSecondaryCtaLabelChange}
+                  disabled={!canInlineEdit}
+                  label="Texto do botão secundário"
                 >
-                  {chrome.planTripLabel}
-                </Link>
+                  <Link
+                    href={getLocalizedPath(lang, "planTrip")}
+                    onClick={preventPreviewNavigation}
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/22 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10 sm:w-auto"
+                  >
+                    {hero.ctas.secondary}
+                  </Link>
+                </Editable>
               </div>
 
               <div className="flex flex-wrap items-center gap-2 text-sm text-white/74">
