@@ -1,7 +1,7 @@
 "use client"
 /* eslint-disable @next/next/no-img-element */
 
-import { useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import {
   ArrowDownIcon,
@@ -246,6 +246,10 @@ export default function HotelsStudioEditor({
     () => normalizeHotelCardCollectionDraft(initialDraft, adminHotelCardsInitialDraft),
     [initialDraft],
   )
+  const normalizeHotelDraft = useCallback(
+    (value: unknown) => normalizeHotelCardCollectionDraft(value, normalizedInitialDraft),
+    [normalizedInitialDraft],
+  )
   const [activeLocale, setActiveLocale] = useState<AppLocale>("pt")
   const [selectedId, setSelectedId] = useState(normalizedInitialDraft.items[0]?.id ?? "")
   const [liveDraft, setLiveDraft] = useState(normalizedInitialDraft)
@@ -260,8 +264,7 @@ export default function HotelsStudioEditor({
     savedAtLabel,
     statusMessage,
   } = useAdminDraft(STORAGE_KEY, normalizedInitialDraft, {
-    normalizeValue: (value) =>
-      normalizeHotelCardCollectionDraft(value, normalizedInitialDraft),
+    normalizeValue: normalizeHotelDraft,
   })
 
   const selectedDraft = useMemo(
@@ -297,6 +300,19 @@ export default function HotelsStudioEditor({
       setLiveDraft(cloneDraft(value))
     },
   })
+
+  useEffect(() => {
+    if (draft.items.length === 0) {
+      if (selectedId) {
+        setSelectedId("")
+      }
+      return
+    }
+
+    if (!draft.items.some((item) => item.id === selectedId)) {
+      setSelectedId(draft.items[0].id)
+    }
+  }, [draft.items, selectedId])
 
   if (!selectedDraft || !selectedLive) {
     return (

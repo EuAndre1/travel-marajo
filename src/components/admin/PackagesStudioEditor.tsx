@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { AppLocale } from "@/config/i18n"
 import AdminDraftToolbar from "@/components/admin/AdminDraftToolbar"
 import AdminLocaleTabs from "@/components/admin/AdminLocaleTabs"
@@ -152,6 +152,19 @@ export default function PackagesStudioEditor({
       setLiveDraft(cloneDraft(value))
     },
   })
+
+  useEffect(() => {
+    if (draft.items.length === 0) {
+      if (selectedSlug) {
+        setSelectedSlug("")
+      }
+      return
+    }
+
+    if (!draft.items.some((item) => item.slug === selectedSlug)) {
+      setSelectedSlug(draft.items[0].slug)
+    }
+  }, [draft.items, selectedSlug])
 
   if (!selectedDraft || !selectedLive || !selectedBase) {
     return null

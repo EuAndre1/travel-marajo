@@ -1,6 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type SetStateAction,
+} from "react"
 
 interface StoredDraft<T> {
   value: T
@@ -9,6 +16,10 @@ interface StoredDraft<T> {
 
 function cloneValue<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
+}
+
+function debugAdminDraft(event: string, payload: unknown) {
+  console.log(`[admin-draft] ${event}`, payload)
 }
 
 function formatSavedAt(savedAt: string | null) {
@@ -27,81 +38,141 @@ export function useAdminDraft<T>(
   initialValue: T,
   options?: { normalizeValue?: (value: unknown) => T },
 ) {
-  const normalizeValue = useMemo(
-    () => options?.normalizeValue ?? ((value: unknown) => value as T),
-    [options?.normalizeValue],
+  const normalizeValueRef = useRef<(value: unknown) => T>(
+    options?.normalizeValue ?? ((value: unknown) => value as T),
   )
-  const pristineValue = useMemo(
-    () => cloneValue(normalizeValue(initialValue)),
-    [initialValue, normalizeValue],
-  )
+  normalizeValueRef.current = options?.normalizeValue ?? ((value: unknown) => value as T)
+
+  const normalizeDraft = useCallback((value: unknown) => {
+    return cloneValue(normalizeValueRef.current(value))
+  }, [])
+
+  const pristineValue = useMemo(() => normalizeDraft(initialValue), [initialValue, normalizeDraft])
   const [baselineValue, setBaselineValue] = useState<T>(pristineValue)
-  const [draft, setDraft] = useState<T>(pristineValue)
+  const [draftState, setDraftState] = useState<T>(pristineValue)
   const [savedAt, setSavedAt] = useState<string | null>(null)
   const [statusMessage, setStatusMessage] = useState("")
   const [hasStoredDraft, setHasStoredDraft] = useState(false)
+  const draftRef = useRef<T>(pristineValue)
+  const baselineRef = useRef<T>(pristineValue)
+
+  const setDraft = useCallback(
+    (valueOrUpdater: SetStateAction<T>) => {
+      const currentDraft = draftRef.current
+      const nextDraft =
+        typeof valueOrUpdater === "function"
+          ? normalizeDraft((valueOrUpdater as (value: T) => T)(cloneValue(currentDraft)))
+          : normalizeDraft(valueOrUpdater)
+
+      draftRef.current = nextDraft
+      setDraftState(nextDraft)
+      debugAdminDraft("draft_changed", {
+        storageKey,
+        draft: nextDraft,
+      })
+    },
+    [normalizeDraft, storageKey],
+  )
 
   useEffect(() => {
-    const nextBaseline = cloneValue(pristineValue)
+    const nextBaseline = normalizeDraft(pristineValue)
+    baselineRef.current = nextBaseline
     setBaselineValue(nextBaseline)
 
     try {
       const rawValue = window.localStorage.getItem(storageKey)
 
       if (!rawValue) {
-        setDraft(cloneValue(nextBaseline))
+        draftRef.current = cloneValue(nextBaseline)
+        setDraftState(cloneValue(nextBaseline))
         setSavedAt(null)
         setHasStoredDraft(false)
+        debugAdminDraft("hydrate_from_baseline", {
+          storageKey,
+          baseline: nextBaseline,
+        })
         return
       }
 
       const stored = JSON.parse(rawValue) as StoredDraft<T> | T
 
       if (typeof stored === "object" && stored && "value" in stored) {
-        setDraft(cloneValue(normalizeValue(stored.value)))
+        const nextDraft = normalizeDraft(stored.value)
+        draftRef.current = nextDraft
+        setDraftState(nextDraft)
         setSavedAt(typeof stored.savedAt === "string" ? stored.savedAt : null)
+        debugAdminDraft("hydrate_from_storage", {
+          storageKey,
+          savedAt: typeof stored.savedAt === "string" ? stored.savedAt : null,
+          draft: nextDraft,
+        })
       } else {
-        setDraft(cloneValue(normalizeValue(stored as T)))
+        const nextDraft = normalizeDraft(stored as T)
+        draftRef.current = nextDraft
+        setDraftState(nextDraft)
         setSavedAt(null)
+        debugAdminDraft("hydrate_from_legacy_storage", {
+          storageKey,
+          draft: nextDraft,
+        })
       }
 
       setHasStoredDraft(true)
     } catch {
-      setDraft(cloneValue(nextBaseline))
+      draftRef.current = cloneValue(nextBaseline)
+      setDraftState(cloneValue(nextBaseline))
       setSavedAt(null)
       setHasStoredDraft(false)
+      debugAdminDraft("hydrate_failed_using_baseline", {
+        storageKey,
+        baseline: nextBaseline,
+      })
     }
-  }, [normalizeValue, pristineValue, storageKey])
+  }, [normalizeDraft, pristineValue, storageKey])
 
   const hasUnsavedChanges = useMemo(
-    () => JSON.stringify(draft) !== JSON.stringify(baselineValue),
-    [baselineValue, draft],
+    () => JSON.stringify(draftState) !== JSON.stringify(baselineValue),
+    [baselineValue, draftState],
   )
 
-  const saveDraft = useCallback(() => {
+  const saveDraft = useCallback((value?: T) => {
     const nextSavedAt = new Date().toISOString()
+    const nextDraft = value === undefined ? draftRef.current : normalizeDraft(value)
     const payload: StoredDraft<T> = {
-      value: normalizeValue(draft),
+      value: nextDraft,
       savedAt: nextSavedAt,
     }
 
     window.localStorage.setItem(storageKey, JSON.stringify(payload))
+    draftRef.current = nextDraft
+    setDraftState(nextDraft)
     setSavedAt(nextSavedAt)
     setHasStoredDraft(true)
     setStatusMessage("Rascunho salvo neste navegador.")
-  }, [draft, normalizeValue, storageKey])
+    debugAdminDraft("draft_saved_locally", {
+      storageKey,
+      savedAt: nextSavedAt,
+      draft: nextDraft,
+    })
+  }, [normalizeDraft, storageKey])
 
   const resetDraft = useCallback(() => {
     window.localStorage.removeItem(storageKey)
-    setDraft(cloneValue(baselineValue))
+    const nextDraft = cloneValue(baselineRef.current)
+    draftRef.current = nextDraft
+    setDraftState(nextDraft)
     setSavedAt(null)
     setHasStoredDraft(false)
     setStatusMessage("Rascunho local removido. O editor voltou para a versao ativa deste ambiente.")
-  }, [baselineValue, storageKey])
+    debugAdminDraft("draft_reset_to_baseline", {
+      storageKey,
+      draft: nextDraft,
+    })
+  }, [storageKey])
 
   const exportDraft = useCallback(
     (fileName: string) => {
-      const blob = new Blob([JSON.stringify(draft, null, 2)], { type: "application/json" })
+      const blob = new Blob([JSON.stringify(draftRef.current, null, 2)], { type: "application/json" })
       const url = URL.createObjectURL(blob)
       const link = document.createElement("a")
       link.href = url
@@ -109,31 +180,42 @@ export function useAdminDraft<T>(
       link.click()
       URL.revokeObjectURL(url)
       setStatusMessage("JSON exportado com sucesso.")
+      debugAdminDraft("draft_exported", {
+        storageKey,
+        fileName,
+      })
     },
-    [draft],
+    [storageKey],
   )
 
   const markPersisted = useCallback(
     (value: T, message = "Camada persistida atualizada com sucesso.") => {
       const nextSavedAt = new Date().toISOString()
-      const clonedValue = cloneValue(normalizeValue(value))
+      const clonedValue = normalizeDraft(value)
       const payload: StoredDraft<T> = {
         value: clonedValue,
         savedAt: nextSavedAt,
       }
 
       window.localStorage.setItem(storageKey, JSON.stringify(payload))
+      baselineRef.current = clonedValue
+      draftRef.current = clonedValue
       setBaselineValue(clonedValue)
-      setDraft(clonedValue)
+      setDraftState(clonedValue)
       setSavedAt(nextSavedAt)
       setHasStoredDraft(true)
       setStatusMessage(message)
+      debugAdminDraft("draft_marked_persisted", {
+        storageKey,
+        savedAt: nextSavedAt,
+        draft: clonedValue,
+      })
     },
-    [normalizeValue, storageKey],
+    [normalizeDraft, storageKey],
   )
 
   return {
-    draft,
+    draft: draftState,
     setDraft,
     saveDraft,
     markPersisted,

@@ -13,6 +13,58 @@ function isContentStudioSurface(value: string): value is ContentStudioSurface {
   return contentStudioSurfaces.includes(value as ContentStudioSurface)
 }
 
+function revalidateSurfacePaths(surface: ContentStudioSurface, draft: unknown) {
+  revalidatePath("/", "layout")
+
+  switch (surface) {
+    case "homepage":
+    case "content":
+      revalidatePath("/planejar-viagem")
+      revalidatePath("/destinos")
+      revalidatePath("/services")
+      revalidatePath("/pacotes")
+      revalidatePath("/hotels")
+      return
+    case "experiences":
+      revalidatePath("/experiencias")
+      revalidatePath("/experiences/pesqueiro")
+      return
+    case "packages":
+    case "routeCards":
+      revalidatePath("/pacotes")
+      revalidatePath("/packages")
+      return
+    case "destinationCards":
+      revalidatePath("/destinos")
+      return
+    case "serviceCards":
+      revalidatePath("/services")
+      return
+    case "hotelCards":
+      revalidatePath("/hotels")
+
+      if (
+        draft &&
+        typeof draft === "object" &&
+        "items" in draft &&
+        Array.isArray((draft as { items?: unknown[] }).items)
+      ) {
+        for (const item of (draft as { items: unknown[] }).items) {
+          if (
+            item &&
+            typeof item === "object" &&
+            "linkedSlug" in item &&
+            typeof (item as { linkedSlug?: unknown }).linkedSlug === "string" &&
+            (item as { linkedSlug: string }).linkedSlug
+          ) {
+            revalidatePath(`/hotels/${(item as { linkedSlug: string }).linkedSlug}`)
+          }
+        }
+      }
+      return
+  }
+}
+
 export async function PUT(
   request: Request,
   context: { params: { surface: string } },
@@ -41,22 +93,35 @@ export async function PUT(
   }
 
   try {
+    console.log("[admin/content-overrides] incoming draft", {
+      surface: surfaceParam,
+      email: session.user.email ?? null,
+      draft,
+    })
+
     const mergedState = mergeContentStudioState({
       [surfaceParam]: draft,
+    })
+    const persistedDraft = mergedState[surfaceParam]
+
+    console.log("[admin/content-overrides] normalized draft", {
+      surface: surfaceParam,
+      draft: persistedDraft,
     })
 
     await savePersistedContentStudioSurface(
       surfaceParam,
-      mergedState[surfaceParam],
+      persistedDraft,
       session.user.email ?? null,
     )
 
-    revalidatePath("/", "layout")
+    revalidateSurfacePaths(surfaceParam, persistedDraft)
 
     return NextResponse.json({
       ok: true,
       surface: surfaceParam,
       updatedAt: new Date().toISOString(),
+      draft: persistedDraft,
     })
   } catch (error) {
     console.error("[admin/content-overrides] failed to persist surface", {

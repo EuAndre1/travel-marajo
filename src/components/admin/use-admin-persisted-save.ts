@@ -1,7 +1,11 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { ContentStudioSurface } from "@/lib/content-studio/resolvers"
+
+function debugAdminPersist(event: string, payload: unknown) {
+  console.log(`[admin-persist] ${event}`, payload)
+}
 
 export function useAdminPersistedSave<T>({
   surface,
@@ -11,18 +15,32 @@ export function useAdminPersistedSave<T>({
 }: {
   surface: ContentStudioSurface
   draft: T
-  saveDraft: () => void
+  saveDraft: (value?: T) => void
   markPersisted: (value: T, statusMessage?: string) => void
 }) {
   const [isPersisting, setIsPersisting] = useState(false)
   const [persistMessage, setPersistMessage] = useState("")
   const [persistState, setPersistState] = useState<"idle" | "saving" | "success" | "error">("idle")
+  const draftRef = useRef(draft)
+
+  useEffect(() => {
+    draftRef.current = draft
+    debugAdminPersist("draft_snapshot_updated", {
+      surface,
+      draft,
+    })
+  }, [draft, surface])
 
   const saveAndPersist = useCallback(async () => {
-    saveDraft()
+    const currentDraft = draftRef.current
+    saveDraft(currentDraft)
     setIsPersisting(true)
     setPersistState("saving")
     setPersistMessage("Sincronizando com a camada persistida do site...")
+    debugAdminPersist("save_requested", {
+      surface,
+      draft: currentDraft,
+    })
 
     try {
       const response = await fetch(`/api/admin/content-overrides/${surface}`, {
@@ -30,7 +48,7 @@ export function useAdminPersistedSave<T>({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ draft }),
+        body: JSON.stringify({ draft: currentDraft }),
       })
 
       const result = await response.json().catch(() => null)
@@ -43,14 +61,20 @@ export function useAdminPersistedSave<T>({
         )
       }
 
+      const persistedDraft = (result?.draft ?? currentDraft) as T
+
       markPersisted(
-        draft,
+        persistedDraft,
         "Conteudo persistido no banco com fallback seguro para os arquivos do projeto.",
       )
       setPersistState("success")
       setPersistMessage(
         "Override salvo no banco e pronto para refletir no site publico quando esta superficie for renderizada.",
       )
+      debugAdminPersist("save_succeeded", {
+        surface,
+        persistedDraft,
+      })
     } catch (error) {
       const message =
         error instanceof Error
@@ -61,10 +85,14 @@ export function useAdminPersistedSave<T>({
         `O rascunho local foi salvo neste navegador, mas houve falha ao persistir no site: ${message}`,
       )
       setPersistState("error")
+      debugAdminPersist("save_failed", {
+        surface,
+        message,
+      })
     } finally {
       setIsPersisting(false)
     }
-  }, [draft, markPersisted, saveDraft, surface])
+  }, [markPersisted, saveDraft, surface])
 
   return {
     isPersisting,

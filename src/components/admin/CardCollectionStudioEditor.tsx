@@ -1,7 +1,7 @@
 "use client"
 /* eslint-disable @next/next/no-img-element */
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { AppLocale } from "@/config/i18n"
 import type {
   AdminCardCollectionDraft,
@@ -260,6 +260,19 @@ export default function CardCollectionStudioEditor({
 
   const localeDraft = selectedDraft?.locales[activeLocale] ?? null
   const liveLocale = selectedLive?.locales[activeLocale] ?? null
+
+  useEffect(() => {
+    if (draft.items.length === 0) {
+      if (selectedId) {
+        setSelectedId("")
+      }
+      return
+    }
+
+    if (!draft.items.some((item) => item.id === selectedId)) {
+      setSelectedId(draft.items[0].id)
+    }
+  }, [draft.items, selectedId])
 
   const updateLocaleField = (field: keyof AdminCardLocaleDraft, value: string) => {
     if (!selectedDraft) {
