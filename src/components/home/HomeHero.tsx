@@ -227,6 +227,7 @@ export default function HomeHero({
                     <Link
                       key={tab.label}
                       href={tab.href}
+                      onClick={preventPreviewNavigation}
                       className="flex items-center justify-between rounded-[1.25rem] border border-white/10 bg-white/6 px-4 py-3.5 text-sm text-white/84 transition hover:bg-white/10"
                     >
                       <div>

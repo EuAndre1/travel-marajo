@@ -59,6 +59,10 @@ export function useAdminPersistedSave<T>({
       setPersistMessage(
         "Override salvo no banco e pronto para refletir no site publico quando esta superficie for renderizada.",
       )
+      return {
+        ok: true as const,
+        draft: persistedDraft,
+      }
     } catch (error) {
       const message =
         error instanceof Error
@@ -69,6 +73,10 @@ export function useAdminPersistedSave<T>({
         `O rascunho local foi salvo neste navegador, mas houve falha ao persistir no site: ${message}`,
       )
       setPersistState("error")
+      return {
+        ok: false as const,
+        error: message,
+      }
     } finally {
       setIsPersisting(false)
     }

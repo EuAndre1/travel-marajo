@@ -1,20 +1,44 @@
 "use client"
 
+import { type MouseEvent } from "react"
 import Link from "next/link"
+import Editable from "@/components/admin/Editable"
 import {
+  useResolvedContentLocale,
   useResolvedHomeAuthorityContent,
   useResolvedSiteContent,
 } from "@/components/content/ContentOverridesProvider"
-import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
 import { buildWhatsAppUrl } from "@/lib/whatsapp-message"
 
-export default function HomeFinalCta() {
-  const { lang } = useSiteLanguage()
+export interface HomeFinalCtaInlineEditing {
+  enabled: boolean
+  canEdit: boolean
+  onTitleChange: (value: string) => void
+  onSubtitleChange: (value: string) => void
+  onPrimaryLabelChange: (value: string) => void
+  onSecondaryLabelChange: (value: string) => void
+}
+
+export default function HomeFinalCta({
+  inlineEditing,
+}: {
+  inlineEditing?: HomeFinalCtaInlineEditing
+}) {
+  const lang = useResolvedContentLocale()
   const authority = useResolvedHomeAuthorityContent()
   const content = useResolvedSiteContent()
   const phone = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
   const specialistHref = phone ? buildWhatsAppUrl(phone, content.pages.planTrip.whatsappMessage) : getLocalizedPath(lang, "planTrip")
+  const canInlineEdit = Boolean(inlineEditing?.enabled && inlineEditing.canEdit)
+
+  const preventPreviewNavigation = (event: MouseEvent<HTMLAnchorElement>) => {
+    if (!canInlineEdit) {
+      return
+    }
+
+    event.preventDefault()
+  }
 
   return (
     <section className="pb-16 pt-8 lg:pb-20">
@@ -25,29 +49,61 @@ export default function HomeFinalCta() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-accent-light/82 sm:text-[11px] sm:tracking-[0.34em]">
                 {authority.finalEyebrow}
               </p>
-              <h2 className="mt-3 max-w-3xl text-[2rem] font-display leading-tight sm:text-4xl">
-                {authority.finalTitle}
-              </h2>
-              <p className="mt-3 max-w-3xl text-[15px] leading-7 text-white/78 sm:text-base sm:leading-8">
-                {authority.finalSubtitle}
-              </p>
+              <Editable
+                type="textarea"
+                value={authority.finalTitle}
+                onChange={inlineEditing?.onTitleChange}
+                disabled={!canInlineEdit}
+                label="Titulo do fechamento da homepage"
+              >
+                <h2 className="mt-3 max-w-3xl text-[2rem] font-display leading-tight sm:text-4xl">
+                  {authority.finalTitle}
+                </h2>
+              </Editable>
+              <Editable
+                type="textarea"
+                value={authority.finalSubtitle}
+                onChange={inlineEditing?.onSubtitleChange}
+                disabled={!canInlineEdit}
+                label="Texto de apoio do fechamento da homepage"
+              >
+                <p className="mt-3 max-w-3xl text-[15px] leading-7 text-white/78 sm:text-base sm:leading-8">
+                  {authority.finalSubtitle}
+                </p>
+              </Editable>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row xl:justify-end">
-              <Link
-                href={getLocalizedPath(lang, "experiences")}
-                className="inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark"
+              <Editable
+                value={authority.finalPrimaryLabel}
+                onChange={inlineEditing?.onPrimaryLabelChange}
+                disabled={!canInlineEdit}
+                label="Texto do botao principal do fechamento"
               >
-                {authority.finalPrimaryLabel}
-              </Link>
-              <Link
-                href={specialistHref}
-                className="inline-flex items-center justify-center rounded-full border border-white/16 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-                target={phone ? "_blank" : undefined}
-                rel={phone ? "noreferrer" : undefined}
+                <Link
+                  href={getLocalizedPath(lang, "experiences")}
+                  onClick={preventPreviewNavigation}
+                  className="inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-dark"
+                >
+                  {authority.finalPrimaryLabel}
+                </Link>
+              </Editable>
+              <Editable
+                value={authority.finalSecondaryLabel}
+                onChange={inlineEditing?.onSecondaryLabelChange}
+                disabled={!canInlineEdit}
+                label="Texto do botao secundario do fechamento"
               >
-                {authority.finalSecondaryLabel}
-              </Link>
+                <Link
+                  href={specialistHref}
+                  onClick={preventPreviewNavigation}
+                  className="inline-flex items-center justify-center rounded-full border border-white/16 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                  target={phone && !canInlineEdit ? "_blank" : undefined}
+                  rel={phone && !canInlineEdit ? "noreferrer" : undefined}
+                >
+                  {authority.finalSecondaryLabel}
+                </Link>
+              </Editable>
             </div>
           </div>
         </div>
