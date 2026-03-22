@@ -5,10 +5,13 @@ import { useEffect, useMemo, useState } from "react"
 import {
   ArrowPathIcon,
   CheckCircleIcon,
+  FilmIcon,
   PhotoIcon,
+  PlayIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
-import type { MediaAssetItem } from "@/lib/media-library/shared"
+import type { MediaAssetItem, MediaAssetType } from "@/lib/media-library/shared"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
 function resolveErrorMessage(raw: unknown) {
   if (typeof raw === "string" && raw.trim()) {
@@ -18,11 +21,64 @@ function resolveErrorMessage(raw: unknown) {
   return "Nao foi possivel carregar a biblioteca de midia."
 }
 
+function MediaThumb({ item }: { item: MediaAssetItem }) {
+  if (item.type === "video") {
+    return (
+      <div className="relative h-full w-full bg-black">
+        <video
+          src={item.url}
+          className="h-full w-full object-cover"
+          muted
+          playsInline
+          preload="metadata"
+        />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/18">
+          <span className="inline-flex items-center justify-center rounded-full bg-white/88 p-2 text-[#0B1C2C]">
+            <PlayIcon className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <img
+      src={item.url}
+      alt={item.alt ?? item.filename}
+      className="h-full w-full object-cover"
+    />
+  )
+}
+
+function MediaDetailPreview({ item }: { item: MediaAssetItem }) {
+  if (item.type === "video") {
+    return (
+      <video
+        className="h-56 w-full bg-black object-cover"
+        controls
+        playsInline
+        preload="metadata"
+      >
+        <source src={item.url} type={getVideoMimeTypeFromPath(item.url || item.filename)} />
+      </video>
+    )
+  }
+
+  return (
+    <img
+      src={item.url}
+      alt={item.alt ?? item.filename}
+      className="h-56 w-full object-cover"
+    />
+  )
+}
+
 export default function AdminMediaPickerDialog({
   open,
-  title = "Selecionar imagem da biblioteca",
-  description = "Escolha uma imagem persistida para usar como referencia visual neste editor.",
+  title = "Selecionar midia da biblioteca",
+  description = "Escolha um arquivo persistido para usar neste editor.",
   selectedUrl,
+  acceptedTypes = ["image"],
   onClose,
   onSelect,
 }: {
@@ -30,6 +86,7 @@ export default function AdminMediaPickerDialog({
   title?: string
   description?: string
   selectedUrl?: string
+  acceptedTypes?: MediaAssetType[]
   onClose: () => void
   onSelect: (item: MediaAssetItem) => void
 }) {
@@ -61,7 +118,8 @@ export default function AdminMediaPickerDialog({
           return
         }
 
-        const nextItems: MediaAssetItem[] = Array.isArray(result?.items) ? result.items : []
+        const rawItems: MediaAssetItem[] = Array.isArray(result?.items) ? result.items : []
+        const nextItems = rawItems.filter((item) => acceptedTypes.includes(item.type))
         setItems(nextItems)
 
         const selectedMatch = nextItems.find((item) => item.url === selectedUrl)
@@ -86,7 +144,7 @@ export default function AdminMediaPickerDialog({
     return () => {
       cancelled = true
     }
-  }, [open, selectedUrl])
+  }, [acceptedTypes, open, selectedUrl])
 
   const selectedItem = useMemo(
     () => items.find((item) => item.id === selectedId) ?? null,
@@ -124,7 +182,7 @@ export default function AdminMediaPickerDialog({
               <div className="flex min-h-[260px] items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50">
                 <div className="text-center text-sm text-slate-500">
                   <ArrowPathIcon className="mx-auto h-6 w-6 animate-spin text-slate-400" />
-                  <p className="mt-3">Carregando imagens persistidas...</p>
+                  <p className="mt-3">Carregando midias persistidas...</p>
                 </div>
               </div>
             ) : errorMessage ? (
@@ -133,8 +191,8 @@ export default function AdminMediaPickerDialog({
               </div>
             ) : items.length === 0 ? (
               <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center text-sm leading-7 text-slate-500">
-                Ainda nao existe nenhuma imagem persistida. Envie a primeira imagem em{" "}
-                <strong>/admin/media</strong> para reutiliza-la aqui.
+                Ainda nao existe nenhuma midia persistida deste tipo. Envie o primeiro arquivo em{" "}
+                <strong>/admin/media</strong> para reutiliza-lo aqui.
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -153,16 +211,12 @@ export default function AdminMediaPickerDialog({
                       }`}
                     >
                       <div className="relative h-44 overflow-hidden">
-                        <img
-                          src={item.url}
-                          alt={item.alt ?? item.filename}
-                          className="h-full w-full object-cover"
-                        />
+                        <MediaThumb item={item} />
                       </div>
                       <div className="p-4">
                         <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.22em]">
                           <span className={active ? "text-white/72" : "text-slate-400"}>
-                            Imagem
+                            {item.type === "video" ? "Video" : "Imagem"}
                           </span>
                           {item.url === selectedUrl ? (
                             <span
@@ -198,23 +252,19 @@ export default function AdminMediaPickerDialog({
             {selectedItem ? (
               <div className="space-y-5">
                 <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
-                  <img
-                    src={selectedItem.url}
-                    alt={selectedItem.alt ?? selectedItem.filename}
-                    className="h-56 w-full object-cover"
-                  />
+                  <MediaDetailPreview item={selectedItem} />
                 </div>
 
                 <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4">
                   <p className="text-xs uppercase tracking-[0.24em] text-slate-400">
-                    Imagem selecionada
+                    Midia selecionada
                   </p>
                   <p className="mt-3 text-base font-semibold text-[#0B1C2C]">
                     {selectedItem.alt || selectedItem.filename}
                   </p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{selectedItem.filename}</p>
                   <div className="mt-4 rounded-[1rem] bg-slate-50 px-3 py-3 text-xs leading-6 text-slate-500">
-                    URL publica pronta para reutilizacao. Ao escolher, o editor recebe a imagem
+                    URL publica pronta para reutilizacao. Ao escolher, o editor recebe a midia
                     sem precisar colar link manualmente.
                   </div>
                 </div>
@@ -235,7 +285,11 @@ export default function AdminMediaPickerDialog({
                   href="/admin/media"
                   className="inline-flex w-full items-center justify-center rounded-full border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
                 >
-                  <PhotoIcon className="mr-2 h-5 w-5" />
+                  {selectedItem.type === "video" ? (
+                    <FilmIcon className="mr-2 h-5 w-5" />
+                  ) : (
+                    <PhotoIcon className="mr-2 h-5 w-5" />
+                  )}
                   Abrir biblioteca completa
                 </a>
               </div>
@@ -243,9 +297,9 @@ export default function AdminMediaPickerDialog({
               <div className="flex h-full min-h-[260px] items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-white text-center text-sm leading-6 text-slate-500">
                 <div className="max-w-[220px] px-4">
                   <PhotoIcon className="mx-auto h-8 w-8 text-slate-300" />
-                  <p className="mt-3 font-semibold text-slate-600">Selecione uma imagem</p>
+                  <p className="mt-3 font-semibold text-slate-600">Selecione uma midia</p>
                   <p className="mt-2">
-                    Escolha um item da grade para ver a previa e usar a imagem neste editor.
+                    Escolha um item da grade para ver a previa e usar o arquivo neste editor.
                   </p>
                 </div>
               </div>

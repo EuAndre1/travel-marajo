@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useResolvedHotelCards } from "@/components/content/ContentOverridesProvider"
 import { getLocalizedPath } from "@/i18n/routing"
 import { useSiteLanguage } from "@/lib/use-site-language"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 import SectionHeader from "./SectionHeader"
 
 const copyByLocale = {
@@ -37,7 +38,11 @@ const copyByLocale = {
 export default function HomePartnerHotels() {
   const { lang } = useSiteLanguage()
   const cards = useResolvedHotelCards().filter(
-    (item) => item.visible && item.imageUrl && item.title.trim() && (item.linkedSlug || item.ctaTarget),
+    (item) =>
+      item.visible &&
+      (item.mediaUrl || item.imageUrl) &&
+      item.title.trim() &&
+      (item.linkedSlug || item.ctaTarget),
   )
 
   if (cards.length === 0) {
@@ -78,7 +83,23 @@ export default function HomePartnerHotels() {
               className="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]"
             >
               <div className="relative h-48">
-                <Image src={card.imageUrl} alt={card.title} fill className="object-cover" />
+                {card.mediaType === "video" && card.mediaUrl ? (
+                  <video
+                    className="h-full w-full object-cover bg-black"
+                    muted
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src={card.mediaUrl} type={getVideoMimeTypeFromPath(card.mediaUrl)} />
+                  </video>
+                ) : (
+                  <Image
+                    src={card.mediaUrl || card.imageUrl}
+                    alt={card.title}
+                    fill
+                    className="object-cover"
+                  />
+                )}
               </div>
               <div className="p-5">
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">

@@ -3,6 +3,7 @@ import Link from "next/link"
 import type { AppLocale } from "@/config/i18n"
 import type { ResolvedAdminHotelCardItem } from "@/lib/admin-studio/card-collections"
 import { getLocalizedPath } from "@/i18n/routing"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
 const copyByLocale = {
   pt: {
@@ -108,7 +109,13 @@ export default function HotelDetailPageContent({
   locale: AppLocale
 }) {
   const copy = copyByLocale[locale]
-  const gallery = Array.from(new Set([hotel.imageUrl, ...hotel.galleryImageUrls].filter(Boolean)))
+  const gallery = Array.from(
+    new Map(
+      hotel.galleryMediaItems
+        .filter((item) => item.url)
+        .map((item) => [`${item.type}:${item.url}`, item]),
+    ).values(),
+  )
   const fullDescription = hotel.fullDescription.trim() || hotel.description
   const amenities = parseMultilineText(hotel.amenitiesText)
   const primaryHref = buildPrimaryHref(hotel, locale)
@@ -116,12 +123,27 @@ export default function HotelDetailPageContent({
   const usesSearchFallback =
     !hotel.ctaTarget || hotel.ctaTarget === "/hotels" || hotel.ctaTarget === "/hoteis"
   const primaryLabel = usesSearchFallback ? copy.fallbackCta : hotel.ctaLabel || copy.fallbackCta
+  const heroFallbackImageUrl = hotel.imageUrl || hotel.mediaUrl
 
   return (
     <main className="min-h-screen bg-[#f8f7f3]">
       <section className="relative overflow-hidden bg-[#0B1C2C] text-white">
         <div className="absolute inset-0">
-          <Image src={hotel.imageUrl} alt={hotel.title} fill priority className="object-cover" />
+          {heroFallbackImageUrl ? (
+            <Image src={heroFallbackImageUrl} alt={hotel.title} fill priority className="object-cover" />
+          ) : null}
+          {hotel.mediaType === "video" && hotel.mediaUrl ? (
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="none"
+            >
+              <source src={hotel.mediaUrl} type={getVideoMimeTypeFromPath(hotel.mediaUrl)} />
+            </video>
+          ) : null}
           <div className="absolute inset-0 bg-[linear-gradient(110deg,rgba(11,28,44,0.92)_0%,rgba(11,28,44,0.8)_42%,rgba(11,28,44,0.28)_100%)]" />
         </div>
 
@@ -226,20 +248,26 @@ export default function HotelDetailPageContent({
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {gallery.map((imageUrl, index) => (
+              {gallery.map((item, index) => (
                 <div
-                  key={`${imageUrl}-${index}`}
+                  key={`${item.type}:${item.url}:${index}`}
                   className={`relative overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white ${
                     index === 0 ? "md:col-span-2 md:row-span-2" : ""
                   }`}
                 >
                   <div className={`relative ${index === 0 ? "h-[340px] sm:h-[420px]" : "h-56 sm:h-64"}`}>
-                    <Image
-                      src={imageUrl}
-                      alt={`${hotel.title} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
+                    {item.type === "video" ? (
+                      <video className="h-full w-full object-cover bg-black" controls playsInline preload="metadata">
+                        <source src={item.url} type={getVideoMimeTypeFromPath(item.url)} />
+                      </video>
+                    ) : (
+                      <Image
+                        src={item.url}
+                        alt={`${hotel.title} ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    )}
                   </div>
                 </div>
               ))}

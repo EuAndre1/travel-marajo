@@ -1,7 +1,11 @@
 import { del, put } from "@vercel/blob"
 import {
+  ACCEPTED_MEDIA_TYPES,
   ACCEPTED_MEDIA_IMAGE_TYPES,
+  ACCEPTED_MEDIA_VIDEO_TYPES,
   MAX_MEDIA_IMAGE_BYTES,
+  MAX_MEDIA_VIDEO_BYTES,
+  getMediaTypeFromMimeType,
   type MediaStorageStatus,
 } from "@/lib/media-library/shared"
 
@@ -53,10 +57,12 @@ export function getMediaStorageStatus(): MediaStorageStatus {
   return {
     provider: "vercel-blob",
     configured,
-    maxFileSizeBytes: MAX_MEDIA_IMAGE_BYTES,
-    acceptedMimeTypes: ACCEPTED_MEDIA_IMAGE_TYPES,
+    maxFileSizeBytes: MAX_MEDIA_VIDEO_BYTES,
+    maxImageFileSizeBytes: MAX_MEDIA_IMAGE_BYTES,
+    maxVideoFileSizeBytes: MAX_MEDIA_VIDEO_BYTES,
+    acceptedMimeTypes: ACCEPTED_MEDIA_TYPES,
     note: configured
-      ? "Armazenamento persistente ativo via Vercel Blob."
+      ? "Armazenamento persistente ativo via Vercel Blob para imagens e videos."
       : "Defina BLOB_READ_WRITE_TOKEN no ambiente para habilitar uploads persistentes.",
   }
 }
@@ -74,20 +80,38 @@ function assertStorageReady() {
   return token
 }
 
-export function validateImageFile(file: File) {
-  if (
-    !ACCEPTED_MEDIA_IMAGE_TYPES.includes(
-      file.type as (typeof ACCEPTED_MEDIA_IMAGE_TYPES)[number],
-    )
-  ) {
-    throw new MediaStorageError(
-      "Formato invalido. Envie JPG, PNG, WEBP, GIF ou AVIF.",
-      415,
-    )
+export function validateMediaFile(file: File) {
+  const mediaType = getMediaTypeFromMimeType(file.type)
+
+  if (mediaType === "image") {
+    if (
+      !ACCEPTED_MEDIA_IMAGE_TYPES.includes(
+        file.type as (typeof ACCEPTED_MEDIA_IMAGE_TYPES)[number],
+      )
+    ) {
+      throw new MediaStorageError(
+        "Formato invalido. Envie JPG, PNG, WEBP, GIF ou AVIF.",
+        415,
+      )
+    }
+
+    if (file.size > MAX_MEDIA_IMAGE_BYTES) {
+      throw new MediaStorageError("Arquivo muito grande. O limite atual para imagem e 5 MB.", 413)
+    }
+
+    return
   }
 
-  if (file.size > MAX_MEDIA_IMAGE_BYTES) {
-    throw new MediaStorageError("Arquivo muito grande. O limite atual e 5 MB.", 413)
+  if (
+    !ACCEPTED_MEDIA_VIDEO_TYPES.includes(
+      file.type as (typeof ACCEPTED_MEDIA_VIDEO_TYPES)[number],
+    )
+  ) {
+    throw new MediaStorageError("Formato invalido. Envie video MP4 ou WEBM.", 415)
+  }
+
+  if (file.size > MAX_MEDIA_VIDEO_BYTES) {
+    throw new MediaStorageError("Arquivo muito grande. O limite atual para video e 50 MB.", 413)
   }
 }
 
@@ -100,13 +124,13 @@ export function getMediaStorageErrorResponse(error: unknown) {
   }
 
   return {
-    message: "Nao foi possivel processar esta imagem agora.",
+    message: "Nao foi possivel processar esta midia agora.",
     status: 500,
   }
 }
 
-export async function uploadImageToStorage(file: File) {
-  validateImageFile(file)
+export async function uploadMediaToStorage(file: File) {
+  validateMediaFile(file)
 
   const token = assertStorageReady()
   const pathname = buildBlobPath(file.name)
@@ -120,7 +144,15 @@ export async function uploadImageToStorage(file: File) {
   })
 }
 
-export async function deleteImageFromStorage(url: string) {
+export async function deleteMediaFromStorage(url: string) {
   const token = assertStorageReady()
   await del(url, { token })
+}
+
+export async function uploadImageToStorage(file: File) {
+  return uploadMediaToStorage(file)
+}
+
+export async function deleteImageFromStorage(url: string) {
+  return deleteMediaFromStorage(url)
 }

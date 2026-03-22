@@ -2,27 +2,36 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useState } from "react"
-import { PhotoIcon } from "@heroicons/react/24/outline"
+import { FilmIcon, PhotoIcon } from "@heroicons/react/24/outline"
 import AdminMediaPickerDialog from "@/components/admin/AdminMediaPickerDialog"
-import type { MediaAssetItem } from "@/lib/media-library/shared"
+import type { MediaAssetItem, MediaAssetType } from "@/lib/media-library/shared"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
-function ImagePreview({
+function MediaPreview({
   title,
   description,
-  imageUrl,
+  mediaUrl,
+  mediaType,
 }: {
   title: string
   description: string
-  imageUrl: string
+  mediaUrl: string
+  mediaType: MediaAssetType
 }) {
   return (
     <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
       <div className="relative h-44 overflow-hidden bg-slate-100">
-        {imageUrl ? (
-          <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
+        {mediaUrl ? (
+          mediaType === "video" ? (
+            <video className="h-full w-full object-cover" controls playsInline preload="metadata">
+              <source src={mediaUrl} type={getVideoMimeTypeFromPath(mediaUrl)} />
+            </video>
+          ) : (
+            <img src={mediaUrl} alt={title} className="h-full w-full object-cover" />
+          )
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-400">
-            Nenhuma imagem selecionada
+            Nenhuma midia selecionada
           </div>
         )}
       </div>
@@ -40,15 +49,51 @@ export default function AdminCardImageField({
   liveImageUrl,
   draftImageUrl,
   onChange,
+  liveMediaUrl,
+  draftMediaUrl,
+  liveMediaType = "image",
+  draftMediaType = "image",
+  acceptedTypes = ["image"],
+  onMediaChange,
 }: {
   label: string
   helper: string
   liveImageUrl: string
   draftImageUrl: string
-  onChange: (value: string) => void
+  onChange?: (value: string) => void
+  liveMediaUrl?: string
+  draftMediaUrl?: string
+  liveMediaType?: MediaAssetType
+  draftMediaType?: MediaAssetType
+  acceptedTypes?: MediaAssetType[]
+  onMediaChange?: (value: { url: string; type: MediaAssetType }) => void
 }) {
   const [pickerOpen, setPickerOpen] = useState(false)
-  const changed = liveImageUrl !== draftImageUrl
+  const effectiveLiveMediaUrl = liveMediaUrl ?? liveImageUrl
+  const effectiveDraftMediaUrl = draftMediaUrl ?? draftImageUrl
+  const changed =
+    effectiveLiveMediaUrl !== effectiveDraftMediaUrl || liveMediaType !== draftMediaType
+
+  const applyMedia = (item: MediaAssetItem) => {
+    if (onMediaChange) {
+      onMediaChange({ url: item.url, type: item.type })
+      return
+    }
+
+    onChange?.(item.url)
+  }
+
+  const resetMedia = () => {
+    if (onMediaChange) {
+      onMediaChange({
+        url: effectiveLiveMediaUrl,
+        type: liveMediaType,
+      })
+      return
+    }
+
+    onChange?.(liveImageUrl)
+  }
 
   return (
     <div
@@ -66,20 +111,22 @@ export default function AdminCardImageField({
             changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
           }`}
         >
-          {changed ? "Nova imagem pronta para publicar" : "Usando a imagem atual"}
+          {changed ? "Nova midia pronta para publicar" : "Usando a midia atual"}
         </span>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <ImagePreview
-          title="Imagem atual no site"
-          description="Esta e a imagem que o visitante ve agora."
-          imageUrl={liveImageUrl}
+        <MediaPreview
+          title="Midia atual no site"
+          description="Este e o arquivo que o visitante ve agora."
+          mediaUrl={effectiveLiveMediaUrl}
+          mediaType={liveMediaType}
         />
-        <ImagePreview
-          title="Imagem do rascunho"
-          description="Esta imagem entra no site quando voce salvar e aplicar as alteracoes."
-          imageUrl={draftImageUrl}
+        <MediaPreview
+          title="Midia do rascunho"
+          description="Este arquivo entra no site quando voce salvar e aplicar as alteracoes."
+          mediaUrl={effectiveDraftMediaUrl}
+          mediaType={draftMediaType}
         />
       </div>
 
@@ -89,27 +136,32 @@ export default function AdminCardImageField({
           onClick={() => setPickerOpen(true)}
           className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
         >
-          <PhotoIcon className="mr-2 h-5 w-5" />
-          Trocar imagem de capa
+          {acceptedTypes.includes("video") ? (
+            <FilmIcon className="mr-2 h-5 w-5" />
+          ) : (
+            <PhotoIcon className="mr-2 h-5 w-5" />
+          )}
+          {acceptedTypes.includes("video") ? "Trocar midia de capa" : "Trocar imagem de capa"}
         </button>
         <button
           type="button"
-          onClick={() => onChange(liveImageUrl)}
+          onClick={resetMedia}
           className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
         >
-          Voltar para a imagem atual
+          Voltar para a midia atual
         </button>
       </div>
 
       <div className="mt-4 rounded-[1.15rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-6 text-slate-600">
-        Ao salvar, a imagem do rascunho passa a ser usada neste card no site.
+        Ao salvar, a midia do rascunho passa a ser usada neste card no site.
       </div>
 
       <AdminMediaPickerDialog
         open={pickerOpen}
-        selectedUrl={draftImageUrl}
+        acceptedTypes={acceptedTypes}
+        selectedUrl={effectiveDraftMediaUrl}
         onClose={() => setPickerOpen(false)}
-        onSelect={(item: MediaAssetItem) => onChange(item.url)}
+        onSelect={applyMedia}
       />
     </div>
   )

@@ -6,7 +6,7 @@ import {
   findMediaAssetById,
 } from "@/lib/media-library/persistence"
 import {
-  deleteImageFromStorage,
+  deleteMediaFromStorage,
   getMediaStorageErrorResponse,
 } from "@/lib/media-library/storage"
 
@@ -30,7 +30,7 @@ export async function DELETE(
   }
 
   try {
-    await deleteImageFromStorage(asset.url)
+    await deleteMediaFromStorage(asset.url)
   } catch (error) {
     if (!(error instanceof BlobNotFoundError)) {
       const { message, status } = getMediaStorageErrorResponse(error)

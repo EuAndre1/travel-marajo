@@ -4,6 +4,11 @@ import { destinations as baseDestinations } from "@/data/destinos"
 import { homeContentByLocale } from "@/data/homepage"
 import { packages as basePackages } from "@/data/pacotes"
 import { services as baseServices } from "@/data/services"
+import {
+  getMediaTypeFromUrl,
+  type MediaAssetType,
+  type MediaReference,
+} from "@/lib/media-library/shared"
 
 export interface AdminCardLocaleDraft {
   title: string
@@ -31,7 +36,10 @@ export interface AdminCardDraftItem {
 
 export interface AdminHotelCardDraftItem
   extends Omit<AdminCardDraftItem, "locales"> {
+  mediaUrl: string
+  mediaType: MediaAssetType
   galleryImageUrls: string[]
+  galleryMediaItems: MediaReference[]
   locales: Record<AppLocale, AdminHotelCardLocaleDraft>
 }
 
@@ -56,10 +64,13 @@ export interface ResolvedAdminHotelCardItem extends AdminHotelCardLocaleDraft {
   id: string
   linkedSlug: string
   imageUrl: string
+  mediaUrl: string
+  mediaType: MediaAssetType
   ctaTarget: string
   visible: boolean
   sortOrder: number
   galleryImageUrls: string[]
+  galleryMediaItems: MediaReference[]
 }
 
 type LocaleRecord<T> = Record<AppLocale, T>
@@ -200,6 +211,55 @@ function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
   return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
 }
 
+function normalizeMediaReference(
+  value: unknown,
+  fallback?: Partial<MediaReference>,
+): MediaReference | null {
+  if (!isRecord(value)) {
+    if (fallback?.url) {
+      return {
+        url: fallback.url,
+        type: fallback.type ?? getMediaTypeFromUrl(fallback.url),
+      }
+    }
+    return null
+  }
+
+  const url = getStringValue(value, "url", fallback?.url ?? "")
+  if (!url) {
+    return null
+  }
+
+  const rawType = getStringValue(value, "type", fallback?.type ?? getMediaTypeFromUrl(url))
+  const type: MediaAssetType = rawType === "video" ? "video" : "image"
+
+  return {
+    url,
+    type,
+  }
+}
+
+function getMediaReferenceArrayValue(
+  source: unknown,
+  key: string,
+  fallback: MediaReference[],
+) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  if (!Array.isArray(value)) {
+    return fallback
+  }
+
+  const nextItems = value
+    .map((item) => normalizeMediaReference(item))
+    .filter((item): item is MediaReference => Boolean(item))
+
+  return nextItems.length ? nextItems : fallback
+}
+
 export function normalizeHotelLocaleDraft(
   localeValue: unknown,
   fallback?: Partial<AdminHotelCardLocaleDraft>,
@@ -230,6 +290,13 @@ export function normalizeHotelCardDraftItem(
   const localesValue = isRecord(itemValue) && isRecord(itemValue.locales) ? itemValue.locales : {}
   const ptLocale = normalizeHotelLocaleDraft(localesValue.pt, fallback?.locales?.pt)
   const imageUrl = getStringValue(itemValue, "imageUrl", fallback?.imageUrl ?? "")
+  const mediaUrl = getStringValue(itemValue, "mediaUrl", fallback?.mediaUrl ?? imageUrl)
+  const rawMediaType = getStringValue(
+    itemValue,
+    "mediaType",
+    fallback?.mediaType ?? getMediaTypeFromUrl(mediaUrl || imageUrl),
+  )
+  const mediaType: MediaAssetType = rawMediaType === "video" ? "video" : "image"
   const galleryImageUrls = getStringArrayValue(
     itemValue,
     "galleryImageUrls",
@@ -239,6 +306,17 @@ export function normalizeHotelCardDraftItem(
         ? [imageUrl]
         : [],
   )
+  const galleryMediaItems = getMediaReferenceArrayValue(
+    itemValue,
+    "galleryMediaItems",
+    fallback?.galleryMediaItems?.length
+      ? fallback.galleryMediaItems
+      : galleryImageUrls.map((url) => ({ url, type: "image" as const })),
+  )
+  const syncedGalleryImageUrls =
+    galleryImageUrls.length > 0
+      ? galleryImageUrls
+      : galleryMediaItems.filter((item) => item.type === "image").map((item) => item.url)
 
   return {
     id: getStringValue(itemValue, "id", baseId),
@@ -251,10 +329,13 @@ export function normalizeHotelCardDraftItem(
       baseId,
     ),
     imageUrl,
+    mediaUrl: mediaUrl || imageUrl,
+    mediaType,
     ctaTarget: getStringValue(itemValue, "ctaTarget", fallback?.ctaTarget ?? "/hotels"),
     visible: getBooleanValue(itemValue, "visible", fallback?.visible ?? true),
     sortOrder: getNumberValue(itemValue, "sortOrder", fallback?.sortOrder ?? index),
-    galleryImageUrls,
+    galleryImageUrls: syncedGalleryImageUrls,
+    galleryMediaItems,
     locales: {
       pt: ptLocale,
       en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en),
@@ -389,10 +470,13 @@ function buildHotelCards(): AdminHotelCardCollectionDraft {
         id: "hotel-partner-1",
         linkedSlug,
         imageUrl: baseOffer.image,
+        mediaUrl: baseOffer.image,
+        mediaType: "image",
         ctaTarget: "/hotels",
         visible: true,
         sortOrder: 0,
         galleryImageUrls: baseOffer.image ? [baseOffer.image] : [],
+        galleryMediaItems: baseOffer.image ? [{ url: baseOffer.image, type: "image" }] : [],
         locales: createLocaleRecord((locale) => {
           const localeOffer =
             homeContentByLocale[locale].offers.items.find((item) => item.href === "/hotels") ??

@@ -2,23 +2,38 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useState } from "react"
-import { PhotoIcon } from "@heroicons/react/24/outline"
+import { FilmIcon, PhotoIcon } from "@heroicons/react/24/outline"
 import AdminMediaPickerDialog from "@/components/admin/AdminMediaPickerDialog"
-import type { MediaAssetItem } from "@/lib/media-library/shared"
+import type { MediaAssetItem, MediaAssetType } from "@/lib/media-library/shared"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
-function ImagePreview({
+function MediaPreview({
   title,
   description,
-  imageUrl,
+  mediaUrl,
+  mediaType,
 }: {
   title: string
   description: string
-  imageUrl: string
+  mediaUrl: string
+  mediaType: MediaAssetType
 }) {
   return (
     <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white">
       <div className="relative h-44 overflow-hidden bg-slate-100">
-        <img src={imageUrl} alt={title} className="h-full w-full object-cover" />
+        {mediaUrl ? (
+          mediaType === "video" ? (
+            <video className="h-full w-full object-cover" controls playsInline preload="metadata">
+              <source src={mediaUrl} type={getVideoMimeTypeFromPath(mediaUrl)} />
+            </video>
+          ) : (
+            <img src={mediaUrl} alt={title} className="h-full w-full object-cover" />
+          )
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-slate-400">
+            Nenhuma midia selecionada
+          </div>
+        )}
       </div>
       <div className="p-4">
         <p className="text-sm font-semibold text-[#0B1C2C]">{title}</p>
@@ -35,17 +50,52 @@ export default function AdminMediaField({
   draftImageUrl,
   onChange,
   pendingNote,
+  liveMediaUrl,
+  draftMediaUrl,
+  liveMediaType = "image",
+  draftMediaType = "image",
+  acceptedTypes = ["image"],
+  onMediaChange,
 }: {
   label: string
   helper: string
   liveImageUrl: string
   draftImageUrl: string
-  onChange: (value: string) => void
+  onChange?: (value: string) => void
   pendingNote: string
+  liveMediaUrl?: string
+  draftMediaUrl?: string
+  liveMediaType?: MediaAssetType
+  draftMediaType?: MediaAssetType
+  acceptedTypes?: MediaAssetType[]
+  onMediaChange?: (value: { url: string; type: MediaAssetType }) => void
 }) {
   const [pickerOpen, setPickerOpen] = useState(false)
-  const changed = liveImageUrl !== draftImageUrl
-  const previewDraftImage = draftImageUrl || liveImageUrl
+  const effectiveLiveMediaUrl = liveMediaUrl ?? liveImageUrl
+  const effectiveDraftMediaUrl = draftMediaUrl ?? draftImageUrl
+  const changed =
+    effectiveLiveMediaUrl !== effectiveDraftMediaUrl || liveMediaType !== draftMediaType
+
+  const applyMedia = (item: MediaAssetItem) => {
+    if (onMediaChange) {
+      onMediaChange({ url: item.url, type: item.type })
+      return
+    }
+
+    onChange?.(item.url)
+  }
+
+  const resetMedia = () => {
+    if (onMediaChange) {
+      onMediaChange({
+        url: effectiveLiveMediaUrl,
+        type: liveMediaType,
+      })
+      return
+    }
+
+    onChange?.(liveImageUrl)
+  }
 
   return (
     <div className="rounded-[1.45rem] border border-slate-200 bg-slate-50/75 p-4">
@@ -59,24 +109,26 @@ export default function AdminMediaField({
             changed ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"
           }`}
         >
-          {changed ? "Nova imagem escolhida no estudio" : "Nenhuma troca preparada ainda"}
+          {changed ? "Nova midia escolhida no estudio" : "Nenhuma troca preparada ainda"}
         </span>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <ImagePreview
-          title="Imagem atual da pagina"
+        <MediaPreview
+          title="Midia atual da pagina"
           description="Referencia visual do que ja esta aparecendo no site hoje."
-          imageUrl={liveImageUrl}
+          mediaUrl={effectiveLiveMediaUrl}
+          mediaType={liveMediaType}
         />
-        <ImagePreview
-          title="Imagem selecionada no estudio"
+        <MediaPreview
+          title="Midia selecionada no estudio"
           description={
             changed
               ? "Esta selecao fica salva no Admin Studio como referencia visual para a equipe."
               : "Nenhuma troca preparada no rascunho ate o momento."
           }
-          imageUrl={previewDraftImage}
+          mediaUrl={effectiveDraftMediaUrl || effectiveLiveMediaUrl}
+          mediaType={effectiveDraftMediaUrl ? draftMediaType : liveMediaType}
         />
       </div>
 
@@ -86,15 +138,21 @@ export default function AdminMediaField({
           onClick={() => setPickerOpen(true)}
           className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
         >
-          <PhotoIcon className="mr-2 h-5 w-5" />
-          Escolher imagem da biblioteca
+          {acceptedTypes.includes("video") ? (
+            <FilmIcon className="mr-2 h-5 w-5" />
+          ) : (
+            <PhotoIcon className="mr-2 h-5 w-5" />
+          )}
+          {acceptedTypes.includes("video")
+            ? "Escolher imagem ou video da biblioteca"
+            : "Escolher imagem da biblioteca"}
         </button>
         <button
           type="button"
-          onClick={() => onChange(liveImageUrl)}
+          onClick={resetMedia}
           className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
         >
-          Voltar para a imagem atual
+          Voltar para a midia atual
         </button>
       </div>
 
@@ -104,9 +162,10 @@ export default function AdminMediaField({
 
       <AdminMediaPickerDialog
         open={pickerOpen}
-        selectedUrl={draftImageUrl}
+        acceptedTypes={acceptedTypes}
+        selectedUrl={effectiveDraftMediaUrl}
         onClose={() => setPickerOpen(false)}
-        onSelect={(item: MediaAssetItem) => onChange(item.url)}
+        onSelect={applyMedia}
       />
     </div>
   )

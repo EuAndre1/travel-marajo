@@ -6,26 +6,75 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   ArrowsPointingOutIcon,
-  PhotoIcon,
+  FilmIcon,
+  PlayIcon,
   TrashIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline"
 import AdminMediaPickerDialog from "@/components/admin/AdminMediaPickerDialog"
+import type { MediaAssetType, MediaReference } from "@/lib/media-library/shared"
+import { getMediaTypeFromUrl, getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
+
+function normalizeMediaItems(items: MediaReference[] | undefined) {
+  return Array.isArray(items)
+    ? items.filter(
+        (item): item is MediaReference =>
+          Boolean(item) &&
+          typeof item.url === "string" &&
+          item.url.trim().length > 0 &&
+          (item.type === "image" || item.type === "video"),
+      )
+    : []
+}
+
+function convertLegacyUrls(items: string[] | undefined): MediaReference[] {
+  return Array.isArray(items)
+    ? items
+        .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+        .map((url) => ({
+          url,
+          type: getMediaTypeFromUrl(url),
+        }))
+    : []
+}
+
+function mediaKey(item: MediaReference, index: number) {
+  return `${item.type}:${item.url}:${index}`
+}
+
+function MediaThumb({ item, alt }: { item: MediaReference; alt: string }) {
+  if (item.type === "video") {
+    return (
+      <div className="relative h-full w-full bg-black">
+        <video className="h-full w-full object-cover" muted playsInline preload="metadata">
+          <source src={item.url} type={getVideoMimeTypeFromPath(item.url)} />
+        </video>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/18">
+          <span className="inline-flex items-center justify-center rounded-full bg-white/88 p-2 text-[#0B1C2C]">
+            <PlayIcon className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+    )
+  }
+
+  return <img src={item.url} alt={alt} className="h-full w-full object-cover" />
+}
 
 function GalleryPreview({
   title,
   description,
-  images,
-  previewUrl,
+  items,
+  previewItem,
   onSelect,
   onOpen,
 }: {
   title: string
   description: string
-  images: string[]
-  previewUrl: string
-  onSelect: (value: string) => void
-  onOpen: (value: string) => void
+  items: MediaReference[]
+  previewItem: MediaReference | null
+  onSelect: (value: MediaReference) => void
+  onOpen: (value: MediaReference) => void
 }) {
   return (
     <div className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
@@ -35,17 +84,23 @@ function GalleryPreview({
           <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
         </div>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-          {images.length} foto{images.length === 1 ? "" : "s"}
+          {items.length} arquivo{items.length === 1 ? "" : "s"}
         </span>
       </div>
 
-      {previewUrl ? (
+      {previewItem ? (
         <div className="mt-4 overflow-hidden rounded-[1.2rem] border border-slate-200 bg-slate-50">
           <div className="relative h-52">
-            <img src={previewUrl} alt={title} className="h-full w-full object-cover" />
+            {previewItem.type === "video" ? (
+              <video className="h-full w-full object-cover bg-black" controls playsInline preload="metadata">
+                <source src={previewItem.url} type={getVideoMimeTypeFromPath(previewItem.url)} />
+              </video>
+            ) : (
+              <img src={previewItem.url} alt={title} className="h-full w-full object-cover" />
+            )}
             <button
               type="button"
-              onClick={() => onOpen(previewUrl)}
+              onClick={() => onOpen(previewItem)}
               className="absolute right-3 top-3 inline-flex items-center justify-center rounded-full bg-[#04101b]/70 p-2 text-white transition hover:bg-[#04101b]"
               aria-label={`Abrir ${title} em destaque`}
             >
@@ -55,30 +110,26 @@ function GalleryPreview({
         </div>
       ) : (
         <div className="mt-4 rounded-[1rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-sm text-slate-500">
-          Nenhuma imagem selecionada ainda.
+          Nenhuma midia selecionada ainda.
         </div>
       )}
 
-      {images.length > 0 ? (
+      {items.length > 0 ? (
         <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
-          {images.map((imageUrl, index) => {
-            const selected = imageUrl === previewUrl
+          {items.map((item, index) => {
+            const selected = previewItem?.url === item.url && previewItem.type === item.type
 
             return (
               <button
-                key={`${imageUrl}-${index}`}
+                key={mediaKey(item, index)}
                 type="button"
-                onClick={() => onSelect(imageUrl)}
+                onClick={() => onSelect(item)}
                 className={`overflow-hidden rounded-[1rem] border transition ${
                   selected ? "border-[#0B1C2C] shadow-sm" : "border-slate-200 hover:border-slate-300"
                 }`}
               >
                 <div className="relative h-24 overflow-hidden bg-slate-100">
-                  <img
-                    src={imageUrl}
-                    alt={`${title} ${index + 1}`}
-                    className="h-full w-full object-cover"
-                  />
+                  <MediaThumb item={item} alt={`${title} ${index + 1}`} />
                 </div>
               </button>
             )
@@ -92,78 +143,101 @@ function GalleryPreview({
 export default function AdminMediaGalleryField({
   label,
   helper,
+  liveItems,
+  draftItems,
+  onItemsChange,
   liveImageUrls,
   draftImageUrls,
   onChange,
 }: {
   label: string
   helper: string
-  liveImageUrls: string[]
-  draftImageUrls: string[]
-  onChange: (value: string[]) => void
+  liveItems?: MediaReference[]
+  draftItems?: MediaReference[]
+  onItemsChange?: (value: MediaReference[]) => void
+  liveImageUrls?: string[]
+  draftImageUrls?: string[]
+  onChange?: (value: string[]) => void
 }) {
-  const safeLiveImageUrls = useMemo(
-    () =>
-      Array.isArray(liveImageUrls)
-        ? liveImageUrls.filter((item) => typeof item === "string" && item.trim().length > 0)
-        : [],
-    [liveImageUrls],
+  const safeLiveItems = useMemo(
+    () => (liveItems ? normalizeMediaItems(liveItems) : convertLegacyUrls(liveImageUrls)),
+    [liveImageUrls, liveItems],
   )
-  const safeDraftImageUrls = useMemo(
-    () =>
-      Array.isArray(draftImageUrls)
-        ? draftImageUrls.filter((item) => typeof item === "string" && item.trim().length > 0)
-        : [],
-    [draftImageUrls],
+  const safeDraftItems = useMemo(
+    () => (draftItems ? normalizeMediaItems(draftItems) : convertLegacyUrls(draftImageUrls)),
+    [draftImageUrls, draftItems],
   )
   const [pickerOpen, setPickerOpen] = useState(false)
-  const [activePreviewUrl, setActivePreviewUrl] = useState("")
-  const [modalImageUrl, setModalImageUrl] = useState("")
-  const changed = JSON.stringify(safeLiveImageUrls) !== JSON.stringify(safeDraftImageUrls)
-  const selectedUrl = safeDraftImageUrls[0] ?? safeLiveImageUrls[0] ?? ""
+  const [activePreviewKey, setActivePreviewKey] = useState("")
+  const [modalItem, setModalItem] = useState<MediaReference | null>(null)
+  const changed = JSON.stringify(safeLiveItems) !== JSON.stringify(safeDraftItems)
+
+  const previewItem = useMemo(() => {
+    const allItems = [...safeDraftItems, ...safeLiveItems]
+
+    return (
+      allItems.find((item) => `${item.type}:${item.url}` === activePreviewKey) ??
+      safeDraftItems[0] ??
+      safeLiveItems[0] ??
+      null
+    )
+  }, [activePreviewKey, safeDraftItems, safeLiveItems])
 
   useEffect(() => {
-    const availableImages = [...safeDraftImageUrls, ...safeLiveImageUrls]
-    const nextPreview =
-      availableImages.find((imageUrl) => imageUrl === activePreviewUrl) ??
-      safeDraftImageUrls[0] ??
-      safeLiveImageUrls[0] ??
-      ""
-
-    if (nextPreview !== activePreviewUrl) {
-      setActivePreviewUrl(nextPreview)
-    }
-  }, [activePreviewUrl, safeDraftImageUrls, safeLiveImageUrls])
-
-  const addImage = (item: { url: string }) => {
-    if (safeDraftImageUrls.includes(item.url)) {
-      setActivePreviewUrl(item.url)
+    if (previewItem) {
+      const nextKey = `${previewItem.type}:${previewItem.url}`
+      if (nextKey !== activePreviewKey) {
+        setActivePreviewKey(nextKey)
+      }
       return
     }
 
-    onChange([...safeDraftImageUrls, item.url])
-    setActivePreviewUrl(item.url)
+    if (activePreviewKey) {
+      setActivePreviewKey("")
+    }
+  }, [activePreviewKey, previewItem])
+
+  const applyChange = (nextItems: MediaReference[]) => {
+    if (onItemsChange) {
+      onItemsChange(nextItems)
+      return
+    }
+
+    onChange?.(nextItems.filter((item) => item.type === "image").map((item) => item.url))
   }
 
-  const moveImage = (index: number, direction: -1 | 1) => {
+  const addMedia = (item: { url: string; type: MediaAssetType }) => {
+    if (safeDraftItems.some((draftItem) => draftItem.url === item.url && draftItem.type === item.type)) {
+      setActivePreviewKey(`${item.type}:${item.url}`)
+      return
+    }
+
+    const nextItems = [...safeDraftItems, { url: item.url, type: item.type }]
+    applyChange(nextItems)
+    setActivePreviewKey(`${item.type}:${item.url}`)
+  }
+
+  const moveMedia = (index: number, direction: -1 | 1) => {
     const nextIndex = index + direction
 
-    if (nextIndex < 0 || nextIndex >= safeDraftImageUrls.length) {
+    if (nextIndex < 0 || nextIndex >= safeDraftItems.length) {
       return
     }
 
-    const nextImages = [...safeDraftImageUrls]
-    const [selected] = nextImages.splice(index, 1)
-    nextImages.splice(nextIndex, 0, selected)
-    onChange(nextImages)
+    const nextItems = [...safeDraftItems]
+    const [selected] = nextItems.splice(index, 1)
+    nextItems.splice(nextIndex, 0, selected)
+    applyChange(nextItems)
   }
 
-  const removeImage = (index: number) => {
-    const nextImages = safeDraftImageUrls.filter((_, currentIndex) => currentIndex !== index)
-    onChange(nextImages)
+  const removeMedia = (index: number) => {
+    const nextItems = safeDraftItems.filter((_, currentIndex) => currentIndex !== index)
+    applyChange(nextItems)
 
-    if (safeDraftImageUrls[index] === activePreviewUrl) {
-      setActivePreviewUrl(nextImages[0] ?? safeLiveImageUrls[0] ?? "")
+    const removedItem = safeDraftItems[index]
+    if (removedItem && `${removedItem.type}:${removedItem.url}` === activePreviewKey) {
+      const nextPreview = nextItems[0] ?? safeLiveItems[0] ?? null
+      setActivePreviewKey(nextPreview ? `${nextPreview.type}:${nextPreview.url}` : "")
     }
   }
 
@@ -190,76 +264,72 @@ export default function AdminMediaGalleryField({
       <div className="mt-4 grid gap-4 xl:grid-cols-2">
         <GalleryPreview
           title="Galeria atual no site"
-          description="Estas imagens representam a galeria publicada agora."
-          images={safeLiveImageUrls}
-          previewUrl={
-            safeLiveImageUrls.includes(activePreviewUrl) ? activePreviewUrl : safeLiveImageUrls[0] ?? ""
-          }
-          onSelect={setActivePreviewUrl}
-          onOpen={setModalImageUrl}
+          description="Estas midias representam a galeria publicada agora."
+          items={safeLiveItems}
+          previewItem={safeLiveItems.find((item) => item.url === previewItem?.url && item.type === previewItem?.type) ?? safeLiveItems[0] ?? null}
+          onSelect={(item) => setActivePreviewKey(`${item.type}:${item.url}`)}
+          onOpen={setModalItem}
         />
 
         <div className="rounded-[1.35rem] border border-slate-200 bg-white p-4">
           <p className="text-sm font-semibold text-[#0B1C2C]">Galeria em edicao</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
-            Escolha fotos da biblioteca, defina a ordem e abra qualquer imagem para conferir melhor.
+            Escolha fotos ou videos da biblioteca, defina a ordem e abra qualquer arquivo para conferir melhor.
           </p>
 
-          {safeDraftImageUrls.length > 0 ? (
+          {safeDraftItems.length > 0 ? (
             <div className="mt-4 space-y-3">
-              {safeDraftImageUrls.map((imageUrl, index) => (
+              {safeDraftItems.map((item, index) => (
                 <div
-                  key={`${imageUrl}-${index}`}
+                  key={mediaKey(item, index)}
                   className={`flex flex-col gap-3 rounded-[1rem] border p-3 sm:flex-row sm:items-center ${
-                    imageUrl === activePreviewUrl
+                    `${item.type}:${item.url}` === activePreviewKey
                       ? "border-[#0B1C2C] bg-[#0B1C2C]/[0.03]"
                       : "border-slate-200 bg-slate-50"
                   }`}
                 >
                   <button
                     type="button"
-                    onClick={() => setModalImageUrl(imageUrl)}
+                    onClick={() => setModalItem(item)}
                     className="h-20 w-full overflow-hidden rounded-[0.9rem] bg-slate-200 sm:w-28"
                   >
-                    <img
-                      src={imageUrl}
-                      alt={`Imagem ${index + 1}`}
-                      className="h-full w-full object-cover"
-                    />
+                    <MediaThumb item={item} alt={`Midia ${index + 1}`} />
                   </button>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-[#0B1C2C]">Imagem {index + 1}</p>
-                    <p className="mt-1 truncate text-xs text-slate-500">{imageUrl}</p>
+                    <p className="text-sm font-semibold text-[#0B1C2C]">
+                      {item.type === "video" ? "Video" : "Imagem"} {index + 1}
+                    </p>
+                    <p className="mt-1 truncate text-xs text-slate-500">{item.url}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
-                      onClick={() => setActivePreviewUrl(imageUrl)}
+                      onClick={() => setActivePreviewKey(`${item.type}:${item.url}`)}
                       className="inline-flex items-center justify-center rounded-full border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-slate-300"
                     >
                       Ver
                     </button>
                     <button
                       type="button"
-                      onClick={() => moveImage(index, -1)}
+                      onClick={() => moveMedia(index, -1)}
                       className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-600 transition hover:border-slate-300"
-                      aria-label={`Mover imagem ${index + 1} para a esquerda`}
+                      aria-label={`Mover midia ${index + 1} para a esquerda`}
                     >
                       <ArrowLeftIcon className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => moveImage(index, 1)}
+                      onClick={() => moveMedia(index, 1)}
                       className="inline-flex items-center justify-center rounded-full border border-slate-200 p-2 text-slate-600 transition hover:border-slate-300"
-                      aria-label={`Mover imagem ${index + 1} para a direita`}
+                      aria-label={`Mover midia ${index + 1} para a direita`}
                     >
                       <ArrowRightIcon className="h-4 w-4" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => removeImage(index)}
+                      onClick={() => removeMedia(index)}
                       className="inline-flex items-center justify-center rounded-full border border-rose-200 p-2 text-rose-700 transition hover:border-rose-300 hover:bg-rose-50"
-                      aria-label={`Remover imagem ${index + 1}`}
+                      aria-label={`Remover midia ${index + 1}`}
                     >
                       <TrashIcon className="h-4 w-4" />
                     </button>
@@ -269,7 +339,7 @@ export default function AdminMediaGalleryField({
             </div>
           ) : (
             <div className="mt-4 rounded-[1rem] border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
-              Nenhuma foto adicional foi escolhida para a galeria ainda.
+              Nenhuma foto ou video adicional foi escolhido para a galeria ainda.
             </div>
           )}
         </div>
@@ -281,12 +351,12 @@ export default function AdminMediaGalleryField({
           onClick={() => setPickerOpen(true)}
           className="inline-flex items-center justify-center rounded-full bg-[#0B1C2C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#10283d]"
         >
-          <PhotoIcon className="mr-2 h-5 w-5" />
-          Adicionar foto na galeria
+          <FilmIcon className="mr-2 h-5 w-5" />
+          Adicionar foto ou video
         </button>
         <button
           type="button"
-          onClick={() => onChange([...safeLiveImageUrls])}
+          onClick={() => applyChange([...safeLiveItems])}
           className="inline-flex items-center justify-center rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300"
         >
           Voltar para a galeria atual
@@ -294,34 +364,40 @@ export default function AdminMediaGalleryField({
       </div>
 
       <div className="mt-4 rounded-[1.15rem] border border-dashed border-slate-300 bg-white px-4 py-4 text-sm leading-6 text-slate-600">
-        A imagem principal fica no card e no topo da pagina. A galeria abaixo mostra as fotos
-        extras da hospedagem.
+        A capa fica no topo da pagina. A galeria abaixo mostra as fotos e videos extras da hospedagem.
       </div>
 
       <AdminMediaPickerDialog
         open={pickerOpen}
-        selectedUrl={selectedUrl}
+        acceptedTypes={["image", "video"]}
+        selectedUrl={previewItem?.url}
         onClose={() => setPickerOpen(false)}
-        onSelect={addImage}
+        onSelect={addMedia}
       />
 
-      {modalImageUrl ? (
+      {modalItem ? (
         <div className="fixed inset-0 z-[110] flex items-center justify-center bg-[#04101b]/78 p-4">
           <div className="relative w-full max-w-5xl overflow-hidden rounded-[1.5rem] bg-white shadow-[0_30px_80px_rgba(4,16,27,0.4)]">
             <button
               type="button"
-              onClick={() => setModalImageUrl("")}
+              onClick={() => setModalItem(null)}
               className="absolute right-4 top-4 z-10 inline-flex items-center justify-center rounded-full bg-[#04101b]/75 p-2 text-white transition hover:bg-[#04101b]"
-              aria-label="Fechar preview da imagem"
+              aria-label="Fechar preview da midia"
             >
               <XMarkIcon className="h-5 w-5" />
             </button>
             <div className="bg-slate-100">
-              <img
-                src={modalImageUrl}
-                alt="Preview da galeria"
-                className="max-h-[82vh] w-full object-contain"
-              />
+              {modalItem.type === "video" ? (
+                <video className="max-h-[82vh] w-full bg-black object-contain" controls playsInline preload="metadata">
+                  <source src={modalItem.url} type={getVideoMimeTypeFromPath(modalItem.url)} />
+                </video>
+              ) : (
+                <img
+                  src={modalItem.url}
+                  alt="Preview da galeria"
+                  className="max-h-[82vh] w-full object-contain"
+                />
+              )}
             </div>
           </div>
         </div>

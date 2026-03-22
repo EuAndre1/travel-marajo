@@ -38,6 +38,7 @@ import { experiences as baseExperiences, type ExperienceItem } from "@/data/expe
 import { FLAGSHIP_PACKAGE_SLUG, premiumPackageLandingContent } from "@/data/package-landing"
 import { packages as basePackages, type PackageItem } from "@/data/pacotes"
 import { homeAuthorityContent, siteChrome } from "@/data/site"
+import { getMediaTypeFromUrl, type MediaReference } from "@/lib/media-library/shared"
 
 export const contentStudioSurfaces = [
   "homepage",
@@ -108,6 +109,37 @@ function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
   return nextItems.length ? nextItems : fallback
 }
 
+function getMediaReferenceArrayValue(source: unknown, key: string, fallback: MediaReference[]) {
+  if (!isRecord(source)) {
+    return fallback
+  }
+
+  const value = source[key]
+  if (!Array.isArray(value)) {
+    return fallback
+  }
+
+  const nextItems = value
+    .map((item) => {
+      if (!isRecord(item)) {
+        return null
+      }
+
+      const url = getStringValue(item, "url", "")
+      if (!url) {
+        return null
+      }
+
+      return {
+        url,
+        type: getStringValue(item, "type", getMediaTypeFromUrl(url)) === "video" ? "video" : "image",
+      } as MediaReference
+    })
+    .filter((item): item is MediaReference => Boolean(item))
+
+  return nextItems.length ? nextItems : fallback
+}
+
 function parseMultilineText(value: string) {
   return value
     .split("\n")
@@ -121,6 +153,15 @@ function mergeHomepageLocaleDraft(
 ): AdminHomepageLocaleDraft {
   return {
     heroImageUrl: getStringValue(override, "heroImageUrl", base.heroImageUrl),
+    heroMediaUrl: getStringValue(
+      override,
+      "heroMediaUrl",
+      getStringValue(override, "heroImageUrl", base.heroMediaUrl),
+    ),
+    heroMediaType:
+      getStringValue(override, "heroMediaType", base.heroMediaType) === "video"
+        ? "video"
+        : "image",
     heroHeadline: getStringValue(override, "heroHeadline", base.heroHeadline),
     heroSubheadline: getStringValue(override, "heroSubheadline", base.heroSubheadline),
     primaryCtaLabel: getStringValue(override, "primaryCtaLabel", base.primaryCtaLabel),
@@ -347,6 +388,13 @@ function mergeHotelCardItem(
   const locales = isRecord(override) && isRecord(override.locales) ? override.locales : {}
   const fallbackSlug = createStudioSlug(base.locales.pt.title || base.id, base.id)
   const imageUrl = getStringValue(override, "imageUrl", base.imageUrl)
+  const mediaUrl = getStringValue(override, "mediaUrl", base.mediaUrl || imageUrl)
+  const rawMediaType = getStringValue(
+    override,
+    "mediaType",
+    base.mediaType || getMediaTypeFromUrl(mediaUrl || imageUrl),
+  )
+  const mediaType = rawMediaType === "video" ? "video" : "image"
   const galleryImageUrls = getStringArrayValue(
     override,
     "galleryImageUrls",
@@ -356,15 +404,29 @@ function mergeHotelCardItem(
         ? [imageUrl]
         : [],
   )
+  const galleryMediaItems = getMediaReferenceArrayValue(
+    override,
+    "galleryMediaItems",
+    base.galleryMediaItems.length
+      ? base.galleryMediaItems
+      : galleryImageUrls.map((url) => ({ url, type: "image" as const })),
+  )
+  const syncedGalleryImageUrls =
+    galleryImageUrls.length > 0
+      ? galleryImageUrls
+      : galleryMediaItems.filter((item) => item.type === "image").map((item) => item.url)
 
   return {
     ...base,
     imageUrl,
+    mediaUrl: mediaUrl || imageUrl,
+    mediaType,
     ctaTarget: getStringValue(override, "ctaTarget", base.ctaTarget),
     linkedSlug: getStringValue(override, "linkedSlug", base.linkedSlug || fallbackSlug),
     visible: getBooleanValue(override, "visible", base.visible),
     sortOrder: getNumberValue(override, "sortOrder", base.sortOrder),
-    galleryImageUrls,
+    galleryImageUrls: syncedGalleryImageUrls,
+    galleryMediaItems,
     locales: {
       pt: mergeHotelLocaleDraft(base.locales.pt, locales.pt),
       en: mergeHotelLocaleDraft(base.locales.en, locales.en),
@@ -505,20 +567,37 @@ function mergeHotelCardCollectionDraft(
         id,
       )
       const imageUrl = getStringValue(item, "imageUrl", "")
+      const mediaUrl = getStringValue(item, "mediaUrl", imageUrl)
+      const mediaType =
+        getStringValue(item, "mediaType", getMediaTypeFromUrl(mediaUrl || imageUrl)) === "video"
+          ? "video"
+          : "image"
       const galleryImageUrls = getStringArrayValue(
         item,
         "galleryImageUrls",
         imageUrl ? [imageUrl] : [],
       )
+      const galleryMediaItems = getMediaReferenceArrayValue(
+        item,
+        "galleryMediaItems",
+        galleryImageUrls.map((url) => ({ url, type: "image" as const })),
+      )
+      const syncedGalleryImageUrls =
+        galleryImageUrls.length > 0
+          ? galleryImageUrls
+          : galleryMediaItems.filter((entry) => entry.type === "image").map((entry) => entry.url)
 
       return {
         id,
         linkedSlug: fallbackSlug,
         imageUrl,
+        mediaUrl: mediaUrl || imageUrl,
+        mediaType,
         ctaTarget: getStringValue(item, "ctaTarget", ""),
         visible: getBooleanValue(item, "visible", true),
         sortOrder: getNumberValue(item, "sortOrder", index),
-        galleryImageUrls,
+        galleryImageUrls: syncedGalleryImageUrls,
+        galleryMediaItems,
         locales: {
           pt: ptLocale,
           en: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.en),
@@ -808,6 +887,8 @@ function resolveAdminHotelCollectionForLocale(
       id: item.id,
       linkedSlug: item.linkedSlug || createStudioSlug(item.locales.pt.title || item.id, item.id),
       imageUrl: item.imageUrl,
+      mediaUrl: item.mediaUrl || item.imageUrl,
+      mediaType: item.mediaType || getMediaTypeFromUrl(item.mediaUrl || item.imageUrl),
       ctaTarget: item.ctaTarget,
       visible: item.visible,
       sortOrder: item.sortOrder,
@@ -817,6 +898,16 @@ function resolveAdminHotelCollectionForLocale(
           : item.imageUrl
             ? [item.imageUrl]
             : [],
+      galleryMediaItems:
+        item.galleryMediaItems.length > 0
+          ? item.galleryMediaItems
+          : item.galleryImageUrls.length > 0
+            ? item.galleryImageUrls.map((url) => ({ url, type: "image" as const }))
+            : item.mediaUrl
+              ? [{ url: item.mediaUrl, type: item.mediaType || getMediaTypeFromUrl(item.mediaUrl) }]
+              : item.imageUrl
+                ? [{ url: item.imageUrl, type: "image" as const }]
+                : [],
       ...item.locales[locale],
     }))
 }

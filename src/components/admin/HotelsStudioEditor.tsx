@@ -30,6 +30,8 @@ import {
   type AdminHotelCardDraftItem,
   type AdminHotelCardLocaleDraft,
 } from "@/lib/admin-studio/card-collections"
+import type { MediaReference } from "@/lib/media-library/shared"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
 const STORAGE_KEY = "travel-marajo-admin-hotel-cards-draft"
 
@@ -46,10 +48,13 @@ function createNewHotelCard(items: AdminHotelCardDraftItem[]) {
     id: nextId,
     linkedSlug: createStudioSlug(defaultTitle, nextId),
     imageUrl: "",
+    mediaUrl: "",
+    mediaType: "image",
     ctaTarget: "",
     visible: false,
     sortOrder: items.length,
     galleryImageUrls: [],
+    galleryMediaItems: [],
     locales: {
       pt: { ...createEmptyAdminHotelCardLocaleDraft(), title: defaultTitle, ctaLabel: "Ver hospedagem" },
       en: { ...createEmptyAdminHotelCardLocaleDraft(), ctaLabel: "View stay" },
@@ -126,20 +131,26 @@ function HotelVisualPreview({
   locale: AppLocale
 }) {
   const localized = item.locales[locale] ?? createEmptyAdminHotelCardLocaleDraft()
-  const galleryCount = item.galleryImageUrls.length
+  const galleryCount = item.galleryMediaItems.length
 
   return (
     <div className="overflow-hidden rounded-[1.7rem] border border-slate-200 bg-white shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
       <div className="relative h-64 bg-slate-100">
-        {item.imageUrl ? (
-          <img
-            src={item.imageUrl}
-            alt={localized.title || "Hospedagem selecionada"}
-            className="h-full w-full object-cover"
-          />
+        {item.mediaUrl ? (
+          item.mediaType === "video" ? (
+            <video className="h-full w-full object-cover bg-black" controls playsInline preload="metadata">
+              <source src={item.mediaUrl} type={getVideoMimeTypeFromPath(item.mediaUrl)} />
+            </video>
+          ) : (
+            <img
+              src={item.mediaUrl}
+              alt={localized.title || "Hospedagem selecionada"}
+              className="h-full w-full object-cover"
+            />
+          )
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-slate-400">
-            Escolha uma imagem de capa para esta hospedagem
+            Escolha uma midia de capa para esta hospedagem
           </div>
         )}
       </div>
@@ -205,9 +216,16 @@ function updateHotelItemField(
   hotelId: string,
   field: keyof Pick<
     AdminHotelCardDraftItem,
-    "linkedSlug" | "imageUrl" | "ctaTarget" | "visible" | "galleryImageUrls"
+    | "linkedSlug"
+    | "imageUrl"
+    | "mediaUrl"
+    | "mediaType"
+    | "ctaTarget"
+    | "visible"
+    | "galleryImageUrls"
+    | "galleryMediaItems"
   >,
-  value: string | boolean | string[],
+  value: string | boolean | string[] | MediaReference[],
 ) {
   return items.map((item) =>
     item.id === hotelId
@@ -278,8 +296,11 @@ export default function HotelsStudioEditor({
         ? {
             ...selectedDraft,
             imageUrl: "",
+            mediaUrl: "",
+            mediaType: "image" as const,
             ctaTarget: "",
             galleryImageUrls: [],
+            galleryMediaItems: [],
             locales: {
               pt: createEmptyAdminHotelCardLocaleDraft(),
               en: createEmptyAdminHotelCardLocaleDraft(),
@@ -376,9 +397,16 @@ export default function HotelsStudioEditor({
   const updateItemField = (
     field: keyof Pick<
       AdminHotelCardDraftItem,
-      "linkedSlug" | "imageUrl" | "ctaTarget" | "visible" | "galleryImageUrls"
+      | "linkedSlug"
+      | "imageUrl"
+      | "mediaUrl"
+      | "mediaType"
+      | "ctaTarget"
+      | "visible"
+      | "galleryImageUrls"
+      | "galleryMediaItems"
     >,
-    value: string | boolean | string[],
+    value: string | boolean | string[] | MediaReference[],
   ) => {
     setDraft((current) => ({
       ...current,
@@ -600,19 +628,44 @@ export default function HotelsStudioEditor({
             description="Primeiro ajuste a capa. Depois monte a galeria com as fotos extras que vao aparecer na pagina do hotel."
           >
             <AdminCardImageField
-              label="Imagem principal da hospedagem"
-              helper="Escolha a foto de capa que representa melhor o hotel na vitrine publica."
+              label="Imagem ou video principal da hospedagem"
+              helper="Escolha a capa que representa melhor o hotel na vitrine publica e na pagina dedicada."
               liveImageUrl={selectedLive.imageUrl}
               draftImageUrl={selectedDraft.imageUrl}
-              onChange={(value) => updateItemField("imageUrl", value)}
+              liveMediaUrl={selectedLive.mediaUrl}
+              draftMediaUrl={selectedDraft.mediaUrl}
+              liveMediaType={selectedLive.mediaType}
+              draftMediaType={selectedDraft.mediaType}
+              acceptedTypes={["image", "video"]}
+              onMediaChange={(media) =>
+                setDraft((current) => ({
+                  ...current,
+                  items: current.items.map((item) =>
+                    item.id === selectedDraft.id
+                      ? {
+                          ...item,
+                          mediaUrl: media.url,
+                          mediaType: media.type,
+                          imageUrl: media.type === "image" ? media.url : item.imageUrl,
+                        }
+                      : item,
+                  ),
+                }))
+              }
             />
 
             <AdminMediaGalleryField
               label="Galeria da pagina de hospedagem"
-              helper="Monte a sequencia de fotos do estabelecimento sem precisar colar URL manualmente."
-              liveImageUrls={selectedLive.galleryImageUrls}
-              draftImageUrls={selectedDraft.galleryImageUrls}
-              onChange={(value) => updateItemField("galleryImageUrls", value)}
+              helper="Monte a sequencia de fotos e videos do estabelecimento sem precisar colar URL manualmente."
+              liveItems={selectedLive.galleryMediaItems}
+              draftItems={selectedDraft.galleryMediaItems}
+              onItemsChange={(value) => {
+                updateItemField("galleryMediaItems", value)
+                updateItemField(
+                  "galleryImageUrls",
+                  value.filter((item) => item.type === "image").map((item) => item.url),
+                )
+              }}
             />
           </AdminSectionCard>
 

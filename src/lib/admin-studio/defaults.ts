@@ -5,6 +5,7 @@ import { homeContentByLocale } from "@/data/homepage"
 import { FLAGSHIP_PACKAGE_SLUG, premiumPackageLandingContent } from "@/data/package-landing"
 import { packages } from "@/data/pacotes"
 import { homeAuthorityContent, siteChrome } from "@/data/site"
+import type { MediaAssetType } from "@/lib/media-library/shared"
 
 export const adminStudioLocales = SUPPORTED_LOCALES
 
@@ -21,6 +22,8 @@ function joinLines(items: readonly string[]) {
 
 export interface AdminHomepageLocaleDraft {
   heroImageUrl: string
+  heroMediaUrl: string
+  heroMediaType: MediaAssetType
   heroHeadline: string
   heroSubheadline: string
   primaryCtaLabel: string
@@ -147,6 +150,8 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
   locales: {
     pt: {
       heroImageUrl: "/hero-bg.jpg",
+      heroMediaUrl: "/hero-bg.jpg",
+      heroMediaType: "image",
       heroHeadline: homeContentByLocale.pt.hero.title,
       heroSubheadline: homeContentByLocale.pt.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.pt.hero.ctas.primary,
@@ -164,6 +169,8 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
     },
     en: {
       heroImageUrl: "/hero-bg.jpg",
+      heroMediaUrl: "/hero-bg.jpg",
+      heroMediaType: "image",
       heroHeadline: homeContentByLocale.en.hero.title,
       heroSubheadline: homeContentByLocale.en.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.en.hero.ctas.primary,
@@ -181,6 +188,8 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
     },
     es: {
       heroImageUrl: "/hero-bg.jpg",
+      heroMediaUrl: "/hero-bg.jpg",
+      heroMediaType: "image",
       heroHeadline: homeContentByLocale.es.hero.title,
       heroSubheadline: homeContentByLocale.es.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.es.hero.ctas.primary,
@@ -198,6 +207,8 @@ export const adminHomepageInitialDraft: AdminHomepageDraft = {
     },
     fr: {
       heroImageUrl: "/hero-bg.jpg",
+      heroMediaUrl: "/hero-bg.jpg",
+      heroMediaType: "image",
       heroHeadline: homeContentByLocale.fr.hero.title,
       heroSubheadline: homeContentByLocale.fr.hero.subtitle,
       primaryCtaLabel: homeContentByLocale.fr.hero.ctas.primary,

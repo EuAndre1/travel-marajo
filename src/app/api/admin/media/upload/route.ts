@@ -3,11 +3,12 @@ import { NextResponse } from "next/server"
 import { requireAdminApiSession } from "@/lib/admin-studio/api-access"
 import { createMediaAsset } from "@/lib/media-library/persistence"
 import {
-  deleteImageFromStorage,
+  deleteMediaFromStorage,
   getMediaStorageErrorResponse,
   getMediaStorageStatus,
-  uploadImageToStorage,
+  uploadMediaToStorage,
 } from "@/lib/media-library/storage"
+import { getMediaTypeFromMimeType } from "@/lib/media-library/shared"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -35,13 +36,14 @@ export async function POST(request: Request) {
   let uploadedUrl = ""
 
   try {
-    const blob = await uploadImageToStorage(fileCandidate)
+    const blob = await uploadMediaToStorage(fileCandidate)
     uploadedUrl = blob.url
+    const mediaType = getMediaTypeFromMimeType(fileCandidate.type)
 
     const item = await createMediaAsset({
       id: crypto.randomUUID(),
       url: blob.url,
-      type: "image",
+      type: mediaType,
       filename: fileCandidate.name,
       alt: alt || null,
       uploadedBy: session.user.email ?? "unknown@travelmarajo.local",
@@ -61,7 +63,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (uploadedUrl) {
       try {
-        await deleteImageFromStorage(uploadedUrl)
+        await deleteMediaFromStorage(uploadedUrl)
       } catch (cleanupError) {
         if (!(cleanupError instanceof BlobNotFoundError)) {
           console.error("[admin/media/upload] failed to cleanup uploaded blob", {

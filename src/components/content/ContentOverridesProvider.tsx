@@ -53,6 +53,12 @@ export function useResolvedHomeContent() {
   return resolveHomeContentForLocale(lang, state)
 }
 
+export function useResolvedHomepageStudioContent() {
+  const { lang } = useSiteLanguage()
+  const state = useContentOverridesState()
+  return state.homepage.locales[lang]
+}
+
 export function useResolvedHomeAuthorityContent() {
   const { lang } = useSiteLanguage()
   const state = useContentOverridesState()

@@ -33,12 +33,43 @@ export async function ensureMediaAssetTable() {
     CREATE TABLE IF NOT EXISTS "${MEDIA_ASSET_TABLE}" (
       "id" TEXT PRIMARY KEY,
       "url" TEXT NOT NULL,
-      "type" TEXT NOT NULL CHECK ("type" IN ('image')),
+      "type" TEXT NOT NULL,
       "filename" TEXT NOT NULL,
       "alt" TEXT,
       "createdAt" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       "uploadedBy" TEXT NOT NULL
     );
+  `)
+
+  await db.$executeRawUnsafe(`
+    DO $$
+    DECLARE
+      existing_constraint TEXT;
+    BEGIN
+      SELECT c.conname
+      INTO existing_constraint
+      FROM pg_constraint c
+      JOIN pg_class t ON t.oid = c.conrelid
+      JOIN pg_namespace n ON n.oid = t.relnamespace
+      WHERE t.relname = '${MEDIA_ASSET_TABLE}'
+        AND c.contype = 'c'
+        AND pg_get_constraintdef(c.oid) LIKE '%"type"%'
+      LIMIT 1;
+
+      IF existing_constraint IS NOT NULL THEN
+        EXECUTE format('ALTER TABLE "%s" DROP CONSTRAINT %I', '${MEDIA_ASSET_TABLE}', existing_constraint);
+      END IF;
+
+      IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint c
+        JOIN pg_class t ON t.oid = c.conrelid
+        WHERE t.relname = '${MEDIA_ASSET_TABLE}'
+          AND c.conname = '${MEDIA_ASSET_TABLE}_type_check'
+      ) THEN
+        EXECUTE 'ALTER TABLE "${MEDIA_ASSET_TABLE}" ADD CONSTRAINT "${MEDIA_ASSET_TABLE}_type_check" CHECK ("type" IN (''image'',''video''))';
+      END IF;
+    END $$;
   `)
 
   await db.$executeRawUnsafe(`

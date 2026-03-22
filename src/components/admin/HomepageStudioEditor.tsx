@@ -43,8 +43,6 @@ export default function HomepageStudioEditor({
 
   const localeDraft = draft.locales[activeLocale]
   const liveLocale = liveDraft.locales[activeLocale]
-  const baseLocale = adminHomepageInitialDraft.locales[activeLocale]
-
   const updateField = (field: keyof AdminHomepageLocaleDraft, value: string) => {
     setDraft((current) => ({
       ...current,
@@ -95,12 +93,33 @@ export default function HomepageStudioEditor({
         description="Edite o que aparece logo na chegada do visitante: titulo principal, texto de apoio, botoes e sinais de confianca."
       >
         <AdminMediaField
-          label="Imagem principal da homepage"
-          helper="Escolha uma imagem da biblioteca para representar a primeira dobra do site de forma mais visual."
-          liveImageUrl={baseLocale.heroImageUrl}
+          label="Imagem ou video de fundo"
+          helper="Escolha uma imagem ou um video da biblioteca para representar a primeira dobra do site."
+          liveImageUrl={liveLocale.heroImageUrl}
           draftImageUrl={localeDraft.heroImageUrl}
-          onChange={(value) => updateField("heroImageUrl", value)}
-          pendingNote="A selecao de imagem fica salva no Admin Studio para a equipe editorial. A homepage publica ainda continua usando a imagem atual ate a etapa dedicada de publicacao visual."
+          liveMediaUrl={liveLocale.heroMediaUrl}
+          draftMediaUrl={localeDraft.heroMediaUrl}
+          liveMediaType={liveLocale.heroMediaType}
+          draftMediaType={localeDraft.heroMediaType}
+          acceptedTypes={["image", "video"]}
+          onMediaChange={(media) =>
+            setDraft((current) => ({
+              ...current,
+              locales: {
+                ...current.locales,
+                [activeLocale]: {
+                  ...current.locales[activeLocale],
+                  heroMediaUrl: media.url,
+                  heroMediaType: media.type,
+                  heroImageUrl:
+                    media.type === "image"
+                      ? media.url
+                      : current.locales[activeLocale].heroImageUrl,
+                },
+              },
+            }))
+          }
+          pendingNote="A homepage publica passa a usar esta midia depois do save. Se o fundo for video e ele falhar, a imagem fallback atual continua protegendo o layout."
         />
 
         <AdminTextFieldCard

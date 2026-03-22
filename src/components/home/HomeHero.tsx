@@ -1,22 +1,32 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import {
   useResolvedHomeAuthorityContent,
   useResolvedHomeContent,
+  useResolvedHomepageStudioContent,
   useResolvedSiteChrome,
   useResolvedSiteContent,
 } from "@/components/content/ContentOverridesProvider"
 import { useSiteLanguage } from "@/lib/use-site-language"
 import { getLocalizedPath } from "@/i18n/routing"
+import { getVideoMimeTypeFromPath } from "@/lib/media-library/shared"
 
 export default function HomeHero() {
+  const [videoFailed, setVideoFailed] = useState(false)
   const { lang } = useSiteLanguage()
   const { hero } = useResolvedHomeContent()
+  const homepageStudio = useResolvedHomepageStudioContent()
   const chrome = useResolvedSiteChrome()
   const authority = useResolvedHomeAuthorityContent()
   const content = useResolvedSiteContent()
+  const heroFallbackImageUrl = homepageStudio.heroImageUrl || "/hero-bg.jpg"
+  const heroMediaUrl = homepageStudio.heroMediaUrl || heroFallbackImageUrl
+  const heroMediaType = homepageStudio.heroMediaType
+  const shouldRenderHeroVideo =
+    heroMediaType === "video" && Boolean(heroMediaUrl) && !videoFailed
   const arrivalNote = {
     pt: "De Belém - ferry + transfer disponíveis",
     en: "From Belem - ferry + transfer available",
@@ -49,8 +59,37 @@ export default function HomeHero() {
   return (
     <section id="hero" className="relative min-h-[70vh] overflow-hidden bg-[#04101b] sm:min-h-[76vh] lg:min-h-[84vh]">
       <div className="absolute inset-0">
-        <Image src="/hero-bg.jpg" alt={content.home.homeHeroImageAlt} fill priority className="object-cover" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,16,27,0.38)_0%,rgba(4,16,27,0.58)_18%,rgba(4,16,27,0.94)_100%)]" />
+        {heroFallbackImageUrl ? (
+          <Image
+            src={heroFallbackImageUrl}
+            alt={content.home.homeHeroImageAlt}
+            fill
+            priority
+            className="object-cover"
+          />
+        ) : null}
+        {shouldRenderHeroVideo ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="none"
+            className="absolute inset-0 h-full w-full object-cover"
+            onError={() => setVideoFailed(true)}
+          >
+            <source src={heroMediaUrl} type={getVideoMimeTypeFromPath(heroMediaUrl)} />
+          </video>
+        ) : heroMediaType === "image" && heroMediaUrl && heroMediaUrl !== heroFallbackImageUrl ? (
+          <Image
+            src={heroMediaUrl}
+            alt={content.home.homeHeroImageAlt}
+            fill
+            priority
+            className="object-cover"
+          />
+        ) : null}
+        <div className="absolute inset-0 bg-black/40" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(229,122,31,0.28),transparent_24%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.06),transparent_28%)]" />
       </div>
 
