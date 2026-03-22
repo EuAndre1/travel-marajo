@@ -40,7 +40,6 @@ export default function HomePartnerHotels() {
   const cards = useResolvedHotelCards().filter(
     (item) =>
       item.visible &&
-      (item.mediaUrl || item.imageUrl) &&
       item.title.trim() &&
       (item.linkedSlug || item.ctaTarget),
   )
@@ -92,21 +91,29 @@ export default function HomePartnerHotels() {
                   >
                     <source src={card.mediaUrl} type={getVideoMimeTypeFromPath(card.mediaUrl)} />
                   </video>
-                ) : (
+                ) : card.mediaUrl || card.imageUrl ? (
                   <Image
                     src={card.mediaUrl || card.imageUrl}
                     alt={card.title}
                     fill
                     className="object-cover"
                   />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-[linear-gradient(135deg,#0B1C2C,#14324a)] px-6 text-center text-sm font-semibold text-white/78">
+                    {card.title}
+                  </div>
                 )}
               </div>
               <div className="p-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                  {card.eyebrow}
-                </p>
+                {card.eyebrow ? (
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+                    {card.eyebrow}
+                  </p>
+                ) : null}
                 <h3 className="mt-3 text-lg font-semibold text-[#0B1C2C]">{card.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{card.description}</p>
+                {card.description ? (
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{card.description}</p>
+                ) : null}
                 {card.metaPrimary ? (
                   <p className="mt-3 text-sm font-semibold text-primary">{card.metaPrimary}</p>
                 ) : null}

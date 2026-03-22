@@ -8,6 +8,7 @@ import {
   adminServiceCardsInitialDraft,
   createEmptyAdminHotelCardLocaleDraft,
   createStudioSlug,
+  normalizeHotelCardCollectionDraft,
   type AdminCardCollectionDraft,
   type AdminCardDraftItem,
   type AdminCardLocaleDraft,
@@ -541,77 +542,7 @@ function mergeHotelCardCollectionDraft(
   base: AdminHotelCardCollectionDraft,
   override: unknown,
 ): AdminHotelCardCollectionDraft {
-  if (!isRecord(override) || !Array.isArray(override.items)) {
-    return {
-      items: [...base.items].sort((left, right) => left.sortOrder - right.sortOrder),
-    }
-  }
-
-  const items = override.items
-    .map((item, index) => {
-      if (!isRecord(item)) {
-        return null
-      }
-
-      const id = getStringValue(item, "id", `hotel-card-${index + 1}`)
-      const baseItem = base.items.find((candidate) => candidate.id === id)
-
-      if (baseItem) {
-        return mergeHotelCardItem(baseItem, item)
-      }
-
-      const locales = isRecord(item.locales) ? item.locales : {}
-      const ptLocale = mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.pt)
-      const fallbackSlug = createStudioSlug(
-        getStringValue(item, "linkedSlug", ptLocale.title || id),
-        id,
-      )
-      const imageUrl = getStringValue(item, "imageUrl", "")
-      const mediaUrl = getStringValue(item, "mediaUrl", imageUrl)
-      const mediaType =
-        getStringValue(item, "mediaType", getMediaTypeFromUrl(mediaUrl || imageUrl)) === "video"
-          ? "video"
-          : "image"
-      const galleryImageUrls = getStringArrayValue(
-        item,
-        "galleryImageUrls",
-        imageUrl ? [imageUrl] : [],
-      )
-      const galleryMediaItems = getMediaReferenceArrayValue(
-        item,
-        "galleryMediaItems",
-        galleryImageUrls.map((url) => ({ url, type: "image" as const })),
-      )
-      const syncedGalleryImageUrls =
-        galleryImageUrls.length > 0
-          ? galleryImageUrls
-          : galleryMediaItems.filter((entry) => entry.type === "image").map((entry) => entry.url)
-
-      return {
-        id,
-        linkedSlug: fallbackSlug,
-        imageUrl,
-        mediaUrl: mediaUrl || imageUrl,
-        mediaType,
-        ctaTarget: getStringValue(item, "ctaTarget", ""),
-        visible: getBooleanValue(item, "visible", true),
-        sortOrder: getNumberValue(item, "sortOrder", index),
-        galleryImageUrls: syncedGalleryImageUrls,
-        galleryMediaItems,
-        locales: {
-          pt: ptLocale,
-          en: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.en),
-          es: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.es),
-          fr: mergeHotelLocaleDraft(createEmptyAdminHotelCardLocaleDraft(), locales.fr),
-        },
-      }
-    })
-    .filter((item): item is AdminHotelCardDraftItem => Boolean(item))
-    .sort((left, right) => left.sortOrder - right.sortOrder)
-
-  return {
-    items,
-  }
+  return normalizeHotelCardCollectionDraft(override, base)
 }
 
 export function createDefaultContentStudioState(): ContentStudioState {
@@ -641,6 +572,25 @@ export function mergeContentStudioState(
     routeCards: mergeCardCollectionDraft(defaults.routeCards, overrideMap.routeCards),
     hotelCards: mergeHotelCardCollectionDraft(defaults.hotelCards, overrideMap.hotelCards),
     serviceCards: mergeCardCollectionDraft(defaults.serviceCards, overrideMap.serviceCards),
+  }
+}
+
+function getHotelLocaleWithFallback(
+  item: AdminHotelCardDraftItem,
+  locale: AppLocale,
+): AdminHotelCardLocaleDraft {
+  const baseLocale = item.locales.pt ?? createEmptyAdminHotelCardLocaleDraft()
+  const localeDraft = item.locales[locale] ?? createEmptyAdminHotelCardLocaleDraft()
+
+  return {
+    title: localeDraft.title || baseLocale.title,
+    eyebrow: localeDraft.eyebrow || baseLocale.eyebrow,
+    description: localeDraft.description || baseLocale.description,
+    metaPrimary: localeDraft.metaPrimary || baseLocale.metaPrimary,
+    metaSecondary: localeDraft.metaSecondary || baseLocale.metaSecondary,
+    ctaLabel: localeDraft.ctaLabel || baseLocale.ctaLabel,
+    fullDescription: localeDraft.fullDescription || baseLocale.fullDescription,
+    amenitiesText: localeDraft.amenitiesText || baseLocale.amenitiesText,
   }
 }
 
@@ -883,33 +833,37 @@ function resolveAdminHotelCollectionForLocale(
 ): ResolvedAdminHotelCardItem[] {
   return [...collection.items]
     .sort((left, right) => left.sortOrder - right.sortOrder)
-    .map((item) => ({
-      id: item.id,
-      linkedSlug: item.linkedSlug || createStudioSlug(item.locales.pt.title || item.id, item.id),
-      imageUrl: item.imageUrl,
-      mediaUrl: item.mediaUrl || item.imageUrl,
-      mediaType: item.mediaType || getMediaTypeFromUrl(item.mediaUrl || item.imageUrl),
-      ctaTarget: item.ctaTarget,
-      visible: item.visible,
-      sortOrder: item.sortOrder,
-      galleryImageUrls:
-        item.galleryImageUrls.length > 0
-          ? item.galleryImageUrls
-          : item.imageUrl
-            ? [item.imageUrl]
-            : [],
-      galleryMediaItems:
-        item.galleryMediaItems.length > 0
-          ? item.galleryMediaItems
-          : item.galleryImageUrls.length > 0
-            ? item.galleryImageUrls.map((url) => ({ url, type: "image" as const }))
-            : item.mediaUrl
-              ? [{ url: item.mediaUrl, type: item.mediaType || getMediaTypeFromUrl(item.mediaUrl) }]
-              : item.imageUrl
-                ? [{ url: item.imageUrl, type: "image" as const }]
-                : [],
-      ...item.locales[locale],
-    }))
+    .map((item) => {
+      const localized = getHotelLocaleWithFallback(item, locale)
+
+      return {
+        id: item.id,
+        linkedSlug: item.linkedSlug || createStudioSlug(item.locales.pt.title || item.id, item.id),
+        imageUrl: item.imageUrl,
+        mediaUrl: item.mediaUrl || item.imageUrl,
+        mediaType: item.mediaType || getMediaTypeFromUrl(item.mediaUrl || item.imageUrl),
+        ctaTarget: item.ctaTarget,
+        visible: item.visible,
+        sortOrder: item.sortOrder,
+        galleryImageUrls:
+          item.galleryImageUrls.length > 0
+            ? item.galleryImageUrls
+            : item.imageUrl
+              ? [item.imageUrl]
+              : [],
+        galleryMediaItems:
+          item.galleryMediaItems.length > 0
+            ? item.galleryMediaItems
+            : item.galleryImageUrls.length > 0
+              ? item.galleryImageUrls.map((url) => ({ url, type: "image" as const }))
+              : item.mediaUrl
+                ? [{ url: item.mediaUrl, type: item.mediaType || getMediaTypeFromUrl(item.mediaUrl) }]
+                : item.imageUrl
+                  ? [{ url: item.imageUrl, type: "image" as const }]
+                  : [],
+        ...localized,
+      }
+    })
 }
 
 export function resolveDestinationCardsForLocale(
@@ -936,7 +890,20 @@ export function resolveHotelBySlugForLocale(
   slug: string,
   state: ContentStudioState,
 ) {
-  return resolveAdminHotelCollectionForLocale(locale, state.hotelCards).find(
-    (item) => item.visible && item.linkedSlug === slug,
-  )
+  const normalizedSlug = createStudioSlug(slug, slug)
+
+  return resolveAdminHotelCollectionForLocale(locale, state.hotelCards).find((item) => {
+    if (!item.visible) {
+      return false
+    }
+
+    const aliases = [
+      item.linkedSlug,
+      createStudioSlug(item.linkedSlug || "", item.id),
+      createStudioSlug(item.id, item.id),
+      createStudioSlug(item.title, item.id),
+    ].filter(Boolean)
+
+    return aliases.includes(normalizedSlug)
+  })
 }

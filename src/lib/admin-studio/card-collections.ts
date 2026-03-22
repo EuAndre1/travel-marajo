@@ -180,6 +180,17 @@ function getStringValue(source: unknown, key: string, fallback: string) {
   return typeof value === "string" ? value : fallback
 }
 
+function getStringValueFromKeys(source: unknown, keys: string[], fallback: string) {
+  for (const key of keys) {
+    const value = getStringValue(source, key, "")
+    if (value) {
+      return value
+    }
+  }
+
+  return fallback
+}
+
 function getBooleanValue(source: unknown, key: string, fallback: boolean) {
   if (!isRecord(source)) {
     return fallback
@@ -209,6 +220,41 @@ function getStringArrayValue(source: unknown, key: string, fallback: string[]) {
   }
 
   return value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+}
+
+function getStringArrayValueFromKeys(source: unknown, keys: string[], fallback: string[]) {
+  for (const key of keys) {
+    const value = getStringArrayValue(source, key, [])
+    if (value.length > 0) {
+      return value
+    }
+  }
+
+  return fallback
+}
+
+function getMultilineStringValueFromKeys(source: unknown, keys: string[], fallback: string) {
+  for (const key of keys) {
+    if (!isRecord(source)) {
+      break
+    }
+
+    const rawValue = source[key]
+    if (typeof rawValue === "string" && rawValue.trim().length > 0) {
+      return rawValue
+    }
+
+    if (Array.isArray(rawValue)) {
+      const nextItems = rawValue.filter(
+        (item): item is string => typeof item === "string" && item.trim().length > 0,
+      )
+      if (nextItems.length > 0) {
+        return nextItems.join("\n")
+      }
+    }
+  }
+
+  return fallback
 }
 
 function normalizeMediaReference(
@@ -288,18 +334,64 @@ export function normalizeHotelCardDraftItem(
 ): AdminHotelCardDraftItem {
   const baseId = fallback?.id ?? `hotel-card-${index + 1}`
   const localesValue = isRecord(itemValue) && isRecord(itemValue.locales) ? itemValue.locales : {}
-  const ptLocale = normalizeHotelLocaleDraft(localesValue.pt, fallback?.locales?.pt)
-  const imageUrl = getStringValue(itemValue, "imageUrl", fallback?.imageUrl ?? "")
-  const mediaUrl = getStringValue(itemValue, "mediaUrl", fallback?.mediaUrl ?? imageUrl)
+  const legacyPtFallback: Partial<AdminHotelCardLocaleDraft> = {
+    title: getStringValueFromKeys(itemValue, ["title", "hotelName", "name"], fallback?.locales?.pt.title ?? ""),
+    eyebrow: getStringValueFromKeys(
+      itemValue,
+      ["location", "eyebrow", "subtitle", "label"],
+      fallback?.locales?.pt.eyebrow ?? "",
+    ),
+    description: getStringValueFromKeys(
+      itemValue,
+      ["shortDescription", "description", "summary"],
+      fallback?.locales?.pt.description ?? "",
+    ),
+    metaPrimary: getStringValueFromKeys(
+      itemValue,
+      ["priceRange", "metaPrimary", "price"],
+      fallback?.locales?.pt.metaPrimary ?? "",
+    ),
+    metaSecondary: getStringValueFromKeys(
+      itemValue,
+      ["metaSecondary"],
+      fallback?.locales?.pt.metaSecondary ?? "",
+    ),
+    ctaLabel: getStringValueFromKeys(
+      itemValue,
+      ["ctaLabel", "buttonLabel"],
+      fallback?.locales?.pt.ctaLabel ?? "",
+    ),
+    fullDescription: getMultilineStringValueFromKeys(
+      itemValue,
+      ["fullDescription", "longDescription"],
+      fallback?.locales?.pt.fullDescription ?? "",
+    ),
+    amenitiesText: getMultilineStringValueFromKeys(
+      itemValue,
+      ["amenitiesText", "amenities", "differentials"],
+      fallback?.locales?.pt.amenitiesText ?? "",
+    ),
+  }
+  const ptLocale = normalizeHotelLocaleDraft(localesValue.pt, legacyPtFallback)
+  const imageUrl = getStringValueFromKeys(
+    itemValue,
+    ["imageUrl", "image", "coverImageUrl", "mainImageUrl"],
+    fallback?.imageUrl ?? "",
+  )
+  const mediaUrl = getStringValueFromKeys(
+    itemValue,
+    ["mediaUrl", "videoUrl", "coverMediaUrl"],
+    fallback?.mediaUrl ?? imageUrl,
+  ) || imageUrl
   const rawMediaType = getStringValue(
     itemValue,
     "mediaType",
     fallback?.mediaType ?? getMediaTypeFromUrl(mediaUrl || imageUrl),
   )
   const mediaType: MediaAssetType = rawMediaType === "video" ? "video" : "image"
-  const galleryImageUrls = getStringArrayValue(
+  const galleryImageUrls = getStringArrayValueFromKeys(
     itemValue,
-    "galleryImageUrls",
+    ["galleryImageUrls", "galleryImages", "gallery", "photos"],
     fallback?.galleryImageUrls?.length
       ? fallback.galleryImageUrls
       : imageUrl
@@ -321,9 +413,9 @@ export function normalizeHotelCardDraftItem(
   return {
     id: getStringValue(itemValue, "id", baseId),
     linkedSlug: createStudioSlug(
-      getStringValue(
+      getStringValueFromKeys(
         itemValue,
-        "linkedSlug",
+        ["linkedSlug", "slug"],
         fallback?.linkedSlug ?? ptLocale.title ?? baseId,
       ),
       baseId,
@@ -331,16 +423,28 @@ export function normalizeHotelCardDraftItem(
     imageUrl,
     mediaUrl: mediaUrl || imageUrl,
     mediaType,
-    ctaTarget: getStringValue(itemValue, "ctaTarget", fallback?.ctaTarget ?? "/hotels"),
-    visible: getBooleanValue(itemValue, "visible", fallback?.visible ?? true),
-    sortOrder: getNumberValue(itemValue, "sortOrder", fallback?.sortOrder ?? index),
+    ctaTarget: getStringValueFromKeys(
+      itemValue,
+      ["ctaTarget", "href", "url"],
+      fallback?.ctaTarget ?? "/hotels",
+    ),
+    visible: getBooleanValue(
+      itemValue,
+      "visible",
+      getBooleanValue(itemValue, "showOnSite", fallback?.visible ?? true),
+    ),
+    sortOrder: getNumberValue(
+      itemValue,
+      "sortOrder",
+      getNumberValue(itemValue, "order", fallback?.sortOrder ?? index),
+    ),
     galleryImageUrls: syncedGalleryImageUrls,
     galleryMediaItems,
     locales: {
       pt: ptLocale,
-      en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en),
-      es: normalizeHotelLocaleDraft(localesValue.es, fallback?.locales?.es),
-      fr: normalizeHotelLocaleDraft(localesValue.fr, fallback?.locales?.fr),
+      en: normalizeHotelLocaleDraft(localesValue.en, fallback?.locales?.en ?? ptLocale),
+      es: normalizeHotelLocaleDraft(localesValue.es, fallback?.locales?.es ?? ptLocale),
+      fr: normalizeHotelLocaleDraft(localesValue.fr, fallback?.locales?.fr ?? ptLocale),
     },
   }
 }
